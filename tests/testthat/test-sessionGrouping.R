@@ -34,6 +34,7 @@ file.path(datadir,'sessionGroupingTest',"4_Ontology_paritalLog.Rmd")
 ))
 t = lapply ( fnames, file.create)
 
+
 sessionPath( cellexalObj, 'sessionGroupingTest' )
 for ( n in fnames[-c(1,6)] ) { expect_true( ! file.exists(n), paste("file not removed",n)) }
 for ( n in fnames[c(1,6)] ) { expect_true( file.exists(n), paste("file not created",n)) }
@@ -129,8 +130,11 @@ expect_true( file.exists( file.path(datadir, '3_Stats_sessionGroupingTest.html' 
 if ( file.exists( file.path(datadir, '4_Network_sessionGroupingTest.html' ))) {
 	unlink(  file.path(datadir, '4_Network_sessionGroupingTest.html' ) )
 }
+grouping <- file.path(prefix, 'data/selection0.txt')
+heatmap_png <- file.path(datadir,  'tmp', 'a_simple_figure.png')
+
 cellexalObj = logNetwork(cellexalObj,  png =  heatmap_png , grouping= grouping )
-expect_true( file.exists( file.path(datadir, '4_Network_sessionGroupingTest.html' )), 'logNetworks failed')
+expect_true( file.exists( file.path(datadir, '3_Network_sessionGroupingTest.html' )), 'logNetworks failed')
 
 ## ontologyLogPage
 
@@ -138,7 +142,7 @@ if ( file.exists( file.path(datadir, '5_Ontology_sessionGroupingTest.html' ))) {
 	unlink(  file.path(datadir, '5_Ontology_sessionGroupingTest.html' ) )
 }
 cellexalObj = ontologyLogPage(cellexalObj,  genes=genes , grouping= grouping )
-expect_true( file.exists( file.path(datadir, '5_Ontology_sessionGroupingTest.html' )), 'logNetworks failed')
+expect_true( file.exists( file.path(datadir, '4_Ontology_sessionGroupingTest.html' )), 'logNetworks failed')
 
 
 ofile=  file.path( datadir, 'session-log-for-session-sessiongroupingtest.html')

@@ -4,7 +4,9 @@
 \name{Epigenetic}
 \alias{Epigenetic}
 \title{A simple table containing the data from 'http://epifactors.autosome.ru/' as from 21st September 2017}
-\format{data.frame}
+\format{
+data.frame
+}
 \usage{
 Epigenetic
 }

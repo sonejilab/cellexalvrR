@@ -4,7 +4,9 @@
 \name{human.CellSurface}
 \alias{human.CellSurface}
 \title{A simple list containing the human ENTREZ.gene.symbols from 'A Mass Spectrometric-Derived Cell Surface Protein Atlas' plos 2015}
-\format{vector}
+\format{
+vector
+}
 \usage{
 human.CellSurface
 }

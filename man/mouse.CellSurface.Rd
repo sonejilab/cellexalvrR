@@ -4,7 +4,9 @@
 \name{mouse.CellSurface}
 \alias{mouse.CellSurface}
 \title{A simple list containing the mouse ENTREZ.gene.symbols from 'A Mass Spectrometric-Derived Cell Surface Protein Atlas' plos 2015}
-\format{vector}
+\format{
+vector
+}
 \usage{
 mouse.CellSurface
 }

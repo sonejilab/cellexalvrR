@@ -4,7 +4,9 @@
 \name{cellexalObj}
 \alias{cellexalObj}
 \title{The cellexlvrR object described in the vignette}
-\format{cellexalvrR}
+\format{
+cellexalvrR
+}
 \usage{
 cellexalObj
 }

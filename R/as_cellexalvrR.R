@@ -16,8 +16,8 @@
 #' @title convert a BioData object to cellexalvrR keeping all 3D drc objects.
 #' @export 
 setGeneric('as_cellexalvrR', ## Name
-	function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie ) { ## Argumente der generischen Funktion
-		standardGeneric('as_cellexalvrR') ## der Aufruf von standardGeneric sorgt für das Dispatching
+	function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie, ... ) { 
+		standardGeneric('as_cellexalvrR')
 	}
 )
 
@@ -25,7 +25,9 @@ setMethod('as_cellexalvrR', signature = c ('environment'),
 	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie ) {
 	## x has to be a BioData object which is read as a simple list here!
 	if ( is.null(meta.cell.groups)){
-		stop( paste(sep="\n","meta.cell.groups is not defined - please set it to one of", paste(colnames(x$samples))) )
+		browser()
+		stop( paste(sep="","meta.cell.groups is not defined - please set it to one of\n'", 
+			paste(collapse="', '", colnames(x$samples)) ,"'") )
 	}
 	ret = methods::new('cellexalvrR')
 	ret@data = x$zscored
@@ -69,6 +71,44 @@ setMethod('as_cellexalvrR', signature = c ('environment'),
 	ret@outpath = outpath
 	ret
 } )
+
+
+setMethod('as_cellexalvrR', signature = c ('Seurat'),
+	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie, assay=NULL ) {
+
+		ret = methods::new('cellexalvrR')
+		getEmb = function (n) {
+			emb = Embeddings(object = x, reduction = n)
+			 if ( ncol(emb) ==2){
+			 	emb = cbind(emb, rep(0,nrow(emb)))
+			 }
+			 if ( ncol(emb) > 3) {
+			 	emb = emb[,1:3]
+			 }
+			 emb
+		}
+		if ( is.null( meta.cell.groups ) ) {
+			stop(paste( sep="", 
+				"The 'meta.cell.groups' is undefined - you need to select values from:\n'",
+				paste( colnames(x@meta.data), collapse="', '"), "'") )
+		}
+		if ( .hasSlot(x, 'data')) {
+			warning( "Untested Seurat object version 2.x")
+			ret@data = x@data
+			ret@drc = lapply( names(x@dr), getEmb )
+			names(ret@drc) = names(x@dr)
+		}
+		else {
+			ret@data = GetAssayData(object = x, assay = assay )
+			ret@drc = lapply( names(x@reductions), getEmb  )
+			names(ret@drc) = names(x@reductions)
+		}
+		ret@meta.cell = make.cell.meta.from.df( x@meta.data, meta.cell.groups)
+		ret@meta.gene = matrix( ncol=1,  rownames(ret@data) )
+		colnames(ret@meta.gene) = "Gene Symbol"
+
+		ret
+	})
 
 # setMethod('as_cellexalvrR', signature = c ('character'),
 # 	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie ) {

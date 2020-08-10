@@ -12,7 +12,8 @@ as_cellexalvrR(
   meta.genes.groups = NULL,
   userGroups = NULL,
   outpath = getwd(),
-  specie
+  specie,
+  ...
 )
 }
 \arguments{

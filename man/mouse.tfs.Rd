@@ -4,11 +4,13 @@
 \name{mouse.tfs}
 \alias{mouse.tfs}
 \title{A list of mouse transcription factors.}
-\format{A vector 1357 in length:
+\format{
+A vector 1357 in length:
 \describe{
   \item{tf}{transcription factor}
   ...
-}}
+}
+}
 \source{
 \url{http://bioinfo.life.hust.edu.cn/AnimalTFDB/}
 }
