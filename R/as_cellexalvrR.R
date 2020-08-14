@@ -74,10 +74,10 @@ setMethod('as_cellexalvrR', signature = c ('environment'),
 
 
 setMethod('as_cellexalvrR', signature = c ('Seurat'),
-	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie, assay=NULL ) {
+	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie, assay=NULL, slot='data' ) {
 
 		ret = methods::new('cellexalvrR')
-		getEmb = function (n) {
+		getEmb = function (n, cn) {
 			emb = Embeddings(object = x, reduction = n)
 			 if ( ncol(emb) ==2){
 			 	emb = cbind(emb, rep(0,nrow(emb)))
@@ -85,6 +85,7 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 			 if ( ncol(emb) > 3) {
 			 	emb = emb[,1:3]
 			 }
+			 rownames(emb) = cn
 			 emb
 		}
 		if ( is.null( meta.cell.groups ) ) {
@@ -95,15 +96,16 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 		if ( .hasSlot(x, 'data')) {
 			warning( "Untested Seurat object version 2.x")
 			ret@data = x@data
-			ret@drc = lapply( names(x@dr), getEmb )
+			ret@drc = lapply( names(x@dr), getEmb, colnames(ret@data) )
 			names(ret@drc) = names(x@dr)
 		}
 		else {
-			ret@data = GetAssayData(object = x, assay = assay )
-			ret@drc = lapply( names(x@reductions), getEmb  )
+			ret@data = GetAssayData(object = x, assay = assay, slot = slot )
+			ret@drc = lapply( names(x@reductions), getEmb, colnames(ret@data)  )
 			names(ret@drc) = names(x@reductions)
 		}
 		ret@meta.cell = make.cell.meta.from.df( x@meta.data, meta.cell.groups)
+		rownames(ret@meta.cell) = colnames(ret@data)
 		ret@meta.gene = matrix( ncol=1,  rownames(ret@data) )
 		colnames(ret@meta.gene) = "Gene Symbol"
 
