@@ -30,7 +30,41 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
 		dataObj@userGroups <- dataObj@userGroups[ids,]
 	}
 	for ( n in names(dataObj@drc) ) {
-		dataObj@drc[[n]] = dataObj@drc[[n]][ids,]
+		#browser()
+		if ( ! is.null(rownames(dataObj@drc[[n]]))){
+			#if ( n == 'rna_pca'){browser()}
+			want = rownames(dataObj@meta.cell)[ids]
+			here <- match(want, rownames(dataObj@drc[[n]]))
+			if ( length(here) > 0 ){
+				#here = here[which(!is.na(here))]
+				get = want[which(!is.na(here))]
+				idsHere =  match(get, rownames(dataObj@drc[[n]]))
+			}
+			else {
+				idsHere = c()
+			}
+			result = tryCatch({
+   			 	dataObj@drc[[n]]  = dataObj@drc[[n]][idsHere,]
+				}, 
+				error = function(error_condition) {
+   				 browser()
+			} )
+			
+		}
+		else if (nrow(dataObj@drc[[n]]) == 0) {
+			dataObj@drc[[n]] = dataObj@drc[[n]]
+		}
+		else {
+   			dataObj@drc[[n]] = dataObj@drc[[n]][ids,]
+		}
+	}
+	for ( n in names(dataObj@groupSelectedFrom) ) {
+		dataObj@groupSelectedFrom[[n]]$order= dataObj@groupSelectedFrom[[n]]$order[ids]
+		dataObj@groupSelectedFrom[[n]]$grouping= dataObj@groupSelectedFrom[[n]]$grouping[ids]
+	}
+	dataObj = check(dataObj)
+	if ( !dataObj@usedObj$checkPassed ) {
+		browser()
 	}
 	dataObj
 } )

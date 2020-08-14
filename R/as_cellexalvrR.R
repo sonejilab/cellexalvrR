@@ -110,6 +110,102 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 		ret
 	})
 
+
+setMethod('as_cellexalvrR', signature = c ('character'),
+	definition = function (x,   meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
+		specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10 ){
+
+	if (!require("hdf5r", quietly = TRUE ) == T ) {
+		stop("package 'hdf5r' needed for this function to work. Please install it.",
+				call. = FALSE)
+	}
+	if ( ! hdf5r::is_hdf5(x)) {
+		stop( "The variable genes / analyzed VelocytoPy outfile if no h5ad file")
+	}
+	file <- H5File$new(x, mode='r')
+
+	as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
+		specie,  embeddings , embeddingDims, velocyto, veloScale, minCell4gene  )
+
+})
+
+
+setMethod('as_cellexalvrR', signature = c ('H5File'),
+	definition = function (x,  meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(),
+	 specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10) {
+
+		if ( length(embeddings) == 0 ) {
+			stop("A CellexalVR session without 3D embeddings is not making sense! STOP.")
+		}
+	## parse the data into a sparse matrix
+	toSparse <- function(file){
+		message("reading expression data")
+		x= file[['X']][['data']][]
+		i= file[['X']][['indices']][]
+		j= rep(0, length(x))
+		indptr = file[['X']][['indptr']][]
+		last = 1
+		for ( a in 2: length(indptr) ) {
+			j[(indptr[a-1]+1):(indptr[a]+1)] = last
+			last = last+1
+		}
+		j = j [-length(j)]
+		m = Matrix::sparseMatrix( i = i+1, j=j, x=x)
+
+		meta.data = H5Anno2df( file, 'obs')
+		annotation = H5Anno2df( file,'var')
+		
+		rownames(m) = annotation[,'_index']
+		colnames(m) = meta.data[,'_index']
+		
+		m
+	}
+	m = toSparse( x )
+	meta.data = H5Anno2df( x, 'obs')
+	annotation = H5Anno2df( x, 'var')
+
+	#browser()
+	drcs = lapply(embeddings, function(n) {  
+				ret = t(x[['obsm']][[paste(sep="_",'X',n)]][1:embeddingDims,])
+				if ( embeddingDims == 2 ){
+					ret = cbind(ret, rep(0, nrow(ret)) )
+				}
+				ret
+			} )
+	names(drcs) = embeddings
+	cellexalvrR = new( 'cellexalvrR', 
+			data=m, meta.cell=as.matrix(meta.data), 
+			meta.gene=as.matrix(annotation), 
+			drc = drcs, specie = specie )
+	
+
+	if ( velocyto ) {
+		for ( n in names(cellexalvrR@drc)) {
+			velo_n = paste( sep="_", 'velocity', n )
+			cellexalvrR@drc[[n]] = 
+				cbind( 
+					cellexalvrR@drc[[n]], 
+					cellexalvrR@drc[[n]][,1:embeddingDims] + t(x[['obsm']][[velo_n]][,] * veloScale)
+				)
+			if ( embeddingDims == 2 ){
+				cellexalvrR@drc[[n]] =
+					cbind(cellexalvrR@drc[[n]],rep(0, nrow(cellexalvrR@drc[[n]])))
+			}
+		}
+	}
+	
+	## and filter the low expression gene, too
+	rsum = Matrix::rowSums( m )
+	OK_genes = which(rsum >= minCell4gene)
+	mOK = m[OK_genes,]
+	
+	#cellexalvrR@meta.gene= matrix()
+	cellexalvrR@data = mOK
+	cellexalvrR@meta.gene = as.matrix(annotation[OK_genes,])
+	cellexalvrR
+} )
+
+
 # setMethod('as_cellexalvrR', signature = c ('character'),
 # 	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie ) {
 	

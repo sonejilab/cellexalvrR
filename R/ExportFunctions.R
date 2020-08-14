@@ -28,17 +28,22 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj,path, forceDB=F, VRpath=NULL ) {
 
 	## check that the cell names (all rownames) contain no spaces!!
+	old_names = colnames(cellexalObj@data)
 	good_names = stringr::str_replace_all( colnames(cellexalObj@data),'\\s+', '_')
 
-
-	colnames(cellexalObj@data) = good_names
 	for ( n in names(cellexalObj@drc) ) {
-		rownames( cellexalObj@drc[[n]]) = good_names
+		if ( is.null(rownames( cellexalObj@drc[[n]]))){
+			rownames( cellexalObj@drc[[n]]) = good_names
+		}
 	}
 	if ( nrow(cellexalObj@index) == ncol(cellexalObj@data) ){
 		rownames( cellexalObj@index ) = good_names
 	}
 
+	cellexalObj = check(cellexalObj)
+	if (! cellexalObj@usedObj$checkPassed ){
+		stop( "The cellexalvrR object did not pass the internal check")
+	}
 
 	ofile = file.path( path, "cellexalObj.RData")
 	if ( ! file.exists( ofile) ){

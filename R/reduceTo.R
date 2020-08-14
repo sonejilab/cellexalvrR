@@ -78,11 +78,31 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 						if ( nrow(x@userGroups) == n){
 							x@userGroups <- x@userGroups[useOnly,]
 						}
-						for ( n in names( x@drc) ) {
+						for ( na in names( x@drc) ) {
 							## I need to cut them down, too
-							x@drc[[n]] = x@drc[[n]][useOnly,]
+							## but they might have another dimension as the others!!
+							if ( ! is.null(rownames(x@drc[[na]]))){
+								here <- match(to, tolower(rownames(x@drc[[na]])))
+								here = to[which(!is.na(here))]
+								## existing IDs
+								x@drc[[na]] = x@drc[[na]][match(here, tolower(rownames( x@drc[[na]]))),]
+							}
+							else {
+								x@drc[[na]] = x@drc[[na]][useOnly,]
+							}
+							
 						}
-						
+						for( na in names( x@groupSelectedFrom) ) {
+							if ( class( x@groupSelectedFrom[[na]]) != 'list'){
+								x@groupSelectedFrom[[na]] = NULL
+								next
+							}
+							if ( length( x@groupSelectedFrom[[na]][['order']]) == n){
+								x@groupSelectedFrom[[na]][['order']] = x@groupSelectedFrom[[na]][['order']][useOnly]
+								x@groupSelectedFrom[[na]][['grouping']] = x@groupSelectedFrom[[na]][['grouping']][useOnly]
+							}
+							
+						}
 												
 					}else {
 						print (paste( "None of the names (to) matched the sample names in the cellexalvr object -> keep everything!"))

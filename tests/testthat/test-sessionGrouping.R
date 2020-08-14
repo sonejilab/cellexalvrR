@@ -5,6 +5,11 @@ prefix = './'
 data = file.path(prefix, 'data/cellexalObj.RData')
 
 cellexalObj = loadObject( data )
+
+cellexalObj@userGroups=data.frame()
+cellexalObj@usedObj$lastGroup = NULL
+cellexalObj@usedObj$SelectionFiles = list()
+
 datadir <- normalizePath(file.path( prefix, 'data', 'output'))
 cellexalObj@usedObj$sessionPath = cellexalObj@usedObj$sessionRmdFiles = cellexalObj@usedObj$sessionName = NULL
 
@@ -34,7 +39,6 @@ file.path(datadir,'sessionGroupingTest',"4_Ontology_paritalLog.Rmd")
 ))
 t = lapply ( fnames, file.create)
 
-
 sessionPath( cellexalObj, 'sessionGroupingTest' )
 for ( n in fnames[-c(1,6)] ) { expect_true( ! file.exists(n), paste("file not removed",n)) }
 for ( n in fnames[c(1,6)] ) { expect_true( file.exists(n), paste("file not created",n)) }
@@ -49,6 +53,7 @@ expect_true( file.exists( file.path(datadir, 'sessionGroupingTest' ) ) , "sessio
 lapply( list.files(datadir , full.names = TRUE, recursive = FALSE), unlink )
 
 grouping =  file.path(prefix, 'data', 'selection0.txt' )
+
 
 cellexalObj = userGrouping( cellexalObj, grouping )
 cellexalObj = sessionRegisterGrouping( cellexalObj, cellexalObj@usedObj$lastGroup )
@@ -104,6 +109,8 @@ ofile=  file.path( datadir, '2_Heatmap_sessionGroupingTest.html')
 if( file.exists(ofile)) {
 	unlink(ofile)
 }
+
+
 #system( paste( 'Rscript', script, datadir, genes, heatmap_png, grouping, ontology, topNodes ))
 cellexalObj = logHeatmap(cellexalObj, genes, heatmap_png, grouping, ontology = ontology, topNodes = topNodes )
 
@@ -127,22 +134,19 @@ expect_true( file.exists( file.path(datadir, '3_Stats_sessionGroupingTest.html' 
 
 # logNetwork
 
-if ( file.exists( file.path(datadir, '4_Network_sessionGroupingTest.html' ))) {
-	unlink(  file.path(datadir, '4_Network_sessionGroupingTest.html' ) )
+if ( file.exists( file.path(datadir, '3_Network_sessionGroupingTest.html' ))) {
+	unlink(  file.path(datadir, '3_Network_sessionGroupingTest.html' ) )
 }
-grouping <- file.path(prefix, 'data/selection0.txt')
-heatmap_png <- file.path(datadir,  'tmp', 'a_simple_figure.png')
-
 cellexalObj = logNetwork(cellexalObj,  png =  heatmap_png , grouping= grouping )
 expect_true( file.exists( file.path(datadir, '3_Network_sessionGroupingTest.html' )), 'logNetworks failed')
 
 ## ontologyLogPage
 
-if ( file.exists( file.path(datadir, '5_Ontology_sessionGroupingTest.html' ))) {
-	unlink(  file.path(datadir, '5_Ontology_sessionGroupingTest.html' ) )
+if ( file.exists( file.path(datadir, '4_Ontology_sessionGroupingTest.html' ))) {
+	unlink(  file.path(datadir, '4_Ontology_sessionGroupingTest.html' ) )
 }
 cellexalObj = ontologyLogPage(cellexalObj,  genes=genes , grouping= grouping )
-expect_true( file.exists( file.path(datadir, '4_Ontology_sessionGroupingTest.html' )), 'logNetworks failed')
+expect_true( file.exists( file.path(datadir, '4_Ontology_sessionGroupingTest.html' )), 'ontologyLog failed')
 
 
 ofile=  file.path( datadir, 'session-log-for-session-sessiongroupingtest.html')
