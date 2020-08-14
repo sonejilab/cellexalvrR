@@ -22,15 +22,28 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	
 	cellexalObj <- renew(cellexalObj) #function definition in file 'renew.R'
 	save = FALSE
+	#init local vars
+	id= (ncol(cellexalObj@userGroups) /2) + 1
+	gname = paste( "User.group", id, sep="." ) #the VR program dependeds on it
+	gOrderName = paste( gname, 'order', sep=" ")
+
+	n = vector( 'numeric', ncol(cellexalObj@data))
+
 	if ( file.exists(cellidfile)){ ## file from the VR env
 		## add this group into the object
 		cellid <- utils::read.delim(cellidfile,header=F)
-
-		#init local vars
-		id= (ncol(cellexalObj@userGroups) /2) + 1
-		gname = paste( "User.group", id, sep="." ) #the VR program dependeds on it
-		n = vector( 'numeric', ncol(cellexalObj@data))
-		
+		if ( cellid[1,1] == 'CellID'){ ## reading a file from the session path
+			cellid = cellid[-1,]
+		}
+		sessionStoreFile <- function() {
+			if ( ! is.null(cellexalObj@usedObj$sessionPath) ){## active session - we need to copy the cellidfile to this path
+				if ( file.exists( cellidfile )){
+					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath,""))
+					cat( gname ,file=file.path(cellexalObj@usedObj$sessionPath, paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
+				}
+			}
+		}
+	#	browser()
 		#find overlap with own data
 		m = match(cellid[,1], colnames(cellexalObj@data))
 		if ( length(which(is.na(m))) > 0 ){
@@ -48,29 +61,48 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		order = n
 		order[match(cellid[,1], colnames(cellexalObj@data))] = 1:nrow(cellid)
 		new =(cbind(n, order))
-		colnames(new) = c( gname, paste( gname, 'order' ))
+		colnames(new) = c( gname, gOrderName)
 
 		if ( ncol(cellexalObj@data) != nrow(cellexalObj@userGroups)){
 			## Just create a new one...
 			id = 1
 			gname = paste( "User.group", id, sep="." )
-			colnames(new)[1] = gname
-			cellexalObj@userGroups = data.frame( new )
+			gOrderName = paste( gname, 'order', sep=" ")
+			new = data.frame( new )
+			colnames(new) = c( gname, gOrderName)
+
+			cellexalObj@userGroups = new 
+			sessionStoreFile() ## local function
 		}else {
 			# did we already read this file?
-			t <- apply( cellexalObj@userGroups, 2, function ( x ) { ok = all.equal(as.numeric(as.vector(x)),as.numeric(as.vector(n))); if ( ok == T ) {TRUE } else { FALSE } } )
-			d <- apply( cellexalObj@userGroups, 2, function ( x ) { ok = all.equal(as.numeric(as.vector(x)),as.numeric(as.vector(order))); if ( ok == T ) {TRUE } else { FALSE } } )
+			t <- apply( cellexalObj@userGroups, 2, function ( x ) { ok = 
+				all.equal(as.numeric(as.vector(x)),as.numeric(as.vector(n))); if ( ok == T ) {TRUE } else { FALSE } } )
+			d <- apply( cellexalObj@userGroups, 2, function ( x ) { ok = 
+				all.equal(as.numeric(as.vector(x)),as.numeric(as.vector(order))); if ( ok == T ) {TRUE } else { FALSE } } )
 			ok <- which( t == T )
 			if ( length(ok) == 1 & length( which(d == T)) == 1) {
 				## OK use the old one
 				gname = names(ok)
 				id = ceiling(as.vector(ok) / 2)
+				sessionStoreFile()
 			}else {
 				cellexalObj@userGroups = cbind(cellexalObj@userGroups, new)
+				sessionStoreFile() ## local function
 			}
 		}
-		
-		cellexalObj@groupSelectedFrom[[gname]] = unique(as.vector(cellid[,3]))
+
+		ginfo = list(
+			gname = gname,
+			selectionFile= basename( cellidfile ),
+			grouping = cellexalObj@userGroups[,gname] ,
+			order = 1:ncol(cellexalObj@data),
+			'drc' = unique(as.vector(cellid[,3])),
+			col = unique(as.vector(unique(cellid[,2])))
+		)
+		if ( ! is.na(match(paste(cellexalObj@usedObj$lastGroup, 'order', sep=" "), colnames(cellexalObj@data))) ){
+			ginfo[['order']] = cellexalObj@userGroups[,paste(gname, 'order', sep=" ")]
+		}
+		cellexalObj@groupSelectedFrom[[gname]] = ginfo
 		cellexalObj@colors[[gname]] = unique(as.vector(unique(cellid[,2])))
 		savePart ( cellexalObj, 'groupSelectedFrom') #function definition in file 'integrateParts.R'
 		savePart ( cellexalObj, 'colors') #function definition in file 'integrateParts.R'
@@ -85,6 +117,12 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	}
 	## store the grouing name
 	cellexalObj@usedObj$lastGroup = gname
-	savePart ( cellexalObj, 'lastGroup') #function definition in file 'integrateParts.R'
+	if ( is.null(cellexalObj@usedObj$SelectionFiles)) {
+		cellexalObj@usedObj$SelectionFiles = list()
+	}
+	if ( file.exists(cellidfile) ){
+		cellexalObj@usedObj$SelectionFiles[[gname]] = cellidfile
+	}
+	savePart ( cellexalObj, 'usedObj') #function definition in file 'integrateParts.R'
 	cellexalObj
 } )

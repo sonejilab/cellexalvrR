@@ -6,7 +6,7 @@
 \alias{drcPlots2D,cellexalvrR-method}
 \title{description of function drcPlot2D}
 \usage{
-drcPlots2D(cellexalObj, gInfo)
+drcPlots2D(cellexalObj, gInfo, GOIs = NULL)
 }
 \arguments{
 \item{cellexalObj}{the cellexal object}

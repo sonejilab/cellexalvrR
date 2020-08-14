@@ -6,7 +6,7 @@
 \title{description of function getDifferentials}
 \usage{
 \S4method{getDifferentials}{character}(
-  cellexalObj,
+  x,
   cellidfile,
   deg.method = c("wilcox", "Seurat_wilcox", "bimod", "roc", "t", "tobit", "poisson",
     "negbinom", "MAST", "DESeq2", "anova"),
@@ -17,7 +17,7 @@
 )
 }
 \arguments{
-\item{cellexalObj}{the cellexal.RData file}
+\item{x}{the cellexalvrR.RData file}
 
 \item{cellidfile}{file containing cell IDs}
 

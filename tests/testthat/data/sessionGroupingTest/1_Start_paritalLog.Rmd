@@ -1,0 +1,3 @@
+# Session Log for Session sessionGroupingTest
+Analysis of data:  data
+

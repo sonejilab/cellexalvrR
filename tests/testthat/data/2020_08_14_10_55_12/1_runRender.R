@@ -1,0 +1,2 @@
+setwd( file.path('C:','Users','Stefan','git','cellexalvrR','tests','testthat','data','2020_08_14_10_55_12') )
+ rmarkdown::render(input=file.path('C:','Users','Stefan','git','cellexalvrR','tests','testthat','data','2020_08_14_10_55_12','1_Start_paritalLog.Rmd'), output_format= 'html_document', output_file='1_Start_2020_08_14_10_55_12', output_dir='../')

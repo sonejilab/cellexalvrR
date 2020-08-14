@@ -7,19 +7,19 @@
 \title{VR helper function getDifferentials}
 \usage{
 \S4method{getDifferentials}{cellexalvrR}(
-  cellexalObj,
+  x,
   cellidfile,
   deg.method = c("wilcox", "Seurat_wilcox", "bimod", "roc", "t", "tobit", "poisson",
     "negbinom", "MAST", "DESeq2", "anova"),
   num.sig = 250,
   Log = TRUE,
-  logfc.threshold = 1,
+  logfc.threshold = 0.1,
   minPct = 0.1,
   onlyPos = TRUE
 )
 }
 \arguments{
-\item{cellexalObj, }{cellexalvr object}
+\item{x, }{cellexalvrR object}
 
 \item{cellidfile}{file containing cell IDs}
 
@@ -36,8 +36,8 @@
 \item{onlyPos}{select only genes showing an higher expression in the group (default =T)}
 }
 \value{
-the cellexalvrr object with the stats table stored in cellexalObj@usedObj$sigGeneLists$Cpp[[cellexalObj@usedObj$lastGroup]]
-and significant genes can be accessed in the cellexalObj@usedObj$deg.genes slot.
+the cellexalvrr object with the stats table stored in x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]]
+and significant genes can be accessed in the x@usedObj$deg.genes slot.
 }
 \description{
 Creates a heatmap from a selection of groups
@@ -53,7 +53,7 @@ This function makes three statistics available for the VR process
 }
 \examples{
 \dontrun{
-getDifferentials( cellexalObj,  cellidfile= 'User.group.2', deg.method='wilcox')@usedObj$deg.genes #function definition in file 'getDifferentials.R'
+getDifferentials( x,  cellidfile= 'User.group.2', deg.method='wilcox')@usedObj$deg.genes #function definition in file 'getDifferentials.R'
 }
 }
 \keyword{DEGs}
