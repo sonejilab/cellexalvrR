@@ -64,6 +64,7 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
 	}
 	dataObj = check(dataObj)
 	if ( !dataObj@usedObj$checkPassed ) {
+		message("The object does not pass the check function - fix that!")
 		browser()
 	}
 	dataObj

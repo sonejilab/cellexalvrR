@@ -41,17 +41,24 @@ setMethod('check', signature = c ('cellexalvrR'),
 		error = c( error,"the data rownames are not the same as the meta.gene rownames!")
 	}
 
-
 	# meta.cell
-	if ( isTRUE( all.equal(rownames(x@meta.cell), cn) ) ){
-		OK = TRUE
-	}
-	
-	if ( ! OK ) {
+	if ( ! isTRUE( all.equal(rownames(x@meta.cell), cn) ) ){
 		error = c(error,"the data colnames are not the same as the meta.cell rownames!")
 	}
+	
+	testMatrix <- function ( x ) {
+		OK = TRUE
+		if ( ! isTRUE( all.equal(names(table(x)), c("0","1"))) ) {
+			if ( isTRUE( all.equal(names(table(x)), c("1"))) | isTRUE( all.equal(names(table(x)), c("0")))  ){
+				OK = TRUE
+			}else {
+				OK = FALSE
+			}
+		}
+		OK
+	}
 
-	if ( ! isTRUE( all.equal(names(table(cellexalObj@meta.cell[] )), c('0','1'))) ){
+	if ( !  all(apply(x@meta.cell,2, testMatrix), TRUE) ){
 		error = c( error,"meta.cells is not a 0/1 table")
 	}
 	
@@ -69,20 +76,30 @@ setMethod('check', signature = c ('cellexalvrR'),
 					m = match( cn, rownames(x@drc[[n]]))
 					x@drc[[n]] = x@drc[[n]][m[which(!is.na(m))],]
 				
-				}else {
+				}else if( is.null(rownames(x@drc[[n]])) ) {
+					error = c(error , 
+					paste("drc", n ,
+						"has no rownames - please fix that") )
+					}
+				else{
 					error = c(error , 
 					paste("cell name missmatch - different cell names drc", n ,
-						" - contact Stefan.Lang@med.lu.se") )
+						" - are you sure the drc is from this data?") )
 				}
 				OK = FALSE
 			}
 			if ( length(which(is.na(match(rownames(x@drc[[n]]), cn )))) > 0 ) {
 				error = c(error , 
-					paste("R logics ERROR: cell name missmatch - different cell names drc", n ,
-						" - contact Stefan.Lang@med.lu.se") )
+					paste("R logics ERROR: NA's in the drc", n ,
+						"rownames - please fix that") )
 				#browser()
 				OK =FALSE
 			}
+		}
+		if ( length(which(is.na(x@drc[[n]]))) > 0){
+			error = c(error , 
+					paste("NA values in drc", n ,
+						" - please fix that") )
 		}
 	}
 
@@ -95,9 +112,11 @@ setMethod('check', signature = c ('cellexalvrR'),
 	
 	if ( !is.null(error) ){
 		x@usedObj$checkPassed = FALSE
+		x@usedObj$checkError = error
 		message(paste(collapse=" \n\r",c ( "check cellexalvrR", error) ) )
 	}else {
 		x@usedObj$checkPassed = TRUE
+		x@usedObj$checkError = error
 		message("seams OK")
 	}
 	

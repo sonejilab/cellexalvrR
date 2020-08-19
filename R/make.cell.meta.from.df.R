@@ -29,6 +29,7 @@ setMethod('make.cell.meta.from.df', signature = c ('data.frame'),
     }
 	# match any repeat of whitespace and replace it with one '.' each
 	colnames(meta4cellexalvr) <- gsub( '\\s+', '.', perl=T, colnames(meta4cellexalvr))
+    rownames(meta4cellexalvr) = rownames(metad)
     meta4cellexalvr
 } )
 
@@ -64,6 +65,7 @@ setMethod('makeCellMetaFromDataframe', signature = c ('data.frame'),
     }
 	# match any repeat of whitespace and replace it with one '.' each
 	colnames(meta4cellexalvr) <- gsub( '\\s+', '.', perl=T, colnames(meta4cellexalvr))
+    rownames(meta4cellexalvr) = rownames(metad)
     meta4cellexalvr
 } )
 

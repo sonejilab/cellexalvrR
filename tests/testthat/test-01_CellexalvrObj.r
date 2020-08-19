@@ -22,7 +22,7 @@ obj = check( obj )
 
 
 expect_true( obj@usedObj$checkPassed == FALSE,
-	"The internal check shold fail" )
+	"The internal check should fail" )
 
 
 ## fix the object first
@@ -46,7 +46,9 @@ if ( file.exists(file.path(ipath,'cellexalObjOK.RData.lock')) ) {
 if ( ! file.exists (file.path(ipath,'cellexalObjOK.RData') ) ) {
 	stop( paste("Libraray error - test file not found ", file.path(ipath,'cellexalObjOK.RData')) )
 }
-cellexalObj <- loadObject(file.path(ipath,'cellexalObjOK.RData'))
+
+cellexalObj = check(cellexalObj)
+expect_true( cellexalObj@usedObj$checkPassed )
 
 ofiles = c( 'a.meta.cell', 'c.meta.gene', 'database.sqlite', 'DDRtree.mds', 
 		 'index.facs',  'diffusion.mds', 'tSNE.mds' )
@@ -126,13 +128,14 @@ if(  file.exists(paste( ofile , '.sqlite3', sep="")) ){
 	unlink( paste( ofile , '.sqlite3', sep="") )
 }
 
-load(system.file( 'data/cellexalObj.rda', package='cellexalvrR'))
-cellexalObj@outpath = opath
-lockedSave( cellexalObj )
 
-make.cellexalvr.heatmap.list ( file.path(opath, 'cellexalObj.RData') , file.path(ipath,'selection0.txt'), 300, ofile )
+#load(system.file( 'data/cellexalObj.rda', package='cellexalvrR'))
+#cellexalObj@outpath = opath
+#lockedSave( cellexalObj )
 
-expect_true( file.exists( ofile ),  paste("gene list file missing:", ofile) )
+#make.cellexalvr.heatmap.list ( file.path(opath, 'cellexalObj.RData') , file.path(ipath,'selection0.txt'), 300, ofile )
+
+#expect_true( file.exists( ofile ),  paste("gene list file missing:", ofile) )
 
 
-expect_true( file.exists( paste( ofile , '.sqlite3', sep="") ),  paste("heatmap database file missing:", ofile) )
+#expect_true( file.exists( paste( ofile , '.sqlite3', sep="") ),  paste("heatmap database file missing:", ofile) )
