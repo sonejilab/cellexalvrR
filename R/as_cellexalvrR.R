@@ -134,7 +134,7 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 
 setMethod('as_cellexalvrR', signature = c ('H5File'),
 	definition = function (x,  meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(),
-	 specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10) {
+	 specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocity =TRUE, veloScale=20, minCell4gene = 10) {
 
 	if (!require("hdf5r", quietly = TRUE ) == T ) {
 		stop("package 'hdf5r' needed for this function to work. Please install it.",
@@ -185,7 +185,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			drc = drcs, specie = specie )
 	
 
-	if ( velocyto ) {
+	if ( velocity ) {
 		for ( n in names(ret@drc)) {
 			velo_n = paste( sep="_", 'velocity', n )
 			ret@drc[[n]] = 
