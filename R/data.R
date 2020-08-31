@@ -1,11 +1,11 @@
 #' @importFrom AnnotationDbi mapIds
-#' @importFrom DDRTree DDRTree
+##' @importFrom DDRTree DDRTree
 #' @importFrom FastWilcoxTest CorMatrix StatTest collapse meltSparseMatrix
 #' @importFrom Matrix Matrix drop0 rowSums t
 #' @importFrom RSQLite dbConnect dbDisconnect dbSendStatement dbWriteTable
-#' @importFrom alphashape3d ashape3d
+##' @importFrom alphashape3d ashape3d
 #' @importFrom bookdown render_book
-#' @importFrom entropy entropy
+##' @importFrom entropy entropy
 #' @importFrom grDevices png rainbow
 #' @importFrom graphics hist
 #' @importFrom knitr kable
