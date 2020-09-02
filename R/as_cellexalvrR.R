@@ -74,7 +74,8 @@ setMethod('as_cellexalvrR', signature = c ('environment'),
 
 
 setMethod('as_cellexalvrR', signature = c ('Seurat'),
-	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie, assay=NULL, slot='data' ) {
+	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, 
+		outpath=getwd(), specie, assay=NULL, slot='data', velocity='none', scale.arrow.travel=20 ) {
 
 		ret = methods::new('cellexalvrR')
 		getEmb = function (n, cn) {
@@ -104,6 +105,18 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 			ret@drc = lapply( names(x@reductions), getEmb, colnames(ret@data)  )
 			names(ret@drc) = names(x@reductions)
 		}
+		if ( velocity == 'scvelo') {
+
+			drc = list()
+			for ( n in names(ret@drc)) {
+				if ( length(grep('^velocity_', n)) == 1 ){
+					n_source = stringr::str_replace( n, '^velocity_', '') 
+					drc[[n_source]] = cbind(ret@drc[[n_source]], ret@drc[[n_source]] + ret@drc[[n]] * scale.arrow.travel)
+				}
+
+			}
+			ret@drc = drc
+		}
 		ret@meta.cell = make.cell.meta.from.df( x@meta.data, meta.cell.groups)
 		rownames(ret@meta.cell) = colnames(ret@data)
 		ret@meta.gene = matrix( ncol=1,  rownames(ret@data) )
@@ -113,23 +126,53 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 	})
 
 
+
+
 setMethod('as_cellexalvrR', signature = c ('character'),
-	definition = function (x,   meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
-		specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10 ){
+	definition = function (x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
+		specie, velocity='scvelo', scale.arrow.travel=20 ){
+		# , embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10
 
-	if (!require("hdf5r", quietly = TRUE ) == T ) {
-		stop("package 'hdf5r' needed for this function to work. Please install it.",
+		## re-write of this function:
+		## Use Seurat-Data instead...
+		if (!require("Seurat", quietly = TRUE ) == T ) {
+			stop("package 'Seurat' needed for this function to work. Please install it.",
 				call. = FALSE)
-	}
-	if ( ! hdf5r::is_hdf5(x)) {
-		stop( "The variable genes / analyzed VelocytoPy outfile if no h5ad file")
-	}
-	file <- H5File$new(x, mode='r')
+		}
+		if (!require("SeuratDisk", quietly = TRUE ) == T ) {
+			stop("package 'SeuratDisk' needed for this function to work. Please install it.",
+				call. = FALSE)
+		}
+		ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
+		if ( ! file.exists( ifile )){
+			Convert(x, dest = "h5seurat", overwrite = TRUE)
+		}
+		ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
+		seurat <- LoadH5Seurat( ifile )
+		ret = as_cellexalvrR(seurat, meta.cell.groups, meta.genes.groups =meta.genes.groups, outpath= outpath, specie=specie, 
+			velocity='scvelo', scale.arrow.travel=20 )
+		## to not screw up the database!
+		ret@data = ret@data [which(Matrix::rowSums(ret@data) > 0),]
+		ret
+} )
 
-	as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
-		specie,  embeddings , embeddingDims, velocyto, veloScale, minCell4gene  )
-
-})
+#setMethod('as_cellexalvrR', signature = c ('character'),
+#	definition = function (x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
+#		specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10 ){
+#
+#	if (!require("hdf5r", quietly = TRUE ) == T ) {
+#		stop("package 'hdf5r' needed for this function to work. Please install it.",
+#				call. = FALSE)
+#	}
+#	if ( ! hdf5r::is_hdf5(x)) {
+#		stop( "The variable genes / analyzed VelocytoPy outfile if no h5ad file")
+#	}
+#	file <- H5File$new(x, mode='r')
+#
+#	as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
+#		specie,  embeddings , embeddingDims, velocyto, veloScale, minCell4gene  )
+#
+#})
 
 
 setMethod('as_cellexalvrR', signature = c ('H5File'),
@@ -200,8 +243,11 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		}
 	}
 	
+	for ( n in names( ret@drc) ) {
+		rownames(ret@drc[[n]]) = colnames(ret@data)
+	}
 	## and filter the low expression gene, too
-	rsum = Matrix::rowSums( m )
+	rsum = FastWilcoxTest::ColNotZero( Matrix::t(m) )
 	OK_genes = which(rsum >= minCell4gene)
 	mOK = m[OK_genes,]
 	
@@ -254,53 +300,129 @@ setMethod('forceAbsoluteUniqueSample', signature = c ('ret'),
 #' @param onlyStrings return only columns that not only contain numbers (default FALSE)
 #' @title description of function H5Anno2df
 #' @export 
+#setGeneric('H5Anno2df', ## Name
+#	function (x, slotName, namecol=NULL, onlyStrings=FALSE ) { ## Argumente der generischen Funktion
+#		standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt für das Dispatching
+#	}
+#)#
+
+#setMethod('H5Anno2df', signature = c ('H5File'),#
+	#definition = function (x, slotName, namecol=NULL, onlyStrings=FALSE ) {
+#  		obs = data.frame(lapply(names(x[[slotName]]), function(n) { x[[paste(sep="/",slotName,n)]][] } ))
+ # 		colnames( obs ) = names(x[[slotName]])
+#  		col_uniq= NULL
+#  		for( n in colnames(obs) ) {#
+#	  		if ( all(obs[,n] =="") ){
+#  				obs[,n] = NULL
+#  			}else {
+#  				col_uniq = c( col_uniq, length(unique(obs[,n]))) 
+#  			}
+#  		}
+#  		names(col_uniq) = colnames( obs )
+#  		## most likely cell names column
+#  		if ( ! is.na(match(namecol, colnames(obs)) )) {#
+#			rownames(obs) =  forceAbsoluteUniqueSample ( #function definition in file 'as_cellexalvrR.R'
+#				as.vector(obs[, namecol]) )
+# 		}else {
+#  			## now I need to check for strings...
+#  			OK = unlist(lapply( colnames(obs) , function(id) {
+#  				a= which( is.na(as.numeric(as.vector(obs[,id])))==T) ## Strings only
+#  				if ( length(a) > 0) {
+#  					length(unique(as.vector(obs[a, id])))
+#  				}else {
+#  						0
+#  				}
+#  			}))
+#  			names(OK) = colnames(obs)
+#  			# if ( slotName == 'row_attrs'){
+#  			# 	browser()
+#  			# }
+#  			rownames(obs) =  forceAbsoluteUniqueSample ( #function definition in file 'as_cellexalvrR.R'
+#  				as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
+#  		}
+#  		if ( onlyStrings ) {
+#  			for( i in 1:length(col_uniq) ) {
+#  				if ( col_uniq[i] == 0 ){ # all entries convertable to numeric
+#  					obs[,i] = NULL
+#  				}
+#  			}
+#  		}
+# })
+
+#' Here two Velocyto file results (actually andata hdf5 files) 
+#' one containing the var gene analysis with a meaningful clustering
+#' and one with all genes. This function will combine the drc models from the var gene analysis 
+#' and it's clustering with the gene expressions in the bigger file.
+#' 
+#' The output will be a cellexalvrR object. 
+#' @name H5Anno2df
+#' @aliases H5Anno2df,cellexalvrR-method
+#' @rdname H5Anno2df-methods
+#' @docType methods
+#' @description  convert a H5 annotation (any name) table to a data table
+#' @param x the H5 object
+#' @param slotName the H5 entity tro convert to a data.frame
+#' @param namecol the (optional) rownames column for the data
+#' @param onlyStrings return only columns that not only contain numbers (default FALSE)
+#' @title description of function H5Anno2df
+#' @export 
 setGeneric('H5Anno2df', ## Name
-	function (x, slotName, namecol=NULL, onlyStrings=FALSE ) { ## Argumente der generischen Funktion
-		standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt für das Dispatching
-	}
+		function (x, slotName, namecol=NULL, onlyStrings=FALSE ) { ## Argumente der generischen Funktion
+			standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt für das Dispatching
+		}
 )
 
-setMethod('H5Anno2df', signature = c ('ret'),
-	definition = function (x, slotName, namecol=NULL, onlyStrings=FALSE ) {
-  		obs = data.frame(lapply(names(x[[slotName]]), function(n) { x[[paste(sep="/",slotName,n)]][] } ))
-  		colnames( obs ) = names(x[[slotName]])
-  		col_uniq= NULL
-  		for( n in colnames(obs) ) {
-	  		if ( all(obs[,n] =="") ){
-  				obs[,n] = NULL
-  			}else {
-  				col_uniq = c( col_uniq, length(unique(obs[,n]))) 
-  			}
-  		}
-  		names(col_uniq) = colnames( obs )
-  		## most likely cell names column
-  		if ( ! is.na(match(namecol, colnames(obs)) )) {
-			rownames(obs) =  forceAbsoluteUniqueSample ( #function definition in file 'as_cellexalvrR.R'
-				as.vector(obs[, namecol]) )
-  		}else {
-  			## now I need to check for strings...
-  			OK = unlist(lapply( colnames(obs) , function(id) {
-  				a= which( is.na(as.numeric(as.vector(obs[,id])))==T) ## Strings only
-  				if ( length(a) > 0) {
-  					length(unique(as.vector(obs[a, id])))
-  				}else {
-  						0
-  				}
-  			}))
-  			names(OK) = colnames(obs)
-  			# if ( slotName == 'row_attrs'){
-  			# 	browser()
-  			# }
-  			rownames(obs) =  forceAbsoluteUniqueSample ( #function definition in file 'as_cellexalvrR.R'
-  				as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
-  		}
-  		if ( onlyStrings ) {
-  			for( i in 1:length(col_uniq) ) {
-  				if ( col_uniq[i] == 0 ){ # all entries convertable to numeric
-  					obs[,i] = NULL
-  				}
-  			}
-  		}
+setMethod('H5Anno2df', signature = c ('H5File'),
+		definition = function (x, slotName, namecol=NULL, onlyStrings=FALSE ) {
+			OK = NULL;
+			for (n in names( x[[slotName]])) {
+				if ( is(x[[paste(sep="/",slotName,n)]], 'H5Group') ){
+					OK= c( OK, FALSE )
+				}else {
+					OK = c(OK, TRUE)
+				}
+			}
+			obs = data.frame(lapply(names(x[[slotName]])[OK], function(n) { x[[paste(sep="/",slotName,n)]][] } ))
+			colnames( obs ) = names(x[[slotName]])[OK]
+			col_uniq= NULL
+			for( n in colnames(obs) ) {
+				if ( all(obs[,n] =="") ){
+					obs[,n] = NULL
+				}else {
+					col_uniq = c( col_uniq, length(unique(obs[,n]))) 
+				}
+			}
+			names(col_uniq) = colnames( obs )
+			## most likely cell names column
+			if ( ! is.null(namecol )) {
+				rownames(obs) =  forceAbsoluteUniqueSample ( #function definition in file 'as_cellexalvrR.R'
+						as.vector(obs[, namecol]) )
+			}else {
+				## now I need to check for strings...
+				OK = unlist(lapply( colnames(obs) , function(id) {
+									a= which( is.na(as.numeric(as.vector(obs[,id])))==T) ## Strings only
+									if ( length(a) > 0) {
+										length(unique(as.vector(obs[a, id])))
+									}else {
+										0
+									}
+								}))
+				names(OK) = colnames(obs)
+				# if ( slotName == 'row_attrs'){
+				# 	browser()
+				# }
+				rownames(obs) =  make.names ( #function definition in file 'as_cellexalvrR.R'
+						as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
+			}
+			if ( onlyStrings ) {
+				for( i in 1:length(col_uniq) ) {
+					if ( col_uniq[i] == 0 ){ # all entries convertable to numeric
+						obs[,i] = NULL
+					}
+				}
+			}
+			
+			obs
+		} )
 
-  		obs
-  	} )
+

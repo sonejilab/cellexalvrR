@@ -6,6 +6,8 @@ Authors@R: c(person("Stefan", "Lang", email = "stefan.lang@med.lu.se", role = c(
 Description: This is the data analysis backend for the CellexalVR application.
 Suggests:
     testthat,
+    Seurat,
+    SeuratData
 biocViews: graph,
     org.Mm.eg.db,
     org.Hs.eg.db,

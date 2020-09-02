@@ -21,6 +21,12 @@ setMethod('make.cell.meta.from.df', signature = c ('data.frame'),
 	definition = function (metad,rq.fields) {
 
     meta4cellexalvr <- NULL
+    m = match(rq.fields, colnames(metad) )
+    if ( length(which(is.na(m))) > 0 ) {
+        err = c(paste( "The column names", paste( collapse=", ", rq.fields[which(is.na(m))]), "are not defined in the data.frame"),
+            paste("data.frame's colnames are: ", paste( collapse=", ", colnames(metad))))
+        stop( paste( err, collapse="\n") )
+    }
 
     for(i in 1:length(rq.fields)){
         tmp.met <- phytools::to.matrix(metad[,rq.fields[i]], unique(metad[,rq.fields[i]]) )
