@@ -15,3 +15,8 @@ expect_equal( dim(ret@meta.cell), c(80,2) )
 expect_equal( dim(ret@meta.gene), c(230,1) )
 
 expect_equal( ret@specie, 'mouse' )
+
+
+context('import from h5ad using SeuratData')
+
+

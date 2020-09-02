@@ -135,24 +135,38 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 
 		## re-write of this function:
 		## Use Seurat-Data instead...
+		ok = TRUE
 		if (!require("Seurat", quietly = TRUE ) == T ) {
-			stop("package 'Seurat' needed for this function to work. Please install it.",
+			ok =FALSE
+			warning("package 'Seurat' needed for this function to work. Please install it.",
 				call. = FALSE)
 		}
 		if (!require("SeuratDisk", quietly = TRUE ) == T ) {
-			stop("package 'SeuratDisk' needed for this function to work. Please install it.",
+			ok =FALSE
+			warning("package 'SeuratDisk' needed for this function to work. Please install it.",
 				call. = FALSE)
 		}
-		ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
-		if ( ! file.exists( ifile )){
-			Convert(x, dest = "h5seurat", overwrite = TRUE)
+		ret = NULL
+		if ( ok ) {
+			ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
+			if ( ! file.exists( ifile )){
+				Convert(x, dest = "h5seurat", overwrite = TRUE)
+			}
+			ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
+			seurat <- LoadH5Seurat( ifile )
+			ret = as_cellexalvrR(seurat, meta.cell.groups, meta.genes.groups =meta.genes.groups, outpath= outpath, specie=specie, 
+				velocity='scvelo', scale.arrow.travel=20 )
+			## to not screw up the database!
+			ret@data = ret@data [which(Matrix::rowSums(ret@data) > 0),]
+		}else {
+			if (!require("hdf5r", quietly = TRUE ) == T ) {
+				stop("fall back package 'hdf5r' needed for this function to work. Please install it.",
+				call. = FALSE)
+			}
+			file = H5File$new(x, mode='r')
+			ret = as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
+				specie, velocyto = velocity == 'scvelo', veloScale = scale.arrow.travel, minCell4gene = 1 )
 		}
-		ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
-		seurat <- LoadH5Seurat( ifile )
-		ret = as_cellexalvrR(seurat, meta.cell.groups, meta.genes.groups =meta.genes.groups, outpath= outpath, specie=specie, 
-			velocity='scvelo', scale.arrow.travel=20 )
-		## to not screw up the database!
-		ret@data = ret@data [which(Matrix::rowSums(ret@data) > 0),]
 		ret
 } )
 
