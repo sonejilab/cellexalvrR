@@ -112,9 +112,12 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 				if ( length(grep('^velocity_', n)) == 1 ){
 					n_source = stringr::str_replace( n, '^velocity_', '') 
 					drc[[n_source]] = cbind(ret@drc[[n_source]], ret@drc[[n_source]] + ret@drc[[n]] * scale.arrow.travel)
+				}else {
+					drc[[n]] = ret@drc[[n]]
 				}
 
 			}
+
 			ret@drc = drc
 		}
 		ret@meta.cell = make.cell.meta.from.df( x@meta.data, meta.cell.groups)

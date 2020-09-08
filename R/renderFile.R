@@ -27,14 +27,16 @@ if ( is.null( x@usedObj$sessionPath )){
 	}
 	
 	fileConn<-file(file.path(sessionPath, '_bookdown.yml') )
+	AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+
 	writeLines(c(
-		paste('book_filename:', paste(id, type, x@usedObj$sessionName, sep="_" )),
+		paste('book_filename:', paste(AA[id], type, x@usedObj$sessionName, sep="_" )),
 		'output_dir: ../',			
 		'delete_merged_file: true' )
 		, fileConn 
 	) 
     close(fileConn)
-    message( paste('bookdown::render_book log id', id) )
+    message( paste('bookdown::render_book log id', id, "/", AA[id] ) )
 	## and now a bloody hack:
 	oldwd = getwd()
 	setwd( x@usedObj$sessionPath )
@@ -46,7 +48,7 @@ if ( is.null( x@usedObj$sessionPath )){
 	
 	cmd =c( paste( sep="","setwd( ", file2Script( sessionPath ), " )\n"), paste( sep="","rmarkdown::render(input=",file2Script(fname),
 		", output_format= 'html_document', output_file='",
-		paste(id, type, x@usedObj$sessionName, sep='_' ),"', output_dir='../')") )
+		paste(AA[id], type, x@usedObj$sessionName, sep='_' ),"', output_dir='../')") )
 
 	script = paste( sep="_", id,"runRender.R")
 	if ( file.exists( script)) {
@@ -86,7 +88,8 @@ setMethod('storeLogContents', signature = c ('cellexalvrR'),
 	}
 	sessionPath = normalizePath(x@usedObj$sessionPath)
 	id = length(x@usedObj$sessionRmdFiles) +1
-	fname = paste( sep="_", id, type, "paritalLog.Rmd" )
+	AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+	fname = paste( sep="_", AA[id], type, "paritalLog.Rmd" )
 	fname = file.path( sessionPath, fname )
 
 	if ( file.exists( fname )) {
