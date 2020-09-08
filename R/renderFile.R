@@ -93,7 +93,8 @@ setMethod('storeLogContents', signature = c ('cellexalvrR'),
 		## damn - somewhere the cellexal object was not saved - better read in all Rmd files now
 		x@usedObj$sessionRmdFiles = list.files(sessionPath, full.names = TRUE, pattern='*.Rmd')
 		id = length(x@usedObj$sessionRmdFiles) +1
-		fname = paste( sep="_", id, type, "paritalLog.Rmd" )
+		AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+		fname = paste( sep="_", AA[id], type, "paritalLog.Rmd" )
 		fname = file.path( sessionPath, fname )
 	}
 	if ( file.exists(fname) ){
