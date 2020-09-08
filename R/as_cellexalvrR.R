@@ -155,7 +155,7 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 			ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
 			seurat <- LoadH5Seurat( ifile )
 			ret = as_cellexalvrR(seurat, meta.cell.groups, meta.genes.groups =meta.genes.groups, outpath= outpath, specie=specie, 
-				velocity='scvelo', scale.arrow.travel=20 )
+				velocity=velocity, scale.arrow.travel=20 )
 			## to not screw up the database!
 			ret@data = ret@data [which(Matrix::rowSums(ret@data) > 0),]
 		}else {
@@ -165,7 +165,7 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 			}
 			file = H5File$new(x, mode='r')
 			ret = as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
-				specie, velocyto = velocity == 'scvelo', veloScale = scale.arrow.travel, minCell4gene = 1 )
+				specie, velocity = velocity == 'scvelo', veloScale = scale.arrow.travel, minCell4gene = 1 )
 		}
 		ret
 } )
@@ -191,7 +191,7 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 
 setMethod('as_cellexalvrR', signature = c ('H5File'),
 	definition = function (x,  meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(),
-	 specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocity =TRUE, veloScale=20, minCell4gene = 10) {
+	 specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocity ='scvelo', scale.arrow.travel=20, minCell4gene = 10) {
 
 	if (!require("hdf5r", quietly = TRUE ) == T ) {
 		stop("package 'hdf5r' needed for this function to work. Please install it.",
@@ -242,7 +242,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			drc = drcs, specie = specie )
 	
 
-	if ( velocity ) {
+	if ( velocity == 'scvelo' ) {
 		for ( n in names(ret@drc)) {
 			velo_n = paste( sep="_", 'velocity', n )
 			ret@drc[[n]] = 

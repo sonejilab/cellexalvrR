@@ -2,6 +2,9 @@ context('import from Seurat V 3.x')
 
 skip_if_not ( require('Seurat', q=T), 'Seurat package is not installed' )
 
+prefix = ''
+#prefix = 'test/testthat'
+
 ret = as_cellexalvrR( 
     'x' = pbmc_small,  
     'meta.cell.groups' = c('groups'), 
@@ -15,3 +18,13 @@ expect_equal( dim(ret@meta.cell), c(80,2) )
 expect_equal( dim(ret@meta.gene), c(230,1) )
 
 expect_equal( ret@specie, 'mouse' )
+
+
+system.time( {cvr <- as_cellexalvrR( file.path( prefix,'data','tiny2.h5ad'), c("sname"), specie="human",velocity="scvelo",scale.arrow.travel=30)})
+
+skip_if_not (!require("hdf5r", quietly = TRUE ) == T, 'hdf5r package is missing ' )
+system.time( {
+	file =  H5File$new(file.path( prefix,'data','tiny2.h5ad'), mode='r') 
+	cvr_fast <- as_cellexalvrR( file, c("sname"), specie="human",velocity="scvelo",scale.arrow.travel=30)})
+})
+
