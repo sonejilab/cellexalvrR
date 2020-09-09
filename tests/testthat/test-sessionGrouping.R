@@ -37,14 +37,18 @@ file.path(datadir,'sessionGroupingTest',"AC_Stats_paritalLog.Rmd"),
 file.path(datadir,'sessionGroupingTest',"AD_Ontology_paritalLog.Rmd")
 
 ))
-t = lapply ( fnames, file.create)
+#t = lapply ( fnames, file.create)
 
-sessionPath( cellexalObj, 'sessionGroupingTest' )
-for ( n in fnames[-c(1,6)] ) { expect_true( ! file.exists(n), paste("file not removed",n)) }
-for ( n in fnames[c(1,6)] ) { expect_true( file.exists(n), paste("file not created",n)) }
+#context('create session grouping - initial clean up using empty files')
+
+#sessionPath( cellexalObj, 'sessionGroupingTest' )
+#for ( n in fnames[-c(1,6)] ) { expect_true( ! file.exists(n), paste("file not removed",n)) }
+#for ( n in fnames[c(1,6)] ) { expect_true( file.exists(n), paste("file not created",n)) }
 
 lapply( list.files(file.path(datadir) , 
 		full.names = TRUE, recursive = TRUE), unlink )
+
+context('create session grouping - start clean')
 
 cellexalObj = sessionPath( cellexalObj, 'sessionGroupingTest' )
 
@@ -59,8 +63,7 @@ cellexalObj = userGrouping( cellexalObj, grouping )
 cellexalObj = sessionRegisterGrouping( cellexalObj, cellexalObj@usedObj$lastGroup )
 n = sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup )
 
-expect_true( n == 1, paste("first entry not 1(", n, ")"))
-
+expect_true( n == 1, paste("first entry not 1 (", n, ")"))
 
 grouping =  file.path(prefix, 'data', 'selection1.txt' )
 
@@ -68,7 +71,7 @@ cellexalObj = userGrouping( cellexalObj, grouping )
 cellexalObj = sessionRegisterGrouping( cellexalObj, cellexalObj@usedObj$lastGroup )
 n = sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup )
 
-expect_true( n == 2, paste("second entry not 2(", n, ")"))
+expect_true( n == 2, paste("second entry not 2 (", n, ")"))
 
 grouping =  file.path(prefix, 'data', 'selection0.txt' )
 cellexalObj = userGrouping( cellexalObj, grouping )
@@ -78,6 +81,8 @@ expect_true( n == 1, paste("third try: first entry not 1(", n, ")"))
 
 ## now add some Session reports:
 
+context('session logHeatmap' )
+
 genes <- file.path(prefix, 'data/heatmap_0.txt')
 if ( ! file.exists(file.path(datadir,  'tmp')) ){
 	dir.create(file.path(datadir, 'tmp'), recursive = TRUE )
@@ -86,8 +91,6 @@ if ( ! file.exists(file.path(datadir,  'tmp')) ){
 png( file=file.path(datadir, 'tmp', 'a_simple_figure.png'), width=800, height=800 )
 plot(1:100, sample(100:1, 100), main="Just for the test 1!" )
 dev.off()
-
-context('session logHeatmap' )
 
 heatmap_png <- file.path(datadir,  'tmp', 'a_simple_figure.png')
 
