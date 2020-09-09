@@ -75,6 +75,7 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 
 	## now I need to create the 2D drc plots for the grouping
 	#cellexalObj = userGrouping(cellexalObj, grouping ) #function definition in file 'userGrouping.R'
+
 	gInfo = groupingInfo( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'groupingInfo.R'
 
 	## gInfo is a list with names grouping, drc, col and order

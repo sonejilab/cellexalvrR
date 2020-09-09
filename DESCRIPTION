@@ -15,7 +15,7 @@ biocViews: graph,
     topGO,
     edgeR
 Depends:
-	R (>= 3.5),
+	R (>= 3.6),
 	Matrix
 Imports:
 	alphashape3d,

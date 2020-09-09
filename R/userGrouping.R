@@ -90,20 +90,32 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				sessionStoreFile() ## local function
 			}
 		}
-
+		colorIDs = unique(cellexalObj@userGroups[,gname][which(!is.na(cellexalObj@userGroups[,gname]))])
+		colR =  cellid[match( colorIDs-1, cellid[,4]),2]
+		colVR = c()
+		for ( i in 1:length(colR)) {
+			colVR[colorIDs[i]] = colR[i]
+		}
+		#browser()
 		ginfo = list(
 			gname = gname,
 			selectionFile= basename( cellidfile ),
 			grouping = cellexalObj@userGroups[,gname] ,
 			order = 1:ncol(cellexalObj@data),
 			'drc' = unique(as.vector(cellid[,3])),
-			col = unique(as.vector(unique(cellid[,2])))
+			col = colVR
 		)
 		if ( ! is.na(match(paste(cellexalObj@usedObj$lastGroup, 'order', sep=" "), colnames(cellexalObj@data))) ){
 			ginfo[['order']] = cellexalObj@userGroups[,paste(gname, 'order', sep=" ")]
 		}
+		#browser()
+		#gr = ginfo$grouping+1
+		#gr[which(is.na(gr))] = 1
+		#plot( cellexalObj@drc[[ginfo$drc]][,2],cellexalObj@drc[[ginfo$drc]][,3],
+		# col=c(gray(.6),ginfo$col)[gr]  )
+
 		cellexalObj@groupSelectedFrom[[gname]] = ginfo
-		cellexalObj@colors[[gname]] = unique(as.vector(unique(cellid[,2])))
+		cellexalObj@colors[[gname]] = colVR
 		savePart ( cellexalObj, 'groupSelectedFrom') #function definition in file 'integrateParts.R'
 		savePart ( cellexalObj, 'colors') #function definition in file 'integrateParts.R'
 		savePart ( cellexalObj, 'userGroups') #function definition in file 'integrateParts.R'
