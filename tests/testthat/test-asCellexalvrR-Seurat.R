@@ -19,10 +19,11 @@ expect_equal( dim(ret@meta.gene), c(230,1) )
 
 expect_equal( ret@specie, 'mouse' )
 
+skip_if_not( require('SeuratDisk', q=T), 'SeuratDisk package is installed' )
 
 system.time( {cvr <- as_cellexalvrR( file.path( prefix,'data','tiny2.h5ad'), c("sname"), specie="human",velocity="scvelo",scale.arrow.travel=30)})
 
-skip_if_not (!require("hdf5r", quietly = TRUE ) == T, 'hdf5r package is missing ' )
+skip_if_not (!require("hdf5r", quietly = TRUE ) == T, 'hdf5r package is installed' )
 system.time( {
 	file =  H5File$new(file.path( prefix,'data','tiny2.h5ad'), mode='r') 
 	cvr_fast <- as_cellexalvrR( file, c("sname"), specie="human",velocity="scvelo",scale.arrow.travel=30)
