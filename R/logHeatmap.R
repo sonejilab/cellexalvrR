@@ -86,8 +86,13 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 	# figureF, drcFiles[1] and drcFiles[2] do now need to be integrated into a Rmd file
 	#mainOfile = file.path( sessionPath, filename( c( n, "Heatmap.Rmd") ) ) #function definition in file 'filename.R'
 	#file.create(mainOfile)
+	## https://stackoverflow.com/questions/29214932/split-a-file-path-into-folder-names-vector
+	split_path <- function(path) {
+  		if (dirname(path) %in% c(".", path)) return(basename(path))
+  		return(c(basename(path), split_path(dirname(path))))
+	}
 
-	PA = unlist(strsplit( sessionPath, .Platform$file.sep))
+	PA = rev(split_path( sessionPath ))
 	substract = NULL
 	for ( i in 1:length(PA) ){
 		substract= c( substract, PA[i] )
@@ -96,6 +101,7 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 		}
 	}
 	if ( length(substract) == length(PA) ) {
+		browser()
 		stop("this is fatal - we are not in a cellexalVR outpath - log inavailable!")
 	}
 

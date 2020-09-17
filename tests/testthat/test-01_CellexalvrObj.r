@@ -1,3 +1,8 @@
+context('dependant programs')
+expect_true( rmarkdown::pandoc_available() , "pandoc is installed")
+
+
+
 context('error throwing') 
 expect_error( loadObject( 'SomeFileNotExistsing') )
 
@@ -99,6 +104,7 @@ orig = read.delim( file.path(ipath, 'selection0.txt'), header=F)
 origids = orig[,4] +1
 names(origids) = orig[,1]
 m = match(names(origids), names(ids) ) ## likely some missing
+
 expect_true( all.equal(origids, ids[m]) == TRUE, 'grouping stored correctly')
 ## and check the order and the colors, too
 

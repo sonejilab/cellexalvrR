@@ -10,7 +10,10 @@ cellexalObj@userGroups=data.frame()
 cellexalObj@usedObj$lastGroup = NULL
 cellexalObj@usedObj$SelectionFiles = list()
 
-datadir <- normalizePath(file.path( prefix, 'data', 'output'))
+datadir <- normalizePath(file.path( prefix, 'data', 'output','sessionTest'))
+if ( ! file.exists( datadir)){
+	dir.create(datadir)
+}
 cellexalObj@usedObj$sessionPath = cellexalObj@usedObj$sessionRmdFiles = cellexalObj@usedObj$sessionName = NULL
 
 cellexalObj@outpath = file.path(datadir) ## to not mess up the package
