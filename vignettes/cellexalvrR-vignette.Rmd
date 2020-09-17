@@ -122,10 +122,10 @@ The first step is to put all the dimension reduction outputs into a single list:
 proj.list <- list(diffusion=diff.proj,DDRtree=ddr.proj,tSNE=tsne.proj)
 ```
 
-The next is to make a `cellexalvr` object by calling `MakeCellexaVRObj` and passing the required objects to it:
+The next is to make a `cellexalvr` object by calling `MakeCellexalVRObj` and passing the required objects to it:
 
 ```{r, fig.show='hold',eval=T}
-cellvr <- MakeCellexaVRObj( Matrix::Matrix(log2data, sparse=TRUE),
+cellvr <- MakeCellexalVRObj( Matrix::Matrix(log2data, sparse=TRUE),
   drc.list=proj.list,specie="mouse",cell.meta=cell.ids,facs.data=NULL)
 ```
 In the same step we also set the specie as mouse which ensures the correct 

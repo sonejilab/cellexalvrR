@@ -71,19 +71,19 @@ setMethod('server', signature = c ('character'),
 	}
 
 	## we check for additional screenshots in folder
-	path = file.path(dirname(file), 'Screenshots')
-	oldFiles = newScreenshots( c(), path =path )
+#	path = file.path(dirname(file), 'Screenshots')
+#	oldFiles = newScreenshots( c(), path =path )
 
   	while(TRUE){
-  		newFiles = newScreenshots(oldFiles, path=path)
-  		if ( length(newFiles) > 0 ){
+#  		newFiles = newScreenshots(oldFiles, path=path)
+#  		if ( length(newFiles) > 0 ){
 
-			for (n in newFiles) {
-				message( paste( 'logFigure will log the file',file.path(path, n) ))
-				cellexalObj = logFigure( cellexalObj,png= file.path(path, n), text='New VR screenshot.' )
-			}
-			oldFiles = c( oldFiles, newFiles)
-		}
+#			for (n in newFiles) {
+#				message( paste( 'logFigure will log the file',file.path(path, n) ))
+#				cellexalObj = logFigure( cellexalObj,png= file.path(path, n), text='New VR screenshot.' )
+#			}
+#			oldFiles = c( oldFiles, newFiles)
+#		}
 		if ( ! file.exists(pidfile ) ) {
 			break
 		}
