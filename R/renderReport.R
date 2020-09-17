@@ -71,15 +71,6 @@ setMethod('renderReport', signature = c ('cellexalvrR'),
 		mine = htmls[ grep(paste( sep="", '_',cellexalObj@usedObj$sessionName) , htmls )]
 		do.call(file.remove, list(mine))
 
-		zipF =  paste(tolower(cellexalObj@usedObj$sessionName), sep='', '.zip')
-		zipF = stringr::str_replace_all( zipF, '_', '-')
-	
-		files = c( expected_outfile, file.path(cellexalObj@outpath, 'libs'),  cellexalObj@usedObj$sessionPath )
-		for( i in 1:length(files)) {
-			files[i] = R.utils::getRelativePath(files[i],  relativeTo=cellexalObj@outpath,  caseSensitive=T )
-		}
-		#browser()
-		zip( zipF, files )
 		## get rid of session information
 		cellexalObj@usedObj$sessionPath = cellexalObj@usedObj$sessionRmdFiles = cellexalObj@usedObj$sessionName = NULL
 		#savePart(cellexalObj,part = 'usedObj' ) #function definition in file 'integrateParts.R'
