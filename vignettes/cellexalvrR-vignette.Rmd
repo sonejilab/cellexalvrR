@@ -150,11 +150,11 @@ moved/copied to the "Data" folder in your CellexalVR setup. See the [manual](htt
  for more details including a schematic of the folder structure.
 
 ## Making a `cellexalvr` object from scratch
-While `MakeCellexaVRObj` is the most convenient way to make the object, sometimes you want to make one manually. 
+While `MakeCellexalVRObj` is the most convenient way to make the object, sometimes you want to make one manually. 
 This is done calling `new`:
 
 ```{r,fig.show='hold',eval=T}
-cell.vr.scr <- new("cellexalvr",data=Matrix::Matrix(log2data,sparse=T),drc=list(tsne=tsne.proj))
+cell.vr.scr <- MakeCellexalVRObj(data=Matrix::Matrix(log2data,sparse=T),drc=list(tsne=tsne.proj))
 cell.vr.scr
 ```
 
