@@ -154,7 +154,7 @@ While `MakeCellexalVRObj` is the most convenient way to make the object, sometim
 This is done calling `new`:
 
 ```{r,fig.show='hold',eval=T}
-cell.vr.scr <- MakeCellexalVRObj(data=Matrix::Matrix(log2data,sparse=T),drc=list(tsne=tsne.proj))
+cell.vr.scr <- MakeCellexalVRObj(exdata=Matrix::Matrix(log2data,sparse=T),drc=list(tsne=tsne.proj))
 cell.vr.scr
 ```
 
