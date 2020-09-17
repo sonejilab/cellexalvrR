@@ -33,8 +33,9 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 	if ( ! file.exists( png) ) {
 		stop(paste( "logHeatmap the heatmap png file can not be found!", png ) )
 	}
-
-#	cellexalObj = userGrouping( cellexalObj, grouping ) #function definition in file 'userGrouping.R'
+	if ( file.exists( grouping)) {
+		cellexalObj = userGrouping( cellexalObj, grouping ) #function definition in file 'userGrouping.R'
+	}
 	cellexalObj = sessionPath( cellexalObj ) #function definition in file 'sessionPath.R'
 	sessionPath = cellexalObj@usedObj$sessionPath
 
@@ -75,7 +76,7 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 
 	## now I need to create the 2D drc plots for the grouping
 	#cellexalObj = userGrouping(cellexalObj, grouping ) #function definition in file 'userGrouping.R'
-
+	
 	gInfo = groupingInfo( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'groupingInfo.R'
 
 	## gInfo is a list with names grouping, drc, col and order
@@ -94,10 +95,13 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 			break;
 		}
 	}
-	substract = paste( collapse=.Platform$file.sep, substract, '')
-	substract = stringr::str_replace(substract, ' *$', '')
+	if ( length(substract) == length(PA) ) {
+		stop("this is fatal - we are not in a cellexalVR outpath - log inavailable!")
+	}
 
+	substract = do.call( file.path, lapply(substract, function(x){x}) )
 	path = R.utils::getRelativePath(sessionPath, relativeTo=substract, caseSensitive=T )
+	
 	
 	content = paste( sep="\n",
 		paste( "##", "Heatmap from Saved Selection ", n  ),
