@@ -9,11 +9,13 @@
 #' @param column the annotation column to reorder on
 #' @title simple reordering of the samples
 #' @export
-if ( ! isGeneric('reorder.samples') ){setGeneric('reorder.samples', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('reorder.samples', ## Name
 	function ( dataObj, column ) { 
 		standardGeneric('reorder.samples') 
 	}
-) }
+)
+#}
 
 setMethod('reorder.samples', signature = c ('cellexalvrR'),
 	definition = function ( dataObj, column ) {
@@ -81,11 +83,13 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
 #' @param column the samples column to reorder on
 #' @title simple reordering of the genes
 #' @export
-if ( ! isGeneric('reorder.genes') ){setGeneric('reorder.genes', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('reorder.genes', ## Name
 	function ( dataObj, column ) { 
 		standardGeneric('reorder.genes') 
 	}
-) }
+)
+#}
 
 setMethod('reorder.genes', signature = c ('cellexalvrR'),
 	definition = function ( dataObj, column ) {

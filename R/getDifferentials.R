@@ -1,12 +1,13 @@
 
-if ( ! isGeneric('getDifferentials') ){setGeneric('getDifferentials', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('getDifferentials', ## Name
 			function (x,cellidfile,
 					deg.method=c('wilcox', 'Seurat_wilcox', 'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova'),
 					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE) { 
 				standardGeneric('getDifferentials') 
 			}
 	) 
-}
+#}
 
 #' Identify differentially expressed genes.
 #' 
@@ -172,8 +173,6 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 				## now we lack the heatmap here... But I would need one - crap!
 				## create the smoothed data heatmap's
 
-				#ploot =  rolled[match( deg.genes,rownames(loc@data)), ]
-				p =  apply(loc@data[deg.genes, order(as.vector(loc@userGroups[, gname ] )) ], 1, function(x) {( x- mean(x)) / sd(x) } )
 				colnames(p) = deg.genes
 				hc = hclust( as.dist( 1- stats::cor(p, method='pearson') ) )
 				deg.genes = hc$labels[hc$order]

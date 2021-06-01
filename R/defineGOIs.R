@@ -10,11 +10,13 @@
 #' @param ...  unused
 #' @title Define special genes based on inbuilt data sets (TFs, ...)
 ##' @export defineGOIs
-if ( ! isGeneric('defineGOIs') ){setGeneric('defineGOIs', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('defineGOIs', ## Name
 	function ( cellexalObj, name, genes, lables=NULL,... ) { 
 		standardGeneric('defineGOIs') 
 	}
-) }
+)
+#}
 
 setMethod('defineGOIs', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, name, genes, lables=NULL,... ) {

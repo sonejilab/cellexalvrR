@@ -12,11 +12,13 @@
 #' @return a list with the entries 'grouping', 'order', 'drc' and 'col'
 #' @keywords groupingInfo
 #' @export groupingInfo
-if ( ! isGeneric('groupingInfo') ){setGeneric('groupingInfo', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('groupingInfo', ## Name
 	function ( cellexalObj, gname=NULL ) { 
 		standardGeneric('groupingInfo') 
 	}
-) }
+)
+#}
 
 setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, gname=NULL ) {

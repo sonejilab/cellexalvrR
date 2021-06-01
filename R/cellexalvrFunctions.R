@@ -13,11 +13,13 @@
 #' @title description of function set.specie
 #' @keywords TFs
 #' @export set.specie
-if ( ! isGeneric('set.specie') ){setGeneric('set.specie', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('set.specie', ## Name
 	function (cellexalObj, specie=c("mouse","human")) { 
 		standardGeneric('set.specie') 
 	}
-) }
+)
+#}
 
 setMethod('set.specie', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj, specie=c("mouse","human")) {
@@ -37,11 +39,13 @@ setMethod('set.specie', signature = c ('cellexalvrR'),
 } )
 
 
-if ( ! isGeneric('get.genes.cor.to') ){setGeneric('get.genes.cor.to', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('get.genes.cor.to', ## Name
 	function (cellexalObj, gname, output=NULL, is.smarker=F, cpp=T) { 
 		standardGeneric('get.genes.cor.to') 
 	}
-) }
+)
+#}
 
 
 #' get.genes.cor.to is able to correlate gene expression in 

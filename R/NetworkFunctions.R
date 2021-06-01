@@ -7,11 +7,13 @@
 #' @title description of function cormat2df
 #' @keywords network construction
 #' @export cormat2df
-if ( ! isGeneric('cormat2df') ){setGeneric('cormat2df', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('cormat2df', ## Name
 	function (cors) {
 		standardGeneric('cormat2df')
 	}
-) }
+)
+#}
 
 setMethod('cormat2df', signature = c ('matrix'),definition = function (cors) {
 
@@ -40,11 +42,13 @@ setMethod('cormat2df', signature = c ('matrix'),definition = function (cors) {
 #' @title description of function make.cellexalvr.network
 #' @keywords network construction
 #' @export make.cellexalvr.network
-if ( ! isGeneric('make.cellexalvr.network') ){setGeneric('make.cellexalvr.network', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('make.cellexalvr.network', ## Name
 	function (cellexalObj, cellidfile,outpath, cutoff.ggm=0.1, exprFract = 0.1, top.n.inter=130,method=c("rho.p","pcor")) {
 		standardGeneric('make.cellexalvr.network')
 	}
-) }
+)
+#}
 
 setMethod('make.cellexalvr.network', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj, cellidfile,outpath, cutoff.ggm=0.1, exprFract = 0.1, top.n.inter=130,method=c("rho.p","pcor")) {

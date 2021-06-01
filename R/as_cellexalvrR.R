@@ -286,7 +286,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 #' @export 
 setGeneric('forceAbsoluteUniqueSample', ## Name
 	function ( x ,separator='_') { ## Argumente der generischen Funktion
-		standardGeneric('forceAbsoluteUniqueSample') ## der Aufruf von standardGeneric sorgt für das Dispatching
+		standardGeneric('forceAbsoluteUniqueSample') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
 	}
 )
 
@@ -319,7 +319,7 @@ setMethod('forceAbsoluteUniqueSample', signature = c ('ret'),
 #' @export 
 setGeneric('H5Anno2df', ## Name
 		function (x, slotName, namecol=NULL, onlyStrings=FALSE ) { ## Argumente der generischen Funktion
-			standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt für das Dispatching
+			standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
 		}
 )
 

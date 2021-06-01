@@ -10,7 +10,7 @@
 #' @export 
 setGeneric('renderFile', ## Name
 	function ( x, id, type='' ) { ## Argumente der generischen Funktion
-		standardGeneric('renderFile') ## der Aufruf von standardGeneric sorgt für das Dispatching
+		standardGeneric('renderFile') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
 	}
 )
 
@@ -76,7 +76,7 @@ if ( is.null( x@usedObj$sessionPath )){
 #' @export 
 setGeneric('storeLogContents', ## Name
 	function ( x, content, type='' ) { ## Argumente der generischen Funktion
-		standardGeneric('storeLogContents') ## der Aufruf von standardGeneric sorgt für das Dispatching
+		standardGeneric('storeLogContents') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
 	}
 )
 

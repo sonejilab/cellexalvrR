@@ -10,11 +10,13 @@
 #' @param lineEnd add a line end at the end of every entry (default =T) 
 #' @title easily create an Rmd link that opens in a new window.
 #' @export 
-if ( ! isGeneric('rmdLink') ){setGeneric('rmdLink', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('rmdLink', ## Name
 			function ( name, link, lineEnd = T ) { 
 				standardGeneric('rmdLink')
 			}
-	) }
+)
+#}
 
 setMethod('rmdLink', signature = c ('character'),
 		definition = function ( name, link, lineEnd = T  ) {

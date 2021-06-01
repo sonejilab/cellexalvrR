@@ -12,11 +12,13 @@
 #' @param path the path where the parts are stored (normally the @outpath)
 #' @title description of function integrateParts
 #' @export 
-if ( ! isGeneric('integrateParts') ){setGeneric('integrateParts', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('integrateParts', ## Name
 			function ( x , path=NULL ) { 
 				standardGeneric('integrateParts')
 			}
-	) }
+)
+#}
 
 setMethod('integrateParts', signature = c ('cellexalvrR'),
 	  definition = function ( x , path=NULL ) {
@@ -68,11 +70,13 @@ setMethod('integrateParts', signature = c ('cellexalvrR'),
 #' @param path the optional outpath (default x@outpath)
 #' @title description of function savePart
 #' @export 
-if ( ! isGeneric('savePart') ){setGeneric('savePart', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('savePart', ## Name
 			function ( x, part = c( 'meta.cell',  'meta.gene',  'userGroups',  'usedObj', 'groupSelectedFrom', 'colors', 'lastGroup' ), path=NULL ) { 
 				standardGeneric('savePart')
 			}
-	) }
+)
+#}
 
 setMethod('savePart', signature = c ('cellexalvrR'),
 		definition = function ( x, part = c( 'meta.cell',  'meta.gene',  'userGroups',  'usedObj', 'groupSelectedFrom', 'colors', 'lastGroup' ), path =NULL ) {
@@ -120,11 +124,13 @@ setMethod('savePart', signature = c ('cellexalvrR'),
 #' @param path the outpath
 #' @title description of internally used function partFname
 #' @export 
-if ( ! isGeneric('partFname') ){setGeneric('partFname', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('partFname', ## Name
 			function ( part = c( 'meta.cell',  'meta.gene',  'userGroups',  'usedObj', 'groupSelectedFrom', 'colors', 'lastGroup', 'all' ), path ) { 
 				standardGeneric('partFname')
 			}
-	) }
+)
+#}
 
 setMethod('partFname', signature = c ('character'),
 		definition = function ( part = c( 'meta.cell',  'meta.gene',  'userGroups',  'usedObj', 'groupSelectedFrom', 'colors', 'lastGroup', 'all' ), path ) {
@@ -166,11 +172,13 @@ setMethod('partFname', signature = c ('character'),
 #' @param path the outpath
 #' @title cleanParts removes all parts when storing the whole object.
 #' @export 
-if ( ! isGeneric('cleanParts') ){setGeneric('cleanParts', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('cleanParts', ## Name
 			function ( path ) { 
 				standardGeneric('cleanParts')
 			}
-	) }
+)
+#}
 
 setMethod('cleanParts', signature = c ('character'),
 		definition = function ( path ) {

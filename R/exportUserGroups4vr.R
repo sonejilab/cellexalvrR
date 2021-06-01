@@ -1,9 +1,11 @@
 	
-if ( ! isGeneric('exportUserGroups4vr') ){setGeneric('exportUserGroups4vr', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('exportUserGroups4vr', ## Name
 	function ( cellexalObj, path ) { 
 		standardGeneric('exportUserGroups4vr') 
 	}
-) }
+)
+#}
 
 #' This is a 'VR' helper function that creates a dynamic file used to make the R groupings known to the VR process.
 #'

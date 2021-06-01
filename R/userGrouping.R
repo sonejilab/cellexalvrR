@@ -11,11 +11,13 @@
 #' @keywords userGrouping
 #' @title description of function userGrouping
 #' @export userGrouping
-if ( ! isGeneric('userGrouping') ){setGeneric('userGrouping', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('userGrouping', ## Name
 	function (cellexalObj, cellidfile) { 
 		standardGeneric('userGrouping') 
 	}
-) }
+)
+#}
 
 setMethod('userGrouping', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj, cellidfile) {

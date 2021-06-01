@@ -1,10 +1,11 @@
 
-if ( ! isGeneric('renew') ){setGeneric('renew', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('renew', ##	
 	function ( x ) {
 		standardGeneric('renew')
 	}
-) }
-
+)
+#}
 #' renew is trying to update objects from old versions to the most up to date structure.
 #' 
 #' It is tested to work on version <= 0.11.1.

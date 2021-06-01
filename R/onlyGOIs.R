@@ -11,11 +11,13 @@
 #' @param name the name of the GIO list (eg TFs or epigenetic)
 #' @title description of function onlyGOIs
 #' @export onlyGOIs
-if ( ! isGeneric('onlyGOIs') ){setGeneric('onlyGOIs', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('onlyGOIs', ## Name
 	function ( cellexalObj, name ) { 
 		standardGeneric('onlyGOIs') 
 	}
-) }
+)
+#}
 
 setMethod('onlyGOIs', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, name ) {

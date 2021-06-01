@@ -11,11 +11,13 @@
 #' @title description of function lockedSave
 #' @keywords lockedSave
 #' @export lockedSave
-if ( ! isGeneric('lockedSave') ){setGeneric('lockedSave', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('lockedSave', ## Name
 	function (cellexalObj, path=NULL, what=NULL ) {
 		standardGeneric('lockedSave')
 	}
-) }
+)
+#}
 
 setMethod('lockedSave', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj, path=NULL ) {
@@ -40,11 +42,13 @@ setMethod('lockedSave', signature = c ('cellexalvrR'),
 
 
 
-if ( ! isGeneric('loadObject') ){setGeneric('loadObject', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('loadObject', ## Name
 	function ( fname, maxwait=50 ) { 
 		standardGeneric('loadObject') 
 	}
-) }
+)
+#}
 
 
 #' @describeIn loadObject cellexalvrR

@@ -8,11 +8,13 @@
 #' @param seuratObj the suerat object to be converted
 #' @title description of function seurat2cellexalvr
 #' @export seurat2cellexalvr
-if ( ! isGeneric('seurat2cellexalvr') ){setGeneric('seurat2cellexalvr', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('seurat2cellexalvr', ## Name
 	function (seuratObj) { 
 		standardGeneric('seurat2cellexalvr') 
 	}
-) }
+)
+#}
 
 setMethod('seurat2cellexalvr', signature = c ('seurat'),
 	definition = function (seuratObj) {
@@ -60,11 +62,13 @@ setMethod('seurat2cellexalvr', signature = c ('seurat'),
 #' @keywords cell type
 #' @title description of function changeIdent
 #' @export changeIdent
-if ( ! isGeneric('changeIdent') ){setGeneric('changeIdent', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('changeIdent', ## Name
 	function (seuratObj,new.idents) { 
 		standardGeneric('changeIdent') 
 	}
-) }
+)
+#}
 
 setMethod('changeIdent', signature = c ('seurat'),
 	definition = function (seuratObj,new.idents) {

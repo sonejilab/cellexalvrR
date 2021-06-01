@@ -16,11 +16,13 @@
 #' @title Create the gene list files for VR
 #' @keywords differential, gene list
 #' @export make.cellexalvr.heatmap.list
-if ( ! isGeneric('make.cellexalvr.heatmap.list') ){setGeneric('make.cellexalvr.heatmap.list', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('make.cellexalvr.heatmap.list', ## Name
 			function (cvrObj,cellidfile,num.sig,outfile, stats_method=NA ) { 
 				standardGeneric('make.cellexalvr.heatmap.list') 
 			}
-	) }
+)
+#}
 
 
 

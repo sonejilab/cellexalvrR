@@ -1,9 +1,11 @@
 
-if ( ! isGeneric('export2cellexalvr') ){setGeneric('export2cellexalvr', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('export2cellexalvr', ## Name
 	function (cellexalObj,path, forceDB=F, VRpath=NULL ) { 
 		standardGeneric('export2cellexalvr') 
 	}
-) }
+)
+#}
 
 #' This function creates all files necessary 
 #' for the CellexalVR application to show this data.
@@ -148,7 +150,7 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 #' @export 
 setGeneric('write_as_sqlite3', ## Name
 		function ( cellexalObj, ofile )  { ## Argumente der generischen Funktion
-			standardGeneric('write_as_sqlite3') ## der Aufruf von standardGeneric sorgt für das Dispatching
+			standardGeneric('write_as_sqlite3') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
 		}
 )
 

@@ -13,7 +13,7 @@
 #' @export
 setGeneric('logStatResult', ## Name
 	function ( x, method, data, col=NULL ) { ## Argumente der generischen Funktion
-		standardGeneric('logStatResult') ## der Aufruf von standardGeneric sorgt für das Dispatching
+		standardGeneric('logStatResult') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
 	}
 )
 

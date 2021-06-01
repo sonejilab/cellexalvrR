@@ -12,11 +12,13 @@
 #' @keywords create cellexalvrR object
 #' @title Create a cellexalvrR object from a matrix object.
 #' @export MakeCellexalVRObj
-if ( ! isGeneric('MakeCellexalVRObj') ){setGeneric('MakeCellexalVRObj', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('MakeCellexalVRObj', ## Name
 	function (exdata,drc.list,specie=c("mouse","human"),cell.metadata=NULL,facs.data=NULL) { 
 		standardGeneric('MakeCellexalVRObj') 
 	}
-) }
+)
+#}
 
 
 setMethod('MakeCellexalVRObj', signature = c ('dgCMatrix'),

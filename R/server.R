@@ -18,11 +18,13 @@
 #' @title start a server function periodicly sourcing in a file.
 #' @export server
 
-if ( ! isGeneric('server') ){setGeneric('server', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('server', ## Name
 			function ( file, sleepT=1, debug=FALSE, masterPID = NULL ) { 
 				standardGeneric('server') 
 			}
-	) }
+)
+#}
 
 setMethod('server', signature = c ('character'),
 		definition =  function(file, sleepT=1, debug=FALSE, masterPID = NULL){

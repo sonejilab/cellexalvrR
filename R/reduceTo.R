@@ -12,11 +12,13 @@
 #' @param to select these names default=NULL
 #' @title description of function reduceTo
 #' @export reduceTo
-if ( ! isGeneric('reduceTo') ){setGeneric('reduceTo', ## Name
+#if ( ! isGeneric('renew') ){
+setGeneric('reduceTo', ## Name
 	function ( x, what='row', to=NULL ) { 
 		standardGeneric('reduceTo') 
 	}
-) }
+)
+#}
 
 setMethod('reduceTo', signature = c ('cellexalvrR'),
 	definition = function ( x, what='row', to=NULL ) {

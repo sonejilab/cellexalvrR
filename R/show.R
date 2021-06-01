@@ -7,11 +7,6 @@
 #' @return nothing
 #' @title show the object contents
 #' @export show
-if ( ! isGeneric('show') ){setGeneric('show', ## Name
-			function ( object ) { 
-				standardGeneric('show') 
-			}
-	) }
 setMethod('show', signature = c ('cellexalvrR'),
 		definition = function (object) {
 			cat (paste("An object of class", class(object)),"\n" )
