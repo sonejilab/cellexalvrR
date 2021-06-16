@@ -122,10 +122,10 @@ The first step is to put all the dimension reduction outputs into a single list:
 proj.list <- list(diffusion=diff.proj,DDRtree=ddr.proj,tSNE=tsne.proj)
 ```
 
-The next is to make a `cellexalvr` object by calling `MakeCellexaVRObj` and passing the required objects to it:
+The next is to make a `cellexalvr` object by calling `MakeCellexalVRObj` and passing the required objects to it:
 
 ```{r, fig.show='hold',eval=T}
-cellvr <- MakeCellexaVRObj( Matrix::Matrix(log2data, sparse=TRUE),
+cellvr <- MakeCellexalVRObj( Matrix::Matrix(log2data, sparse=TRUE),
   drc.list=proj.list,specie="mouse",cell.meta=cell.ids,facs.data=NULL)
 ```
 In the same step we also set the specie as mouse which ensures the correct 
@@ -150,11 +150,11 @@ moved/copied to the "Data" folder in your CellexalVR setup. See the [manual](htt
  for more details including a schematic of the folder structure.
 
 ## Making a `cellexalvr` object from scratch
-While `MakeCellexaVRObj` is the most convenient way to make the object, sometimes you want to make one manually. 
+While `MakeCellexalVRObj` is the most convenient way to make the object, sometimes you want to make one manually. 
 This is done calling `new`:
 
 ```{r,fig.show='hold',eval=T}
-cell.vr.scr <- new("cellexalvr",data=Matrix::Matrix(log2data,sparse=T),drc=list(tsne=tsne.proj))
+cell.vr.scr <- MakeCellexalVRObj(exdata=Matrix::Matrix(log2data,sparse=T),drc=list(tsne=tsne.proj))
 cell.vr.scr
 ```
 

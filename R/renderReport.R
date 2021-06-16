@@ -1,6 +1,7 @@
 #' renderReport is the final step to create a html log file.
 #' 
 #' These log files can be accessed from within the VR environment using the inbuilt browser.
+#' It also creates a zip file that contains all data required to view this report.
 #' 
 #' @name renderReport
 #' @aliases renderReport,cellexalvrR-method
@@ -61,9 +62,11 @@ setMethod('renderReport', signature = c ('cellexalvrR'),
 	
 	expected_outfile =  paste("session-log-for-session-",tolower(cellexalObj@usedObj$sessionName), sep='', '.html')
 	expected_outfile = stringr::str_replace_all( expected_outfile, '_', '-')
-	expected_outfile = file.path(sessionPath, '..', expected_outfile )
+	expected_outfile = file.path( cellexalObj@outpath,expected_outfile )
+	
 	if ( file.exists( expected_outfile )){
 		## get rid of all section html files
+
 		htmls <-  list.files(file.path( cellexalObj@usedObj$sessionPath,'..'), full.names = TRUE, pattern='*.html')
 		mine = htmls[ grep(paste( sep="", '_',cellexalObj@usedObj$sessionName) , htmls )]
 		do.call(file.remove, list(mine))
@@ -77,6 +80,8 @@ setMethod('renderReport', signature = c ('cellexalvrR'),
 	}	
 
 	lockedSave( cellexalObj) #function definition in file 'lockedSave.R'
+
+	
 	
 	cellexalObj
 } )

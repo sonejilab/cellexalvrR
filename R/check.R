@@ -117,7 +117,7 @@ setMethod('check', signature = c ('cellexalvrR'),
 	}else {
 		x@usedObj$checkPassed = TRUE
 		x@usedObj$checkError = error
-		message("seams OK")
+		message("object passes checks")
 	}
 	
 

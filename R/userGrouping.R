@@ -45,7 +45,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				}
 			}
 		}
-	#	browser()
+		#browser()
 		#find overlap with own data
 		m = match(cellid[,1], colnames(cellexalObj@data))
 		if ( length(which(is.na(m))) > 0 ){
@@ -96,7 +96,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		colR =  cellid[match( colorIDs-1, cellid[,4]),2]
 		colVR = c()
 		for ( i in 1:length(colR)) {
-			colVR[colorIDs[i]] = colR[i]
+			colVR[colorIDs[i]] = as.vector(colR[i])
 		}
 		#browser()
 		ginfo = list(
