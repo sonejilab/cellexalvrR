@@ -60,11 +60,6 @@ for ( i in 4:6){
 
 merger@outpath = tempdir(check = FALSE)
 
-merger = check(merger)
-
-expect_true ( merger@usedObj$checkPassed , "check should pass")
-
-skip( "Not in version 0.13" )
 
 context('GrabDRCs - Object usability - timelines')
 
@@ -74,7 +69,8 @@ merger@userGroups=data.frame()
 merger@usedObj$groupSelectedFrom = list()
 merger@usedObj$timelines = list()
 
-selectionF = file.path(prefix,'data','SelectionHSPC_time.txt')
-merger = getDifferentials(merger, selectionF, 'wilcox')
+#selectionF = file.path(prefix,'data','SelectionHSPC_time.txt')
+#merger = getDifferentials(merger, selectionF, 'wilcox')
 
 
+#check(merger)

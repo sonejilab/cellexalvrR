@@ -1,11 +1,8 @@
 #' @importFrom AnnotationDbi mapIds
-##' @importFrom DDRTree DDRTree
 #' @importFrom FastWilcoxTest CorMatrix StatTest collapse meltSparseMatrix
 #' @importFrom Matrix Matrix drop0 rowSums t
 #' @importFrom RSQLite dbConnect dbDisconnect dbSendStatement dbWriteTable
-##' @importFrom alphashape3d ashape3d
 #' @importFrom bookdown render_book
-##' @importFrom entropy entropy
 #' @importFrom grDevices png rainbow
 #' @importFrom graphics hist
 #' @importFrom knitr kable
@@ -16,7 +13,11 @@
 #' @importFrom methods .hasSlot is slot<- 
 #' @importFrom stats quantile var
 #' @importFrom utils packageVersion 
-
+#' @importFrom R.utils getRelativePath
+#' @importFrom grDevices dev.off gray grey
+#' @importFrom graphics axis box image lines par plot.new plot.window points polygon rect title
+#' @importFrom stats dist kmeans loess median predict pt sd time
+#' @importFrom utils capture.output read.delim sessionInfo timestamp write.table
 NULL
 
 
@@ -33,7 +34,7 @@ NULL
 #' @keywords data
 "mouse.tfs"
 
-globalVariables("mouse.tfs", 'cellexalvrR' , add = TRUE)
+globalVariables("mouse.tfs cellexalvrR", add = TRUE)
 
 NULL
 
@@ -50,7 +51,7 @@ NULL
 #' @keywords data
 "human.tfs"
 
-globalVariables("human.tfs", 'cellexalvrR' , add = TRUE)
+globalVariables("human.tfs cellexalvrR", add = TRUE)
 
 
 #' @name Epigenetic
@@ -60,24 +61,24 @@ globalVariables("human.tfs", 'cellexalvrR' , add = TRUE)
 #' @usage Epigenetic
 #' @format data.frame
 #' @keywords data
-'Epigenetic'
+"Epigenetic"
 
-globalVariables("Epigenetic", 'cellexalvrR' , add = TRUE)
+globalVariables("Epigenetic cellexalvrR", add = TRUE)
 
 #' @name CellCycle
 #' @title A simple table containing the Human and mouse orthologe CellCycle genes from PMID17994010
-#' "Genome-scale RNAi profiling of cell division in human tissue culture cells."
+#' 'Genome-scale RNAi profiling of cell division in human tissue culture cells.'
 #' @description The data can be used by stating
-#' useInbuiltGOIlists (cellexalObj, 'CellCycle' ) #function definition in file 'useInbuiltGOIlists.R'
+#' useInbuiltGOIlists (cellexalObj, 'CellCycle' )
 #' And it is used to visualize the cell cycle genes in the VR environment.
 #' Only the genes also identifyable in mouse were used here.
 #' @docType data
 #' @usage CellCycle
 #' @format data.frame
 #' @keywords data
-'CellCycle'
+"CellCycle"
 
-globalVariables("CellCycle", 'cellexalvrR' , add = TRUE)
+globalVariables("CellCycle cellexalvrR", add = TRUE)
 
 #' @name cellexalObj
 #' @title The cellexlvrR object described in the vignette
@@ -86,9 +87,9 @@ globalVariables("CellCycle", 'cellexalvrR' , add = TRUE)
 #' @usage cellexalObj
 #' @format cellexalvrR
 #' @keywords data
-'cellexalObj' 
+"cellexalObj"
 
-globalVariables("cellexalObj", 'cellexalvrR' , add = TRUE)
+globalVariables("cellexalObj cellexalvrR", add = TRUE)
 
 
 
@@ -101,7 +102,7 @@ globalVariables("cellexalObj", 'cellexalvrR' , add = TRUE)
 #' @keywords data
 "human.CellSurface"
 
-globalVariables("human.CellSurface", 'cellexalvrR' , add = TRUE)
+globalVariables("human.CellSurface cellexalvrR", add = TRUE)
 
 
 #' @name mouse.CellSurface
@@ -113,5 +114,5 @@ globalVariables("human.CellSurface", 'cellexalvrR' , add = TRUE)
 #' @keywords data
 "mouse.CellSurface"
 
-globalVariables("mouse.CellSurface", 'cellexalvrR' , add = TRUE)
+globalVariables("mouse.CellSurface cellexalvrR", add = TRUE)
 

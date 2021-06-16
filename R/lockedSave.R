@@ -1,17 +1,15 @@
-#' A thread save saving of the object. 
+#' A thread save function to save cellexalvrR objects. 
+#' Needed for the VR interaction.
 #' @name lockedSave
-#' @aliases lockedSave,cellexalvrR-method
-#' @rdname lockedSave-methods
 #' @docType methods
-#' @description  Saving the RData in the VR tool might create a problem. Hence this function will
-#' @description  save the cellexalObj in a controlled way. Locked save removes all parts from the file system.
+#' @description  A thread save saving of the object. 
 #' @param cellexalObj, cellexalvr object
 #' @param path the output path
 #' @param what which part needs saving? (default NULL == all)
-#' @title description of function lockedSave
+#' @title thread save save method for cellexalvrR objects
 #' @keywords lockedSave
 #' @export lockedSave
-#if ( ! isGeneric('renew') ){
+#if ( ! isGeneric('lockedSave') ){
 setGeneric('lockedSave', ## Name
 	function (cellexalObj, path=NULL, what=NULL ) {
 		standardGeneric('lockedSave')
@@ -19,6 +17,8 @@ setGeneric('lockedSave', ## Name
 )
 #}
 
+
+#' @rdname lockedSave
 setMethod('lockedSave', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj, path=NULL ) {
 		if ( is.null(path) ){
@@ -37,12 +37,21 @@ setMethod('lockedSave', signature = c ('cellexalvrR'),
 	cleanParts ( path ) #function definition in file 'integrateParts.R'
 	file.remove(lockFile)
 	
-	print (paste("saved the object to",path))
+	#print (paste("saved the object to",path))
 } )
 
 
-
-#if ( ! isGeneric('renew') ){
+#' loadObject has thread functionallity looking for a lock file and waiting for 'maxwait' seconds 
+#' before reporting a failed attempt.
+#' 
+#' @name loadObject
+#' @docType methods
+#' @description Loads the cellexalvr object or returns the cellexalvrR object.
+#' @param fname the file to load or a cellexalvr object
+#' @param maxwait stop after maxwait seconds default=50
+#' @title thread save load function for cellexalvrR obejcts
+#' @export 
+#if ( ! isGeneric('loadObject') ){
 setGeneric('loadObject', ## Name
 	function ( fname, maxwait=50 ) { 
 		standardGeneric('loadObject') 
@@ -51,32 +60,16 @@ setGeneric('loadObject', ## Name
 #}
 
 
-#' @describeIn loadObject cellexalvrR
-#' @docType methods
-#' @description just returns the cellexalObj
-#' @param fname the file to load or a cellexalvr object
-#' @param maxwait stop after maxwait seconds default=50
-#' @keywords load
-#' @title dummy function just returning the cellexalvrR object.
-#' @export loadObject
+
+
+#' @rdname loadObject
 setMethod('loadObject', signature = c ('cellexalvrR'),
 		definition = function ( fname, maxwait=50 ) {
 			return (fname)
 } )
 
-#' loadObject has thread functionallity looking for a lock file and waiting for 'maxwait' seconds 
-#' before reporting a failed attempt.
-#' 
-#' @name loadObject
-#' @aliases loadObject,character-method
-#' @rdname loadObject-methods
-#' @docType methods
-#' @description  Loads the cellexalvr object, if the fname is a file
-#' @param fname the file to load or a cellexalvr object
-#' @param maxwait stop after maxwait seconds default=50
-#' @keywords load
-#' @title description of function loadObject
-#' @export loadObject
+
+#' @rdname loadObject
 setMethod('loadObject', signature = c ('character'),
 		definition = function ( fname, maxwait=50 ) {
 			if ( file.exists( fname) ) {
@@ -100,9 +93,9 @@ setMethod('loadObject', signature = c ('character'),
 					cellexalObj = renew(cellexalObj) #function definition in file 'renew.R'
 				}
 			}
-			## old objects need an updatae
+			## old objects need an update
 			if ( ! methods::.hasSlot( cellexalObj, 'data') ){
-				new = MakeCellexaVRObj ( cellexalObj@data, drc.list = cellexalObj@drc,	specie=cellexalObj@specie,cell.metadata= cellexalObj@meta.cell, facs.data= NULL ) #function definition in file 'makeCellexalVRObj.R'
+				new = MakeCellexalVRObj ( cellexalObj@data, drc.list = cellexalObj@drc,	specie=cellexalObj@specie,cell.metadata= cellexalObj@meta.cell, facs.data= NULL ) #function definition in file 'makeCellexalVRObj.R'
 				new@userGroups = cellexalObj@userGroups
 				new@colors = cellexalObj@colors
 				new@groupSelectedFrom = cellexalObj@groupSelectedFrom
@@ -126,7 +119,7 @@ setMethod('loadObject', signature = c ('character'),
 				if ( length(m) != length(fnames) | length(which(is.na(m))) > 0 ) {
 					message("The drc names between VR and R do not overlap - updating the R object!")
 					cellexalObj@drc = lapply(drcFiles, function(n){ 
-						d = read.delim( n, header=F )
+						d = utils::read.delim( n, header=F )
 						if ( d[1,1] == 'CellID' ){
 							colnames(d) = d[1,]
 							d= d[-1,]
@@ -163,6 +156,7 @@ setMethod('loadObject', signature = c ('character'),
 			## there might be different other objects in the same path
 			## integrat them now
 			cellexalObj = integrateParts( cellexalObj , normalizePath(dirname( fname )) ) #function definition in file 'integrateParts.R'
+			colnames(cellexalObj@userGroups) = stringr::str_replace_all( colnames(cellexalObj@userGroups), '.order', ' order')
 			cellexalObj
 		} )
 

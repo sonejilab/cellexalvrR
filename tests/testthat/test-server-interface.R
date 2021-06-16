@@ -11,6 +11,9 @@ if ( is.na( match('cellexalvrR',rownames(installed.packages()))) ) {
 }
 
 tmpDir = file.path( tempdir(), 'Output')
+if ( file.exists(tmpDir )){
+	unlink(tmpDir, recursive=TRUE)
+}
 dir.create( tmpDir)
 tmpDir = file.path( tmpDir, 'TestDataset')
 if ( file.exists( tmpDir )){
@@ -89,8 +92,6 @@ write_lines( c(
 	f= srvFile , 0
 )
 
-
-
 #startCMD = paste( "paste(", R.exe(),",'CMD BATCH',", file2Script(srvFile),",'&')" )
 
 
@@ -110,9 +111,10 @@ expect_true( isAlive(pid) ,label="server started" )
 skip_if ( ! isAlive(pid), "server failed to start" )
 
 write_lines(
-	c( 
-		paste( sep='', "load('", normalizePath(file.path( ipath, 'cellexalObj.RData')), "')"),
-		"print(cellexalObj)" ))
+	c( paste( sep="\n",
+		paste( sep='', "load('", normalizePath(file.path( ipath, 'cellexalObj.RData')), "')")),
+		"cellexalObj = reset(cellexalObj)",
+		"print(cellexalObj)" ) )
 
 wait4server()
 
@@ -130,12 +132,13 @@ expect_true( length( output ) == 1, label = "exactly one outfile" )
 
 expect_true( file.exists( output ), label="outfile exists" )
 
-out = read.delim( output, row.names=NULL, header=F )
+out = utils::read.delim( output, row.names=NULL, header=F )
 expect_true( all(dim(out) == c(8,1)), label="incorrect output size")
 
 expect_equal( as.vector(out[2:8,1]), c("An object of class cellexalvrR ",
 "with 4709 genes and 1654  cells. ",
-"Annotation datasets (0,0): ''   ",
+#"Annotation datasets (0,0): ''   ",
+"Annotation datasets (4709,2): 'Gene Symbol', 'savekeeping'   ",
 "Sample annotation (1654,23): 'LTHSC_broad', 'LMPP_broad', 'MPP_broad', 'CMP_broad', 'MEP_broad', 'GMP_broad', 'MPP1_broad', 'MPP2_broad', 'MPP3_broad', 'STHSC_broad', 'LTHSC', 'LMPP', 'MPP', 'CMP', 'MEP', 'GMP', 'MPP1', 'MPP2', 'MPP3', 'STHSC', 'ESLAM', 'HSC1', 'Projected'   ",
 "There are 0 user group(s) stored :",
 "and 3 drc object(s)",
@@ -147,7 +150,7 @@ write_lines( c(paste(sep="",'cellexalObj@outpath = "',dirname(tmpFile),'"')) )
 wait4server()
 write_lines( c('print(cellexalObj@outpath)') )
 wait4server()
-out = read.delim( output, row.names=NULL, header=F )
+out = utils::read.delim( output, row.names=NULL, header=F )
 
 expect_true( out[nrow(out),] == paste("[1]", dirname(tmpFile)), label=paste("not right path:" , out[nrow(out),]))
 
@@ -161,7 +164,7 @@ wait4server()
 
 expect_true( file.exists( file.path( dirname(tmpFile), 'testSession' )))
 
-for (file in c('1_runRender.R', 'AA_Start_paritalLog.Rmd', '_bookdown.yml', 'png', 'tables') ){
+for (file in c('1_Start_runRender.R', 'AA_Start_paritalLog.Rmd', '_output.yaml', 'png', 'tables') ){
 	ofile = file.path( dirname(tmpFile), 'testSession', file )
 	expect_true( file.exists( ofile), label=paste("file exists:",ofile))
 }
@@ -173,41 +176,59 @@ context('server VR interface - create heatmap')
 #  make.cellexalvr.heatmap.list (cvrObj,cellidfile,num.sig,outfile, stats_method=NA)
 ## first copy the selection file
 
-expect_true( file.copy( file.path(prefix, 'data', 'selection0.txt' ), file.path( tmpDir, 'selection0.txt')), label='selection file copy')
+## to check that the server does not mix up selections
 
-expect_true( file.exists( file.path( tmpDir, 'selection0.txt')))
+testHeatmap = function( selectionFile, startID ) {
 
-dir.create(file.path( tmpDir, 'Heatmaps') )
+expect_true( file.copy( selectionFile, file.path( tmpDir, basename(selectionFile))), label='selection file copy')
+
+expect_true( file.exists( file.path( tmpDir, basename(selectionFile) )))
+
+
+if ( ! file.exists( file.path( tmpDir, 'Heatmaps'))){
+	dir.create(file.path( tmpDir, 'Heatmaps') )
+}
 
 write_lines(paste( sep="",
 	"cellexalObj = make.cellexalvr.heatmap.list( cellexalObj, cellidfile = '",
-	file.path( tmpDir, 'selection0.txt'),
+	file.path( tmpDir, basename(selectionFile) ),
 	"', num.sig = 250, outfile = '",
-	file.path(  tmpDir, 'Heatmaps', "testHeatmap" ),
+	file.path(  tmpDir, 'Heatmaps', paste( sep=".","testHeatmap",startID) ),
 	"', stats_method= 'wilcox')" 
     )
 ) 
 
 wait4server()
+Sys.sleep( 1 )
 
-out = read.delim( output, row.names=NULL, header=F )
+out = utils::read.delim( output, row.names=NULL, header=F )
 
 
-for ( file in c('testHeatmap','testHeatmap.sqlite3') ){
-	expect_true( file.exists( file.path( dirname(tmpFile), 'Heatmaps', file )))
+for ( file in c(
+	paste( sep=".","testHeatmap",startID),
+	paste( sep=".","testHeatmap",startID,'sqlite3')
+	) ){
+	expect_true( file.exists( file.path( dirname(tmpFile), 'Heatmaps', file )), 
+		label = file )
 }
 
-expect_true ( length(scan(what=character(), file.path( dirname(tmpFile), 'Heatmaps',"testHeatmap" ) ) ) == 253 , label="always get 253 genes instead of 250?" )
+expect_true ( length(scan(what=character(), 
+	file.path( dirname(tmpFile), 'Heatmaps',paste(sep=".","testHeatmap" ,startID)) ) ) == 253 , label="always get 253 genes instead of 250?" )
 
 ## and now I alsoexpect the results to be in the log!
 
+AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
 for ( file in 
-	c('2_runRender.R', 'AB_Stats_paritalLog.Rmd', 
-		'selection0.txt', 'selection0.txt.group.txt') ){
+	c(paste(sep="", startID,'_Stats_runRender.R'), paste( AA[startID],'_Stats_paritalLog.Rmd',sep=""), 
+		basename(selectionFile),paste( sep=".",basename(selectionFile) ,'group.txt') ) ){
 	expect_true( 
 		file.exists( file.path( tmpDir, 'testSession', file ))
 		, label=file )
 }
+
+}
+
+testHeatmap( file.path(prefix, 'data', 'selection0.txt' ) , 2 )
 
 ## nice - now log the Heatmap -  
 
@@ -215,29 +236,34 @@ for ( file in
 context('server VR interface - log heatmap')
 ############################################################
 
+testLogHeatmap = function( startID ) {
 
 ## first create a fake png - why not in the correct place?
-png( file=file.path(  tmpDir, 'Heatmaps', "testHeatmap.png"), width=600, height=600 ) 
-plot(1:10,1:10)
-dev.off()
+hfile = paste( sep=".","testHeatmap",startID,'png')
+png( file=file.path(  tmpDir, 'Heatmaps',hfile), width=600, height=600 ) 
+plot(1:10,1:10, main= hfile )
+grDevices::dev.off()
 
 write_lines(
 	paste( sep="",
 	"cellexalObj = logHeatmap( cellexalObj, genes= cellexalObj@usedObj$deg.genes, grouping= '",
-	file.path( tmpDir, 'selection0.txt'),
-	"', png='",file.path( tmpDir, 'Heatmaps', "testHeatmap.png"),"')" 
+	file.path( tmpDir, 'selection10.txt'),
+	"', png='",file.path( tmpDir, 'Heatmaps', hfile ),"')" 
     )
 ) 
 wait4server()
+Sys.sleep( 1 )
 
-expect_true( 
-		file.exists( file.path( tmpDir, 'testSession', 'AB_Heatmap_paritalLog.Rmd' ))
-		, label='AB_Heatmap_paritalLog.Rmd' )
+AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+ofile = file.path( tmpDir, 'testSession', paste(sep='_', AA[startID],'Heatmap_paritalLog.Rmd' ))
+expect_true( file.exists( ofile ), label=ofile )
 
-expect_true( 
-		file.exists( file.path( tmpDir,"AB_Heatmap_testSession.html")), 
-			label="AB_Heatmap_testSession.html" )
 
+ofile = file.path( tmpDir,paste(sep='_', AA[startID],"Heatmap_testSession.html" ) )
+expect_true( file.exists( ofile ), label=ofile )
+
+}
+testLogHeatmap( 3 )
 
 ############################################################
 context('server VR interface - create network')
@@ -256,6 +282,7 @@ write_lines(
 ) 
 
 wait4server()
+Sys.sleep( 1 )
 
 thisP = file.path( tmpDir, 'Networks' )
 expect_true( file.exists( thisP), label=thisP )
@@ -271,20 +298,27 @@ context('server VR interface - log network')
 
 
 #logNetwork ( cellexalObj, genes = NULL, png, grouping, ... )
+hfile = paste( sep=".","testNetwork",'png')
+grDevices::png( file=file.path(  tmpDir, 'Heatmaps',hfile), width=600, height=600 ) 
+plot(1:10,1:10, main= "Network" )
+grDevices::dev.off()
+
 write_lines(
   paste( sep="",
 	"cellexalObj = logNetwork( cellexalObj, grouping= '",
 	file.path( tmpDir, 'selection0.txt'),
-	"', png='",file.path( tmpDir, 'Heatmaps', "testHeatmap.png"),"')" 
+	"', png='",file.path( tmpDir, 'Heatmaps', "testNetwork.png"),"')" 
   )
 )
 
 wait4server()
+Sys.sleep( 1 )
 
-thisP = file.path( tmpDir, 'testSession', 'AC_Network_paritalLog.Rmd'  )
+
+thisP = file.path( tmpDir, 'testSession', 'AD_Network_paritalLog.Rmd'  )
 expect_true( file.exists(thisP), label = thisP)
 
-thisP =  file.path(tmpDir, 'AC_Network_testSession.html' ) 
+thisP =  file.path(tmpDir, 'AD_Network_testSession.html' ) 
 expect_true( file.exists(thisP), label = thisP)
 
 
@@ -295,39 +329,116 @@ context('server VR interface - log simple Figure')
 
 #logFigure(cellexalObj, png,  text = NULL,...)
 
-if ( FALSE ) {
-write_lines(
-  paste( sep="",
-	"cellexalObj = logFigure( cellexalObj, ",
-	"png='",file.path( tmpDir, 'Heatmaps', "testHeatmap.png"),
-	"', text='just a simple figure - ",
-	"not really meaningful as that would be created in VR.')" 
-  )
-)
-
-wait4server()
-
-thisP = file.path(tmpDir, 'AD_Figure_testSession.html')
-expect_true( file.exists(thisP), label = thisP)
-
 
 write_lines(
   paste( sep="",
 	"cellexalObj = logFigure( cellexalObj, ",
-	"png='",file.path( tmpDir, 'Heatmaps', "testHeatmap.png"),
+	"png='",file.path( tmpDir, 'Heatmaps', "testNetwork.png"),
 	"', text='just a simple figure - ",
-	"not really meaningful as that would be created in VR.')" 
+	"not really meaningful as that would be created in VR.')
+	" 
   )
 )
 
 wait4server()
+Sys.sleep( 1 )
 
 thisP = file.path(tmpDir, 'AE_Figure_testSession.html')
 expect_true( file.exists(thisP), label = thisP)
+
+
+write_lines(
+  paste( sep="",
+	"cellexalObj = logFigure( cellexalObj, ",
+	"png='",file.path( tmpDir, 'Heatmaps', "testNetwork.png"),
+	"', text='just a simple figure - ",
+	"not really meaningful as that would be created in VR.')
+	" 
+  )
+)
+
+#browser()
+wait4server()
+Sys.sleep( 1 )
+
+thisP = file.path(tmpDir, 'AF_Figure_testSession.html')
+expect_true( file.exists(thisP), label = thisP)
+
+
+
+############################################################
+context('server VR interface - create timeline')
+############################################################
+
+#  make.cellexalvr.heatmap.list (cvrObj,cellidfile,num.sig,outfile, stats_method=NA)
+## first copy the selection file
+
+gFile= 'SelectionHSPC_time.txt'
+grouping <- file.path(prefix, 'data', gFile )
+
+expect_true( file.copy( grouping, file.path( tmpDir, gFile)), label='selection file copy')
+
+expect_true( file.exists( file.path( tmpDir, gFile)))
+
+#dir.create(file.path( tmpDir, 'Heatmaps') )
+
+write_lines(paste( sep="",
+	"cellexalObj = make.cellexalvr.heatmap.list( cellexalObj, cellidfile = '",
+	file.path( tmpDir, gFile),
+	"', num.sig = 250, outfile = '",
+	file.path(  tmpDir, 'Heatmaps', "timeHeatmap" ),
+	"', stats_method= 'wilcox')" 
+    )
+) 
+
+wait4server()
+Sys.sleep( 1 )
+
+out = utils::read.delim( output, row.names=NULL, header=F )
+
+
+for ( file in c('timeHeatmap','timeHeatmap.sqlite3') ){
+	expect_true( file.exists( file.path( dirname(tmpFile), 'Heatmaps', file )), label = file )
 }
+
+
+l = length(scan(what=character(), file.path( dirname(tmpFile), 'Heatmaps',"timeHeatmap" ) ) )
+expect_true ( l == 251 , 
+     label=paste("always get 251 genes instead of 250? (",l,")" ) )
+
+## and now I alsoexpect the results to be in the log!
+Sys.sleep( 1 )
+
+for ( file in 
+	c('8_OneGroupTime_runRender.R', 'AH_OneGroupTime_paritalLog.Rmd', 
+		'SelectionHSPC_time.txt', 'SelectionHSPC_time.txt.group.txt',
+		'SelectionHSPC_time.txt.time','SelectionHSPC_time.txt.time.points') ){
+	expect_true( 
+		file.exists( file.path( tmpDir, 'testSession', file ))
+		, label=file )
+}
+
+ofile= file.path( tmpDir,"AG_Stats_testSession.html")
+expect_true( file.exists( ofile), label=ofile ) 
+
+ofile= file.path( tmpDir,"AH_OneGroupTime_testSession.html")
+expect_true( file.exists( ofile), label=ofile ) 
+
+
+
+### check whether the heatmap is able to find "it's" selection if the logHeatmap gets faulty info.
+############################################################
+context('server VR interface - second heatmap')
+############################################################
+
+testHeatmap( file.path(prefix, 'data', 'selection1.txt' ) , 9 )
+
+testLogHeatmap( 10 )
+
+
 ## now shut down the server
 ############################################################
-context('server VR interface - create report - sutdown')
+context('server VR interface - create report - shutdown')
 ############################################################
 
 

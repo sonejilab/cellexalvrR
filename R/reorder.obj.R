@@ -1,7 +1,5 @@
-#' reorder function to reorder the whole cellexalvrR object based on a samples order.
-#' @name reorder.samples
-#' @aliases reorder.samples,cellexalvrR-method
-#' @rdname reorder.samples-methods
+#' reorder function to reorder the whole cellexalvrR object based on a cell order.
+#' @name reorderSamples
 #' @docType methods
 #' @description  this function reorderes the cellexalvr object based on a column in the annotation
 #' @description  table (e.g. for plotting)
@@ -10,14 +8,17 @@
 #' @title simple reordering of the samples
 #' @export
 #if ( ! isGeneric('renew') ){
-setGeneric('reorder.samples', ## Name
+setGeneric('reorderSamples', ## Name
 	function ( dataObj, column ) { 
-		standardGeneric('reorder.samples') 
+		standardGeneric('reorderSamples') 
 	}
 )
 #}
 
-setMethod('reorder.samples', signature = c ('cellexalvrR'),
+
+
+#' @rdname reorderSamples
+setMethod('reorderSamples', signature = c ('cellexalvrR'),
 	definition = function ( dataObj, column ) {
 	if (! is.na( match ( column, colnames(dataObj@meta.cell)) ) ) {
 		ids = order( dataObj@meta.cell[,column])
@@ -34,7 +35,7 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
 	for ( n in names(dataObj@drc) ) {
 		#browser()
 		if ( ! is.null(rownames(dataObj@drc[[n]]))){
-			#if ( n == 'rna_pca'){browser()}
+			#if ( n == 'LargeSubset'){browser()}
 			want = rownames(dataObj@meta.cell)[ids]
 			here <- match(want, rownames(dataObj@drc[[n]]))
 			if ( length(here) > 0 ){
@@ -49,7 +50,7 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
    			 	dataObj@drc[[n]]  = dataObj@drc[[n]][idsHere,]
 				}, 
 				error = function(error_condition) {
-   				 browser()
+   				if(interactive()) { browser() }
 			} )
 			
 		}
@@ -61,21 +62,27 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
 		}
 	}
 	for ( n in names(dataObj@groupSelectedFrom) ) {
-		dataObj@groupSelectedFrom[[n]]$order= dataObj@groupSelectedFrom[[n]]$order[ids]
-		dataObj@groupSelectedFrom[[n]]$grouping= dataObj@groupSelectedFrom[[n]]$grouping[ids]
+		dataObj@groupSelectedFrom[[n]]@order= dataObj@groupSelectedFrom[[n]]@order[ids]
+		dataObj@groupSelectedFrom[[n]]@grouping= dataObj@groupSelectedFrom[[n]]@grouping[ids]
 	}
 	dataObj = check(dataObj)
-	if ( !dataObj@usedObj$checkPassed ) {
-		message("The object does not pass the check function - fix that!")
-		browser()
+	if ( ! is.null (dataObj@usedObj$timelines)) {
+		for ( name in names( dataObj@usedObj$timelines ) ) {
+			if ( length(dataObj@usedObj$timelines[[name]]@error) > 0 ){
+				warning( paste("timeline", name,"is invalid - removed!"))
+				dataObj@usedObj$timelines[[name]] = NULL
+			}
+		}
 	}
-	dataObj
+	if ( !dataObj@usedObj$checkPassed ) {
+		if(interactive()) { browser() }
+	}
+	invisible(dataObj)
 } )
 
+
 #' reorder function to reorder the whole cellexalvrR object based on a genes order.
-#' @name reorder.genes
-#' @aliases reorder.genes,cellexalvrR-method
-#' @rdname reorder.genes-methods
+#' @name reorderGenes
 #' @docType methods
 #' @description  this function reorderes the cellexalvr object based on a column in the samples table
 #' @description  (e.g. for plotting)
@@ -84,14 +91,16 @@ setMethod('reorder.samples', signature = c ('cellexalvrR'),
 #' @title simple reordering of the genes
 #' @export
 #if ( ! isGeneric('renew') ){
-setGeneric('reorder.genes', ## Name
+setGeneric('reorderGenes', ## Name
 	function ( dataObj, column ) { 
-		standardGeneric('reorder.genes') 
+		standardGeneric('reorderGenes') 
 	}
 )
 #}
 
-setMethod('reorder.genes', signature = c ('cellexalvrR'),
+
+#' @rdname reorderGenes
+setMethod('reorderGenes', signature = c ('cellexalvrR'),
 	definition = function ( dataObj, column ) {
 	dataObj@data <- dataObj@data[ order( dataObj@meta.gene[,column]),]
 	dataObj@meta.gene <- dataObj@meta.gene[order( dataObj@meta.gene[,column]),]

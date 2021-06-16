@@ -1,17 +1,13 @@
 #' @name useInbuiltGOIlists
-#' @aliases useInbuiltGOIlists,cellexalvrR-method
-#' @rdname useInbuiltGOIlists-methods
 #' @docType methods
-#' @description  An easy function to register the inbuilt (G)enes (O)f (I)nterest lists 'TFs', epigenetic factors
-#' CellCycle genes or CellSurface proteins
-#' @description  'epigenetic' are supported at the moment
+#' @description  An easy function to register the inbuilt (G)enes (O)f (I)nterest lists.
 #' @param x, cellexalvr object
 #' @param name the name of the inbuilt list to use ( either 'TFs' or 'epigenetic' for now)
 #' @param x, TEXT MISSING
 #' @param name one of ("TFs", 'epigenetic', "CellCycle", "CellSurface")
 #' @title easily identify e.g. all TFs in the dataset
-#' @export useInbuiltGOIlists
-#if ( ! isGeneric('renew') ){
+#' @export 
+#if ( ! isGeneric('useInbuiltGOIlists') ){
 setGeneric('useInbuiltGOIlists', ## Name
 	function (x, name ) { 
 		standardGeneric('useInbuiltGOIlists') 
@@ -19,6 +15,8 @@ setGeneric('useInbuiltGOIlists', ## Name
 )
 #}
 
+
+#' @rdname useInbuiltGOIlists
 setMethod('useInbuiltGOIlists', signature = c ('cellexalvrR'),
 	definition = function (x, name ) {
 			
@@ -38,13 +36,13 @@ setMethod('useInbuiltGOIlists', signature = c ('cellexalvrR'),
 				#}
 				#else {
 					## use inbuilt lists
-					hum_t <- length(which(is.na(match(rownames(x@data),human.tfs))==F))
-					mouse_t <- length(which(is.na(match( rownames(x@data), mouse.tfs))==F))
+					hum_t <- length(which(is.na(match(rownames(x@data), cellexalvrR::human.tfs))==F))
+					mouse_t <- length(which(is.na(match( rownames(x@data), cellexalvrR::mouse.tfs))==F))
 					if (hum_t > mouse_t ){
-						x = defineGOIs( x, name, human.tfs ) #function definition in file 'defineGOIs.R'
+						x = defineGOIs( x, name, cellexalvrR::human.tfs ) #function definition in file 'defineGOIs.R'
 						x@specie = 'human'
 					}else if ( mouse_t > hum_t ){
-						x = defineGOIs( x, name, mouse.tfs ) #function definition in file 'defineGOIs.R'
+						x = defineGOIs( x, name, cellexalvrR::mouse.tfs ) #function definition in file 'defineGOIs.R'
 						x@specie = 'mouse'
 					}else {
 						stop( "Sorry, but neither inbuilt dataset (Gene Symbols from mouse and humans) do match to the rownames(data$data) - please double ckech that.")
@@ -53,36 +51,36 @@ setMethod('useInbuiltGOIlists', signature = c ('cellexalvrR'),
 			}
 			else if ( name == 'epigenetic' ) {
 				# register 'epigeneic'
-				hum_e <- length(which(is.na(match(rownames(x@data),Epigenetic$HGNC_symbol))==F))
-				mouse_e <- length(which(is.na(match( rownames(x@data),Epigenetic$MGI_symbol ))==F))
+				hum_e <- length(which(is.na(match(rownames(x@data), cellexalvrR::Epigenetic$HGNC_symbol))==F))
+				mouse_e <- length(which(is.na(match( rownames(x@data), cellexalvrR::Epigenetic$MGI_symbol ))==F))
 				if ( hum_e > mouse_e){
-					x = defineGOIs( x, name, Epigenetic$HGNC_symbol, Epigenetic$Target ) #function definition in file 'defineGOIs.R'
+					x = defineGOIs( x, name, cellexalvrR::Epigenetic$HGNC_symbol, cellexalvrR::Epigenetic$Target ) #function definition in file 'defineGOIs.R'
 					x@specie = 'human'
 				}else if ( mouse_e > hum_e ){
-					x = defineGOIs( x, name, Epigenetic$MGI_symbol, Epigenetic$Target) #function definition in file 'defineGOIs.R'
+					x = defineGOIs( x, name, cellexalvrR::Epigenetic$MGI_symbol, cellexalvrR::Epigenetic$Target) #function definition in file 'defineGOIs.R'
 					x@specie = 'mouse'
 				}else {
 					stop( "Sorry, but neither inbuilt dataset (Gene Symbols from mouse and humans) do match to the rownames(data$data) - please double ckech that.")
 				}
 			}
 			else if ( name =="CellCycle" ) {
-				hum_e <- length(which(is.na(match(rownames(x@data),CellCycle$Gene.Symbol))==F))
-				mouse_e <- length(which(is.na(match( rownames(x@data),CellCycle$MouseGene ))==F))
+				hum_e <- length(which(is.na(match(rownames(x@data), cellexalvrR::CellCycle$Gene.Symbol))==F))
+				mouse_e <- length(which(is.na(match( rownames(x@data) ,cellexalvrR::CellCycle$MouseGene ))==F))
 				if ( hum_e > mouse_e){
-					x = defineGOIs( x, name, CellCycle$Gene.Symbol, CellCycle$X ) #function definition in file 'defineGOIs.R'
+					x = defineGOIs( x, name, cellexalvrR::CellCycle$Gene.Symbol, cellexalvrR::CellCycle$X ) #function definition in file 'defineGOIs.R'
 				}else if ( mouse_e > hum_e ){
-					x = defineGOIs( x, name, CellCycle$MouseGene, CellCycle$X ) #function definition in file 'defineGOIs.R'
+					x = defineGOIs( x, name, cellexalvrR::CellCycle$MouseGene, cellexalvrR::CellCycle$X ) #function definition in file 'defineGOIs.R'
 				}else {
 					stop( "Sorry, but neither inbuilt dataset (Gene Symbols from mouse and humans) do match to the rownames(data$data) - please double ckech that.")
 				}
 			}
 			else if ( name =="CellSurface" ) {
-				hum_e <- length(which(is.na(match(rownames(x@data),human.CellSurface))==F))
-				mouse_e <- length(which(is.na(match( rownames(x@data),mouse.CellSurface ))==F))
+				hum_e <- length(which(is.na(match(rownames(x@data), cellexalvrR::human.CellSurface))==F))
+				mouse_e <- length(which(is.na(match( rownames(x@data), cellexalvrR::mouse.CellSurface ))==F))
 				if ( hum_e > mouse_e){
-					x = defineGOIs( x, name, human.CellSurface) #function definition in file 'defineGOIs.R'
+					x = defineGOIs( x, name, cellexalvrR::human.CellSurface) #function definition in file 'defineGOIs.R'
 				}else if ( mouse_e > hum_e ){
-					x = defineGOIs( x, name, mouse.CellSurface ) #function definition in file 'defineGOIs.R'
+					x = defineGOIs( x, name, cellexalvrR::mouse.CellSurface ) #function definition in file 'defineGOIs.R'
 				}else {
 					stop( "Sorry, but neither inbuilt dataset (Gene Symbols from mouse and humans) do match to the rownames(data$data) - please double ckech that.")
 				}

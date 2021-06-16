@@ -1,12 +1,11 @@
-#' Log function that keeps trach of the number of sections used in the log file.
+#' Log function that keeps track of the number of sections used in the log file.
+#'
 #' @name sessionRegisterGrouping
-#' @aliases sessionRegisterGrouping,cellexalvrR-method
-#' @rdname sessionRegisterGrouping-methods
 #' @docType methods
 #' @description Registers a grouping for this session.
 #' @param x the cellexalvrR object
 #' @param gName the group name to register
-#' @title description of function sessionRegisterGrouping
+#' @title update an internal counter
 #' @export 
 setGeneric('sessionRegisterGrouping', ## Name
 	function ( x, gName ) { 
@@ -14,6 +13,9 @@ setGeneric('sessionRegisterGrouping', ## Name
 	}
 )
 
+
+
+#' @rdname sessionRegisterGrouping
 setMethod('sessionRegisterGrouping', signature = c ('cellexalvrR'),
 	definition = function ( x, gName ) {
 		if ( is.na( match(gName, names(x@usedObj$sessionCounter)) ) ){

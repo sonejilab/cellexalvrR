@@ -2,10 +2,10 @@
 % Please edit documentation in R/scriptHelpers.R
 \name{R.exe}
 \alias{R.exe}
-\title{create the '"' wrapped location of the R/R.exe program}
+\title{create the ''' wrapped location of the R/R.exe program}
 \usage{
 R.exe()
 }
 \description{
-create the '"' wrapped location of the R/R.exe program
+create the ''' wrapped location of the R/R.exe program
 }

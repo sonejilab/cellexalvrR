@@ -1,25 +1,30 @@
+#' CellexalvrR includes several tables describing gene functionality.
+#' Namely TFs, epigenetic, CellCycle and CellSurface genes.
+#' This function will match the CellexalvrR object against these lists and add a
+#' column into the meta.gene table containing 0 and 1 values.
+#'
+#' This function is used for the correlation networks in VR.
 #' @name defineGOIs
-#' @aliases defineGOIs,cellexalvrR-method
-#' @rdname defineGOIs-methods
 #' @docType methods
 #' @description  Allows the user to define (G)enes (O)f (I)nterest lists in the object
 #' @param cellexalObj, cellexalvr object
 #' @param name the name of the GIO list (eg TFs or epigenetic)
 #' @param genes a list of gene symbols that match to the @data rownames
 #' @param lables a list of lables for the GIO column (default NULL)
-#' @param ...  unused
 #' @title Define special genes based on inbuilt data sets (TFs, ...)
-##' @export defineGOIs
+#' @export
 #if ( ! isGeneric('renew') ){
 setGeneric('defineGOIs', ## Name
-	function ( cellexalObj, name, genes, lables=NULL,... ) { 
+	function ( cellexalObj, name, genes, lables=NULL ) { 
 		standardGeneric('defineGOIs') 
 	}
 )
 #}
 
+
+#' @rdname defineGOIs
 setMethod('defineGOIs', signature = c ('cellexalvrR'),
-	definition = function ( cellexalObj, name, genes, lables=NULL,... ) {
+	definition = function ( cellexalObj, name, genes, lables=NULL ) {
 			if ( is.null(lables) ) {
 				lables = rep(name, length(genes))
 			}
@@ -29,7 +34,7 @@ setMethod('defineGOIs', signature = c ('cellexalvrR'),
 				rownames(cellexalObj@meta.gene) = rownames(cellexalObj@data)
 			}
 			if ( ! is.na( match(name, colnames(cellexalObj@meta.gene)))) {
-				stop( "Sorry, but this GIO list has already been defined" )
+				stop( "This GIO list has already been defined" )
 			}
 			
 			#OK <- which(is.na(match( rownames(cellexalObj@data), genes)) == F)

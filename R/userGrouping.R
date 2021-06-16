@@ -1,17 +1,14 @@
-#' VR function that ready the VR grouping information and stores it in the R object.
+#' VR function that reads the VR grouping information and stores it in the R object.
+#' Each selection is only added once into the cellexalvrR object.
 #' @name userGrouping
-#' @aliases userGrouping,cellexalvrR-method
-#' @rdname userGrouping-methods
 #' @docType methods
 #' @description  Reads a VR cell selection file and creates a user.grouping column with the information
 #' @description  storing the user defined grouping for later use
 #' @param cellexalObj, cellexalvr object
 #' @param cellidfile file containing cell IDs
-#' @param cellidfile  TEXT MISSING
-#' @keywords userGrouping
-#' @title description of function userGrouping
-#' @export userGrouping
-#if ( ! isGeneric('renew') ){
+#' @title add a CellexalVR created selection to the cellexalvrR object
+#' @export 
+#if ( ! isGeneric('userGrouping') ){
 setGeneric('userGrouping', ## Name
 	function (cellexalObj, cellidfile) { 
 		standardGeneric('userGrouping') 
@@ -19,6 +16,8 @@ setGeneric('userGrouping', ## Name
 )
 #}
 
+
+#' @rdname userGrouping
 setMethod('userGrouping', signature = c ('cellexalvrR'),
 	definition = function (cellexalObj, cellidfile) {
 	
@@ -45,16 +44,17 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				}
 			}
 		}
-		#browser()
+	#	browser()
 		#find overlap with own data
 		m = match(cellid[,1], colnames(cellexalObj@data))
 		if ( length(which(is.na(m))) > 0 ){
 			stop( paste (
-				"The grouping file has cells that are not defined in the object:", 
+				"The grouping file has cells that are not part of the object:", 
 				paste(as.vector(cellid[which(is.na(m)),1]), collapse=", " )
 					))
 
 		}
+
 		m = match(colnames(cellexalObj@data), cellid[,1])
 		n = rep( NA, ncol(cellexalObj@data))
 		n[ which(! is.na(m)) ] = cellid[m[ which(! is.na(m)) ],4] +1
@@ -92,32 +92,31 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				sessionStoreFile() ## local function
 			}
 		}
-		colorIDs = unique(cellexalObj@userGroups[,gname][which(!is.na(cellexalObj@userGroups[,gname]))])
-		colR =  cellid[match( colorIDs-1, cellid[,4]),2]
+
+		colorIDs = as.numeric(unique(cellexalObj@userGroups[,gname][
+			which(!is.na(cellexalObj@userGroups[,gname]))]))
+		colR =  cellid[match( colorIDs-1, as.numeric(cellid[,4])),2]
 		colVR = c()
 		for ( i in 1:length(colR)) {
-			colVR[colorIDs[i]] = as.vector(colR[i])
+			colVR[colorIDs[i]] = colR[i]
 		}
-		#browser()
-		ginfo = list(
+		ginfo = new( 'cellexalGrouping',
 			gname = gname,
 			selectionFile= basename( cellidfile ),
 			grouping = cellexalObj@userGroups[,gname] ,
-			order = 1:ncol(cellexalObj@data),
+			order = as.integer(order),
 			'drc' = unique(as.vector(cellid[,3])),
 			col = colVR
 		)
 		if ( ! is.na(match(paste(cellexalObj@usedObj$lastGroup, 'order', sep=" "), colnames(cellexalObj@data))) ){
-			ginfo[['order']] = cellexalObj@userGroups[,paste(gname, 'order', sep=" ")]
+			ginfo@order = cellexalObj@userGroups[,paste(gname, 'order', sep=" ")]
 		}
-		#browser()
-		#gr = ginfo$grouping+1
-		#gr[which(is.na(gr))] = 1
-		#plot( cellexalObj@drc[[ginfo$drc]][,2],cellexalObj@drc[[ginfo$drc]][,3],
-		# col=c(gray(.6),ginfo$col)[gr]  )
 
 		cellexalObj@groupSelectedFrom[[gname]] = ginfo
 		cellexalObj@colors[[gname]] = colVR
+
+		cellexalObj = checkGrouping( cellexalObj, gname )
+
 		savePart ( cellexalObj, 'groupSelectedFrom') #function definition in file 'integrateParts.R'
 		savePart ( cellexalObj, 'colors') #function definition in file 'integrateParts.R'
 		savePart ( cellexalObj, 'userGroups') #function definition in file 'integrateParts.R'

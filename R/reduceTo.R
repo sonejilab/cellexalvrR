@@ -2,17 +2,14 @@
 #' and makes sure, that all other objects still are in the same dimensianlity as the main data.
 #' 
 #' @name reduceTo
-#' @aliases reduceTo,cellexalvrR-method
-#' @rdname reduceTo-methods
 #' @docType methods
-#' @description  The main reduction function can drop both samples and genes using the colnames /
-#' @description  rownames of the data tables
+#' @description  The main reduction function can drop both samples and genes using the colnames/rownames of the data tables
 #' @param x the cellexalvrR object
 #' @param what reduce to samples or row ids default='row'
 #' @param to select these names default=NULL
-#' @title description of function reduceTo
-#' @export reduceTo
-#if ( ! isGeneric('renew') ){
+#' @title reduce a cellexalvrR object on either genes or columns
+#' @export 
+#if ( ! isGeneric('reduceTo') ){
 setGeneric('reduceTo', ## Name
 	function ( x, what='row', to=NULL ) { 
 		standardGeneric('reduceTo') 
@@ -20,6 +17,8 @@ setGeneric('reduceTo', ## Name
 )
 #}
 
+
+#' @rdname reduceTo
 setMethod('reduceTo', signature = c ('cellexalvrR'),
 	definition = function ( x, what='row', to=NULL ) {
 
@@ -38,17 +37,14 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 							to <- to[ ! is.na(useOnly)]
 							useOnly <- useOnly[ ! is.na(useOnly) ]
 						}
-#						for (n in x@drop){
-#							if ( ! is.null(x[[n]]) ) {
-#								x[[n]] <- NULL
-#							}
-#							if ( ! is.null(x@usedObj[[n]]) ) {
-#								x@usedObj[[n]] <- NULL
-#							}
-#						}
 						x@data <- x@data[useOnly,]
 						x@meta.gene <- x@meta.gene[useOnly,]
-						
+						for ( tName in names( x@usedObj$timelines)[-1]){
+							if ( ! is.null( x@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] ) ) {
+								x@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] = 
+									x@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']][useOnly,]
+							}
+						}
 					}else {
 						print (paste( "None of the probesets matched the probesets in the cellexalvr object -> keep everything!"))
 					}
@@ -64,14 +60,6 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 							to <- to[ ! is.na(useOnly)]
 							useOnly <- useOnly[ ! is.na(useOnly) ]
 						}
-#						for (n in x@drop){
-#							if ( ! is.null(x[[n]]) ) {
-#								x[[n]] <- NULL
-#							}
-#							if ( ! is.null(x@usedObj[[n]]) ) {
-#								x@usedObj[[n]] <- NULL
-#							}
-#						}
 						n = ncol(x@data)
 						x@data <- x@data[,useOnly]
 						if ( nrow(x@meta.cell) == n ){
@@ -88,22 +76,27 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								here = to[which(!is.na(here))]
 								## existing IDs
 								x@drc[[na]] = x@drc[[na]][match(here, tolower(rownames( x@drc[[na]]))),]
-							}
-							else {
+							}else {
 								x@drc[[na]] = x@drc[[na]][useOnly,]
 							}
 							
 						}
 						for( na in names( x@groupSelectedFrom) ) {
-							if ( class( x@groupSelectedFrom[[na]]) != 'list'){
+
+							if ( class( x@groupSelectedFrom[[na]]) != 'cellexalGrouping'){
 								x@groupSelectedFrom[[na]] = NULL
 								next
 							}
-							if ( length( x@groupSelectedFrom[[na]][['order']]) == n){
-								x@groupSelectedFrom[[na]][['order']] = x@groupSelectedFrom[[na]][['order']][useOnly]
-								x@groupSelectedFrom[[na]][['grouping']] = x@groupSelectedFrom[[na]][['grouping']][useOnly]
+							if ( length( x@groupSelectedFrom[[na]]@order) == n){
+								x@groupSelectedFrom[[na]]@order = x@groupSelectedFrom[[na]]@order[useOnly]
+								x@groupSelectedFrom[[na]]@grouping = x@groupSelectedFrom[[na]]@grouping[useOnly]
 							}
 							
+						}
+						for( na in names(x@userGroups$timelines) ) {
+							if ( length( which (is.na(match( rownames(x@userGroups$timelines[[na]]), colnames(x@data)) ))) > 0 ){
+								x@userGroups$timelines[[na]] = subsetTime( x@userGroups$timelines[[na]], colnames(x@data) )
+							}
 						}
 												
 					}else {

@@ -1,9 +1,6 @@
-
-
-#' GrabDRCs  will copy all 3D graphs from the other object into this object.
+#' Copy all drc models from one cellexalObj to another - even if the
+#' order and/or the size of the objects is not the same.
 #' @name GrabDRCs
-#' @aliases GrabDRCs,cellexalvrR-method
-#' @rdname GrabDRCs-methods
 #' @docType methods
 #' @description make 3D graphs from consecutive analysies available in the main analysis VR session
 #' @param x the cellexalvrR object
@@ -11,15 +8,16 @@
 #' @param prefix a prefix for the 3D graph name (shown in VR)
 #' @title copy 3D graphs from objects of the same analysis
 #' @export 
-
 setGeneric('GrabDRCs', ## Name
-	function ( x, other, prefix ) {
+	function ( x, other, prefix = NULL ) {
 		standardGeneric('GrabDRCs')
 	}
 )
 
+
+#' @rdname GrabDRCs
 setMethod('GrabDRCs', signature = c ('cellexalvrR', 'cellexalvrR'),
-	definition = function ( x, other, prefix= NULL) {
+	definition = function ( x, other, prefix = NULL) {
 	if ( is.null(prefix) ) {
 		stop("Sorry but I need a prefix to add the 3D graphs from another cellexalvrR object.")
 	}
@@ -38,8 +36,11 @@ setMethod('GrabDRCs', signature = c ('cellexalvrR', 'cellexalvrR'),
 		if ( ! is.null(x@drc[[new_name]])) {
 			stop(paste( "The drc with the name", new_name, "is already exisiting in the object") )
 		}
+		if ( is.null(rownames(other@drc[[n]]))){
+			rownames(other@drc[[n]]) = colnames(other@data)
+		}
 		x@drc[[new_name]] = other@drc[[n]][order(m),]
 	}
 
-	invisible( x )
+	invisible( check(x) )
 } )

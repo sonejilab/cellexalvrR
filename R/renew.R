@@ -1,24 +1,25 @@
-
+#' renew is trying to update objects from old versions to the most up to date structure.
+#' 
+#' It is tested to work on version <= 0.14.5.
+#' 
+#' @name renew
+#' @docType methods
+#' @description  updatae the class definition by re-creating the instance This version also makes sure,
+#' @description  that the returned object is an S4 object.
+#' @param x the object you want to updatae
+#' @title renew/update a cellexalvrR object structure to the last version
+#' @export renew
 #if ( ! isGeneric('renew') ){
-setGeneric('renew', ##	
+setGeneric('renew', ## Name
 	function ( x ) {
 		standardGeneric('renew')
 	}
 )
 #}
-#' renew is trying to update objects from old versions to the most up to date structure.
-#' 
-#' It is tested to work on version <= 0.11.1.
-#' 
-#' @name renew
-#' @aliases renew,cellexalvrR-method
-#' @rdname renew-methods
-#' @docType methods
-#' @description  updatae the class definition by re-creating the instance This version also makes sure,
-#' @description  that the returned object is an S4 object.
-#' @param x the object you want to updatae
-#' @title description of function renew
-#' @export renew
+
+
+
+#' @rdname renew
 setMethod('renew', signature = c ('cellexalvrR'),
 	definition = function ( x ) {
 			#ret <- new("cellexalvrR",data=as.matrix(x@data),drc=x@drc,meta.cell=x@meta.cell,meta.gene = x@meta.gene,  index = x@index, tfs= x@tfs)
@@ -39,7 +40,7 @@ setMethod('renew', signature = c ('cellexalvrR'),
 							meta.cell=x@meta.cell,meta.gene = x@meta.gene,  index = x@index, outpath= x@outpath)
 					}else {
 						print ( "Sorry this need re-coding - how do we update this old object here?")
-						browser()
+						if(interactive()) { browser() }
 					}
 					
 				}else if (x@version != as.character(packageVersion("cellexalvrR"))  ) { 
@@ -93,12 +94,8 @@ setMethod('renew', signature = c ('cellexalvrR'),
 			invisible(ret)
 }  )
 
-#' @describeIn renew cellexalvrR
-#' @docType methods
-#' @description renew the OLD cellexalvr objects
-#' @param x the old cellexalvr (not cellexalvrR) object
-#' @title description of function renew
-#' @export renew
+
+#' @rdname renew
 setMethod('renew', signature = c ('cellexalvr'), ## old R3 object
 		definition = function (x) {
 			class(x) = 'cellexalvrR'

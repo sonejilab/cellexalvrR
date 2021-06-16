@@ -2,7 +2,7 @@
 % Please edit documentation in R/scriptHelpers.R
 \name{file2Script}
 \alias{file2Script}
-\title{convert a file 'A/B/.txt' into the string "file.path('A','B','C.txt')"}
+\title{Convert a file 'A/B/C.txt' into the string 'file.path('A','B','C.txt')'.}
 \usage{
 file2Script(path, mustWork = FALSE)
 }
@@ -12,5 +12,5 @@ file2Script(path, mustWork = FALSE)
 \item{mustWork}{default = FALSE}
 }
 \description{
-convert a file 'A/B/.txt' into the string "file.path('A','B','C.txt')"
+Convert a file 'A/B/C.txt' into the string 'file.path('A','B','C.txt')'.
 }

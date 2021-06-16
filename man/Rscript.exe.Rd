@@ -2,10 +2,10 @@
 % Please edit documentation in R/scriptHelpers.R
 \name{Rscript.exe}
 \alias{Rscript.exe}
-\title{create the '"' wrapped location of the Rscript/Rscript.exe program}
+\title{create the ''' wrapped location of the Rscript/Rscript.exe program}
 \usage{
 Rscript.exe()
 }
 \description{
-create the '"' wrapped location of the Rscript/Rscript.exe program
+create the ''' wrapped location of the Rscript/Rscript.exe program
 }

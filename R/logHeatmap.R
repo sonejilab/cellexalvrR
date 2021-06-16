@@ -1,73 +1,78 @@
-
+#' logHeatmap will create a section in the log document including 
+#'
+#' (1) the DRC the grouping was selected from (colored 2D)
+#'
+#' (2) the heatmap itself
+#'
+#' (3) a GO analysis of the genes displayed in the heatmap (using ontologyLogPage())
+#' @name logHeatmap
+#' @docType methods
+#' @description Add a VR created heatmap into the log.
+#' @param cellexalObj the cellexalvrR object
+#' @param genes the genes displayed on the heatmap (default NULL)
+#' @param png the VR generated heatmap (png)
+#' @param grouping the grouping file used to create this heatmap
+#' @param ... options you want to send to the ontologyLogPage() function
+#' @title add the VR created heatmap to the log system
+#' @export 
 setGeneric('logHeatmap', ## Name
-	function ( cellexalObj, genes, png, grouping, ... ) {
+	function ( cellexalObj, genes = NULL, png, grouping, ... ) {
 		standardGeneric('logHeatmap')
 	}
 )
-#' logHeatmap will create a section in the log document including 
-#' (1) the DRC the grouping was selected from (colored 2D)
-#' (2) the heatmap itself
-#' (3) a GO analysis of the genes displayed in the heatmap (using ontologyLogPage()) #function definition in file 'ontologyLogPage.R'
-#' @name logHeatmap
-#' @aliases logHeatmap,cellexalvrR-method
-#' @rdname logHeatmap-methods
-#' @docType methods
-#' @description preload the object before creating one Heatmap session report page
-#' @param cellexalObj the cellexalvrR object
-#' @param genes the genes displayed on the heatmap
-#' @param png the VR generated heatmap (png)
-#' @param grouping the grouping file used to create this heatmap
-#' @param ... options you want to send to the ontologyLogPage() function #function definition in file 'ontologyLogPage.R'
-#' @title description of function logHeatmap
-#' @export 
+
+
+#' @rdname logHeatmap
 setMethod('logHeatmap', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, genes = NULL, png, grouping, ...  ) {
 	## here I need to create a page of the final log
 
+	
 	if ( !is.null(genes)){
-		if ( file.exists(genes)) {
-			genes = as.vector(utils::read.delim(genes)[,1])
+		if ( file.exists(genes[1])) {
+			genes = as.vector(utils::read.delim(genes[1])[,1])
 		}
 	}
-
 	if ( ! file.exists( png) ) {
 		stop(paste( "logHeatmap the heatmap png file can not be found!", png ) )
 	}
+
+	# if we got a file - let's read that in!
 	if ( file.exists( grouping)) {
 		cellexalObj = userGrouping( cellexalObj, grouping ) #function definition in file 'userGrouping.R'
+		grouping = cellexalObj@usedObj$lastGroup
 	}
-	cellexalObj = sessionPath( cellexalObj ) #function definition in file 'sessionPath.R'
-	sessionPath = cellexalObj@usedObj$sessionPath
 
 	## the grouping needs to be matched with the heatmap
+
 	base = unlist(strsplit( png, '_' ))
 	base = paste( paste( collapse="_",base[-length(base)] ), sep=".", 'txt')
 
-	for ( i in 1:length( cellexalObj@groupSelectedFrom ) ) {
-		if ( class( cellexalObj@groupSelectedFrom[[i]]) != 'list') {
-			next
-		}
-		if ( ! is.null( cellexalObj@groupSelectedFrom[[i]]$heatmap2selection) ){
-			if ( cellexalObj@groupSelectedFrom[[i]]$heatmap2selection == basename(base) ) {
-				grouping = cellexalObj@groupSelectedFrom[[i]]$gname
-				break
-			}
-		}else if ( cellexalObj@groupSelectedFrom[[i]]$selectionFile == basename(grouping)){
-			cellexalObj@groupSelectedFrom[[i]]$heatmap2selection = basename(base)
-			grouping = cellexalObj@groupSelectedFrom[[i]]$gname
-			break
-		}
-	}
-	cellexalObj = sessionRegisterGrouping( cellexalObj, grouping ) #function definition in file 'sessionRegisterGrouping.R'
-	n = sessionCounter( cellexalObj, grouping ) #function definition in file 'sessionCounter.R'
+	heatmap_core =  basename(base)
+	
+	ok = which( unlist( lapply( cellexalObj@groupSelectedFrom, 
+           function(info){!is.na(match(info@heatmapBasename, heatmap_core )) }
+    )))
+    if ( length( ok ) > 0 ){
+        grouping = names(rev(ok)[1])
+    }
 
-	file.copy(png, file.path( sessionPath , 'png', basename( png ) ) )
+	cellexalObj = sessionPath( cellexalObj ) #function definition in file 'sessionPath.R'
+	sessionPath = cellexalObj@usedObj$sessionPath
 
-	figureF = file.path( 'png', basename( png ) )
-
-	## in order to restore this heatmap in a new VR session I now need to store the database and gene list, too
+	## copy the CellexalVR files to the log folder
 	
 
+	## set the lastGroup id to grouping
+	
+	cellexalObj = sessionRegisterGrouping( cellexalObj, grouping ) #function definition in file 'sessionRegisterGrouping.R'
+	n = sessionCounter( cellexalObj, grouping ) #function definition in file 'sessionCounter.R'
+	cellexalObj@usedObj$lastGroup = grouping
+
+	figureF = file.path( sessionPath , 'png', basename( png ) )
+	file.copy(png, figureF )
+
+	## in order to restore this heatmap in a new VR session I now need to store the database and gene list, too
 	if ( ! file.exists( file.path( sessionPath , 'Heatmap') ) ) {
 		dir.create( file.path( sessionPath , 'Heatmap') )
 	}
@@ -79,59 +84,36 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 	
 	gInfo = groupingInfo( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'groupingInfo.R'
 
-	## gInfo is a list with names grouping, drc, col and order
-	# create a file containing the grouping info (and thereby color) and the drc info - do not create doubles
-	drcFiles = drcPlots2D( cellexalObj, gInfo ) #function definition in file 'drcPlot2D.R'
-
-	# figureF, drcFiles[1] and drcFiles[2] do now need to be integrated into a Rmd file
-	#mainOfile = file.path( sessionPath, filename( c( n, "Heatmap.Rmd") ) ) #function definition in file 'filename.R'
-	#file.create(mainOfile)
-	## https://stackoverflow.com/questions/29214932/split-a-file-path-into-folder-names-vector
-	split_path <- function(path) {
-  		if (dirname(path) %in% c(".", path)) return(basename(path))
-  		return(c(basename(path), split_path(dirname(path))))
+	tableHTML = HTMLtable ( gInfo) 
+	if ( nrow( gInfo@timeObj@dat) > 0 ){
+		tableHTML = HTMLtable ( gInfo@timeObj )
 	}
-
-	PA = rev(split_path( sessionPath ))
-	substract = NULL
-	for ( i in 1:length(PA) ){
-		substract= c( substract, PA[i] )
-		if ( PA[i] == "Output" | PA[i] == "output"){
-			break;
-		}
-	}
-	if ( length(substract) == length(PA) ) {
-		browser()
-		stop("this is fatal - we are not in a cellexalVR outpath - log inavailable!")
-	}
-
-	substract = do.call( file.path, lapply(substract, function(x){x}) )
-	path = R.utils::getRelativePath(sessionPath, relativeTo=substract, caseSensitive=T )
 	
 	
+
+	figureF = correctPath(figureF, cellexalObj)
 	content = paste( sep="\n",
 		paste( "##", "Heatmap from Saved Selection ", n  ),
 		paste("This selection is available in the R object as group",cellexalObj@usedObj$lastGroup ),
 		"",
 		paste( "### Genes"),
-		paste( collapse=" ", unlist( lapply(sort(genes), function(n) { rmdLink(n, "https://www.genecards.org/cgi-bin/carddisp.pl?gene=")  })) ), #function definition in file 'rmdLink.R'
+		md_gene_links( sort(genes) ), #function definition in file 'rmdLink.R'
+		md_gene_links( rev(genes), label="expand genes in heatmap order" ),
 		'',
 		paste( "### Heatmap (from CellexalVR)"),
 		paste("![](",figureF,")"),
 		'',
-		paste( "### 2D DRC", gInfo$drc, " dim 1,2"),
-		paste("![](",drcFiles[1],")"),
-		'',
-		paste( "### 2D DRC", gInfo$drc, " dim 2,3"),
-		paste("![](",drcFiles[2],")"),
-		"",
+		tableHTML,'',
+		paste(collapse = "\n", sep="\n",drcFiles2HTML(cellexalObj, gInfo )),
 		"The heatmap can be restored in a new VR session using the 2D console (F12) and type:",
-		"",
-		paste("lsf", R.utils::getRelativePath(gInfo$selectionFile, relativeTo= path, caseSensitive=T) ),
+		"","```",
+		paste("lsf", file.path( cellexalObj@usedObj$sessionPath, gInfo@selectionFile) ),
 		"",
 		"confirm", 
 		"",
-		paste( "rsf", R.utils::getRelativePath( base, relativeTo=substract, caseSensitive=T) )
+		paste( "rsf",  file.path( cellexalObj@usedObj$sessionPath, 'Heatmap',basename(base))),
+		"```",
+		"These files are also part of the Portable session log file. Please adjust the paths accordingly."
 
 	)
 
@@ -148,15 +130,8 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 	cellexalObj
 } )
 
-#' @describeIn logHeatmap cellexalvrR
-#' @description create one Heatmap session report page
-#' @param cellexalObj the cellexalvrR file
-#' @param genes the genes displayed on the heatmap
-#' @param png the VR generated heatmap (png)
-#' @param grouping the grouping file used to create this heatmap
-#' @param ... options you want to send to the ontologyLogPage() function #function definition in file 'ontologyLogPage.R'
-#' @title description of function logHeatmap
-#' @export
+
+#' @rdname logHeatmap
 setMethod('logHeatmap', signature = c ('character'),
 		definition = function (cellexalObj, genes, png, grouping, ... ) {
 			cellexalObj <- loadObject(cellexalObj) #function definition in file 'lockedSave.R'

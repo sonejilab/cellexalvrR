@@ -1,51 +1,49 @@
-
-#if ( ! isGeneric('renew') ){
-setGeneric('getDifferentials', ## Name
-			function (x,cellidfile,
-					deg.method=c('wilcox', 'Seurat_wilcox', 'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova'),
-					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE) { 
-				standardGeneric('getDifferentials') 
-			}
-	) 
-#}
-
 #' Identify differentially expressed genes.
 #' 
-#' This function makes three statistics available for the VR process 
-#' (1) 'timeline' will automaticly be choosen it there is only one group in the data
+#' This function makes two statistics available for the VR process 
+#' (1) 'timeline' will automaticly be choosen if there is only one group in the data
 #' (2) 'wilcox' a c++ re-implementation of the Seurat::FindAllMarkers function (default)
-#' (3) 'Seurat_wilcox' the original Seurat::FindAllMarkers function (~10x slower than the c++ version and currently not working)
 #' 
 #' @name getDifferentials
-#' @aliases getDifferentials,cellexalvrR-method
-#' @rdname getDifferentials-methods
 #' @docType methods
-#' @description  Creates a heatmap from a selection of groups
-#' The Seurat based statsictsics is applied only to genes expressed in at least 1 percent of the cells.
+#' @description  Calculates the statistics for one CellexalVR selection file.
 #' @param x, cellexalvrR object
 #' @param cellidfile file containing cell IDs
-#' @param deg.method The method to use to find DEGs ( 'wilcox', 'Seurat wilcox', 'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2' )
+#' @param deg.method The method to use to find DEGs (only 'wilcox' supported at the moment)
 #' @param num.sig number of differnetial genes to return (250)
 #' @param Log log the results (default=TRUE)
 #' @param logfc.threshold the Seurat logfc.threshold option (default here 1 vs 0.25 in Seurat)
 #' @param minPct the minium percent expressing cells in a group (default 0.1)
 #' @param onlyPos select only genes showing an higher expression in the group (default =T)
+#' @param report4genes a list of genes you want to get a report on.
 #' @keywords DEGs
-#' @title VR helper function getDifferentials
+#' @title main Statistics function for cellexalvrR
 #' @examples 
 #' \dontrun{
-#' getDifferentials( x,  cellidfile= 'User.group.2', deg.method='wilcox')@usedObj$deg.genes #function definition in file 'getDifferentials.R'
+#' getDifferentials( x,  cellidfile= 'User.group.2', deg.method='wilcox')@usedObj$deg.genes 
 #' }
 #' @return the cellexalvrr object with the stats table stored in x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]]
 #' and significant genes can be accessed in the x@usedObj$deg.genes slot.
-#' @export getDifferentials
+#' @export 
+#if ( ! isGeneric('getDifferentials') ){
+setGeneric('getDifferentials', ## Name
+			function (x,cellidfile,
+					deg.method='wilcox',
+					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL ) { 
+				standardGeneric('getDifferentials') 
+			}
+	) 
+#}
+
+
+#' @rdname getDifferentials
 setMethod('getDifferentials', signature = c ('cellexalvrR'),
 		definition = function (x,cellidfile,
-				deg.method=c('wilcox','Seurat_wilcox',  'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova'),
-				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE) {
+				deg.method='wilcox',
+				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
-			check(x)
+			x= check(x)
 			num.sig <- as.numeric( num.sig )
 			
 			accepted = c('wilcox','Seurat_wilcox',  'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova')
@@ -54,29 +52,30 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 			}
 			
 			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'
-			
-			ok <- which(!is.na(x@userGroups[,x@usedObj$lastGroup]))
+			cellidfile = x@usedObj$lastGroup
+
+			ok <- which(!is.na(x@userGroups[,cellidfile]))
 
 			if ( length(ok) > 0) {
 				loc <- reduceTo (x, what='col', to=colnames(x@data)[ ok ] ) #function definition in file 'reduceTo.R'
 			}else {
 				loc <- x
 			}
-			if ( ! is.na(match(paste(x@usedObj$lastGroup, 'order'), colnames(x@userGroups))) ){
+			if ( ! is.na(match(paste(cellidfile, 'order'), colnames(x@userGroups))) ){
 				## at some time we had a problem in the creeation of order column names:
-    			possible = c( paste(x@usedObj$lastGroup, c(' order','.order'), sep=""))
+    			possible = c( paste(cellidfile, c(' order','.order'), sep=""))
     			gname = possible[which(!is.na(match(possible, colnames(loc@userGroups))))]
 				#browser()
-				loc <- reorder.samples ( loc, gname ) #function definition in file 'reorder.obj.R'
+				loc <- reorderSamples ( loc, gname ) #function definition in file 'reorder.obj.R'
 			}
 			
-			info <- groupingInfo( loc ) #function definition in file 'groupingInfo.R'
+			info <- groupingInfo( loc, cellidfile ) #function definition in file 'groupingInfo.R'
 			
 			rem.ind <- which(Matrix::rowSums(loc@data)==0)
 			
-			grp.vec <- info$grouping
+			grp.vec <- info@grouping
 			
-			col.tab <- info$col
+			col.tab <- info@col
 			
 			if(length(rem.ind)>0){
 				loc = reduceTo(loc, what='row', to=rownames(loc@data)[-rem.ind]) #function definition in file 'reduceTo.R'
@@ -91,104 +90,48 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 				message('anova gene stats is deprecated - using wilcox instead!')
 				deg.method= 'wilcox'
 			}
-			if(  length(table(info$grouping)) == 1 ){
+			if(  length(table(info@grouping)) == 1 ){
 				deg.method = 'Linear'
-				stop( "Please selecting more than one group!")
-				message('cor.stat linear gene stats timeline EXPERIMENTAL')
-				if ( is.null( info$drc )) {
+				#stop( "Please selecting more than one group!")
+				message('cor.stat linear gene stats timeline')
+				if ( is.null( info@drc )) {
 					message(paste("The linear stats has not gotten the drc information -- choosing the first possible" , names(loc@drc )[1] )) 
-					info$drc = names(loc@drc )[1]
+					info@drc = names(loc@drc )[1]
+			
 				}
-				drc = loc@drc[[ info$drc ]]
-				if ( is.null(drc) ){
-					message(paste("the drc info",info$drc, "can not be found in the data! (", paste(collapse=", ", names(loc@drc)) ))
-					message(paste("The linear stats has not gotten the drc information -- choosing the first possible" , names(loc@drc )[1] )) 
-					info$drc = names(loc@drc )[1] ## for the log!
-					drc = loc@drc[[ 1 ]]
-				}
-
-				#browser()
-				if ( !is.null(rownames(drc))){
-					OK = match( rownames(drc), colnames(x@data) )
-				}else {
-					OK = match( colnames(loc@data), colnames(x@data) )
-				}
-				a = drc[,1]
-
-				if ( is.null(names(a))) {
-					names(a) = colnames(loc@data)[OK]
-				}
-				loc = pseudotimeTest3D( loc, a, drc[,2], drc[,3], info$gname )
-
-				message("After timeline calculation in smaller object:")
-				check(loc)
-
-				## so the new group needs to get into the main object:
-				gname = loc@usedObj$lastGroup
-				gnameO =  paste(sep=" ",gname , 'order')
-
-
-				cellexalTime = loc@usedObj$timelines[[ gname ]] 
-				#browser()
-				x = addSelection( cellexalTime, x, info$gname)
-				message("after time copy over:")
-				check(x)
-				#  rgl::plot3d( drc[OK,1], drc[OK,2], drc[OK,3], col=x@colors[[gname]][ x@userGroups[OK, gname ] ] )
-
-				## run the correlation on a rolling window smothed information
-				## It does not make sense to check genes that are hardly expressed at all in the group.
-				## Lets say I want min 10% of the genes - how would that look?
-				nCells = FastWilcoxTest::ColNotZero( Matrix::t( loc@data ) )
-				OK = which( nCells / ncol(loc@data)  > .01 )
-
-				loc = reduceTo(loc, what='row', to = rownames(loc@data)[OK]  )
-				## this leads to horrible results
-				if ( 1==0 ){
-					nrol = round( length(OK) / 100 )
-					if ( nrol < 10){
-						nrol = 10
-					}
-					if ( nrol > 500){
-						nrol = 500
-					}	
-
-					rolled <- FastWilcoxTest::rollSum( loc@data[, order(as.vector(loc@userGroups[, gname ] )) ], nrol )
-					## create the stats
-					ps <- FastWilcoxTest::CorNormalMatrix(  t(rolled), loc@userGroups[nrol:ncol(loc@data), gname ] ) 
-				}
-				ps = FastWilcoxTest::CorMatrix(  loc@data[, order(as.vector(loc@userGroups[, gname ] )) ], loc@userGroups[, gname ] ) 
-				names(ps) = rownames(loc@data)
-
-				ps[which(is.na(ps))] = 0
-				o = order(abs( ps ), decreasing=TRUE)
-
-				deg.genes = names(ps)[o[1:num.sig]]
-
-				if ( is.null( x@usedObj$timelines)) {
-					x@usedObj$timelines = list()
-				}
-				x@usedObj$timelines[['lastEntry']] = loc@usedObj$timelines[['lastEntry']]
-				x@usedObj$timelines[[paste(info$gname, 'timeline')]] = loc@usedObj$timelines[['lastEntry']]
 				
-				## now we lack the heatmap here... But I would need one - crap!
-				## create the smoothed data heatmap's
-
-				colnames(p) = deg.genes
-				hc = hclust( as.dist( 1- stats::cor(p, method='pearson') ) )
-				deg.genes = hc$labels[hc$order]
-
-				#ret = list( genes = split( names(gr), gr), ofile = ofile, pngs = pngs )
-				ret = simplePlotHeatmaps( mat= p,  fname=file.path( x@usedObj$sessionPath,'png', gname ) )
-				## add the plots to the log
-				try( { 
-					x = logTimeLine( x, ps, ret$genes, 
-						groupingInfo( x,info$gname), png = c( ret$ofile, ret$pngs ), groupingInfo( x, gname ) ) 
-				} )
+				info = groupingInfo(x, info@gname ) ## get the info for the big object
+				drc = x@drc[[ info@drc ]]
+				 if ( is.null(drc) ){
+				 	message(paste("the drc info",info@drc, "can not be found in the data! (", paste(collapse=", ", names(loc@drc)) ))
+				 	message(paste("The linear stats has not gotten the drc information -- choosing the first possible" , names(loc@drc )[1] )) 
+				 	info@drc = names(x@drc )[1] ## for the log!
+				 	drc = x@drc[[ 1 ]]
+				}
 				
-				x@usedObj$sigGeneLists$lin[[x@usedObj$lastGroup]] = ps
+				cellexalTime = NULL
+				if (  nrow(info@timeObj@dat) == 0 ){
+					message('defining time')
+					x = pseudotimeTest3D( x, grouping= info@gname )
+					info = groupingInfo( x, info@gname ) ## load changes
+					cellexalTime = info@timeObj
+				}
+				else {
+					cellexalTime = info@timeObj
+				}
+				message('creating reports')
+				x  = createStats( cellexalTime, x,  num.sig= num.sig )
 				
+				ret = createReport(cellexalTime, 
+					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
+					info = groupingInfo( x, info@gname ) 
+				)
+				timeN = cellexalTime@gname
+				x@usedObj$timelines[['lastEntry']] = x@usedObj$timelines[[timeN]] =
+					 ret$cellexalObj@usedObj$timelines[[timeN]]
+				
+				deg.genes = x@usedObj$deg.genes
 
-				
 			}else if ( deg.method == 'wilcox') {
 				## use the faster Rcpp implementation
 				CppStats <- function( n ) {
@@ -196,27 +139,30 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 					BAD= which(grp.vec != n )
 					r = NULL
 					if ( length(OK) > 0 & length(BAD) >0){
-						try({
+						#try({
 						r = as.data.frame(
 								FastWilcoxTest::StatTest( Matrix::t( loc@data), OK, BAD, 
 										logfc.threshold, minPct, onlyPos=onlyPos )
 						)
 						r= r[order( r[,'p.value']),]
 						r = cbind( r, cluster= rep(n,nrow(r) ), gene=rownames(loc@data)[r[,1]] )
-						})
+						#})
 					}
 					r
 				}
-				
 				all_markers = NULL;
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
-				
+
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
-				if ( Log ) {
-					try ( {logStatResult( x, 'Cpp', all_markers, 'p.value' ) }) #function definition in file 'logStatResult.R'
-				}
+				try ( {
+					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value' )
+					## And get additional info about the genes
+
+
+				}) #function definition in file 'logStatResult.R'
+				
 				if ( is.null(x@usedObj$sigGeneLists$Cpp)) 
 					x@usedObj$sigGeneLists$Cpp = list()
 				x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]] = all_markers
@@ -270,10 +216,20 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 				
 				tab <- t(FastWilcoxTest::collapse( loc@data, as.numeric(factor( as.vector(loc@userGroups[, loc@usedObj$lastGroup]) ) ), 1 )) ## simple sum up the data
 				tab[which(tab == -Inf)] = 0
+
+				bad = which( apply(tab, 2, var) == 0 )
+				bad.genes = NULL
+				if ( length(bad) > 0 ){
+					tab = tab[, -bad]
+					bad.genes = deg.genes[bad]
+					deg.genes = deg.genes[-bad]
+					loc =reduceTo( loc, what='row', to=deg.genes)
+					message(paste(length(bad), "genes had a summary varianze of 0 in this comparison"))
+				}
 				hc <- stats::hclust(stats::as.dist( 1- stats::cor(tab, method='pearson') ),method = 'ward.D2')
-				deg.genes = rownames(loc@data)[hc$order]
+				deg.genes = c(rownames(loc@data)[hc$order], bad.genes)
 			}
-			
+
 			if ( length(deg.genes) == 0){
 				message('deg.genes no entries - fix that')
 				if ( interactive() ) {
@@ -294,7 +250,10 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 				#print( 'And this - Do we reach this point, too?')
 			}
 			if ( length(deg.genes ) < 10){
-				browser()
+				if(interactive()) {
+				 print("no deg genes - please check why!")
+				 browser() 
+				}
 			}
 			x@usedObj$deg.genes = deg.genes
 			invisible( x )
@@ -302,23 +261,10 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 )
 
 
-#' @describeIn getDifferentials cellexalvrR
-#' @docType methods
-#' @description preload the cellexalObj
-#' @param x the cellexalvrR.RData file
-#' @param cellidfile file containing cell IDs
-#' @param deg.method The method to use to find DEGs ( 'wilcox', 'Seurat wilcox', 'bimod',
-#' 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2')
-#' @param num.sig number of differnetial genes to return (250)
-#' @param Log log the results (default=TRUE)
-#' @param logfc.threshold the Seurat logfc.threshold option (default here 1 vs 0.25 in Seurat)
-#' @param minPct the minium percent expressing cells in a group (default 0.1)
-#' @keywords DEGs
-#' @title description of function getDifferentials
-#' @export getDifferentials
+#' @rdname getDifferentials
 setMethod('getDifferentials', signature = c ('character'),
 		definition = function (x,cellidfile,
-				deg.method=c('wilcox', 'Seurat_wilcox', 'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova'),
+				deg.method='wilcox',
 				num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1) {
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			getDifferentials( x,cellidfile,deg.method,num.sig, Log=Log) #function definition in file 'getDifferentials.R'

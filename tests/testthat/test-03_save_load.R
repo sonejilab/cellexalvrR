@@ -9,7 +9,8 @@ start_time <- Sys.time()
 if ( file.exists(lockfile) ) {
 	unlink(lockfile)
 }
-cellexalObj2 = loadObject( datafile )
+save( cellexalObj, file= datafile)
+#cellexalObj2 = loadObject( datafile )
 
 end_time <- Sys.time()
 
@@ -18,10 +19,9 @@ min = end_time - start_time
 file.create( lockfile )
 message( "Manually created",lockfile )
 
-expect_true(exists('cellexalObj2'), 'normal load')
-
-rm(cellexalObj2)
-
+if ( exists('cellexalObj2') ){
+	rm(cellexalObj2)
+}
 # we have one version hardcoded in the source so this will always be true!
 expect_true(! exists('cellexalObj2'), 'just removed the object')
 

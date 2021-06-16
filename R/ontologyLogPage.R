@@ -1,7 +1,6 @@
 #' The ontology analysis for the log files.
+#' Response time is too slow for VR.
 #' @name ontologyLogPage
-#' @aliases ontologyLogPage,cellexalvrR-method
-#' @rdname ontologyLogPage-methods
 #' @docType methods
 #' @description creates the GO analysis for a gene list and puts it into the report.
 #' @param cellexalObj the cellexalvrR object
@@ -11,7 +10,7 @@
 #' @param topNodes how many GO terms to report (default 10)
 #' @param ... unused
 #' @import org.Mm.eg.db org.Hs.eg.db topGO
-#' @title description of function ontologyLogPage
+#' @title old log function to create a pathways analysis for a list of genes.
 #' @export
 setGeneric('ontologyLogPage', ## Name
 	function ( cellexalObj, genes, grouping=NULL, ontology = 'BP', topNodes=10, ... ) {
@@ -19,11 +18,13 @@ setGeneric('ontologyLogPage', ## Name
 	}
 )
 
+
+#' @rdname ontologyLogPage
 setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, genes, grouping=NULL, ontology = 'BP', topNodes=10, ... ) {
 	## process the ontology for this gene list and add one ontology report page
 	#requireNamespace( 'AnnotationDbi' )
-	require( 'topGO' )
+	requireNamespace( 'topGO' )
 	
 	if ( file.exists(genes)) {
 		genes = as.vector(utils::read.delim(genes)[,1])
@@ -89,12 +90,9 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 	colnames(GOI_2_genes) = c("GO ID", "Rmd Gene list", "Mapping Gene List")
 	for( i in 1:nrow(allRes) ) {
 		GOI_2_genes[i,1] = allRes[i,1]
-		GOI_2_genes[i,2] =  paste( intersect( genes,cellexalObj@usedObj$GO2genes[[allRes[i,1]]]), collapse=" ")
-		GOI_2_genes[i,3] = paste(
-				unlist( lapply(	intersect( genes,cellexalObj@usedObj$GO2genes[[allRes[i,1]]]),
-		            rmdLink, link="https://www.genecards.org/cgi-bin/carddisp.pl?gene=", lineEnd=FALSE ))
-			, collapse=" "
-	    )
+		GOI_2_genes[i,2] = paste( intersect( genes,cellexalObj@usedObj$GO2genes[[allRes[i,1]]]), collapse=" ")
+		GOI_2_genes[i,3] = md_gene_links ( intersect( genes,cellexalObj@usedObj$GO2genes[[allRes[i,1]]]) )
+
 	}
 	for ( i in 1:nrow(allRes) ) {
 		allRes[i,1] = rmdLink(allRes[i,1],"http://amigo.geneontology.org/amigo/term/", lineEnd=FALSE ) #function definition in file 'rmdLink.R'
@@ -139,7 +137,7 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 					paste("This selection is available in the R object as group", cellexalObj@usedObj$lastGroup ),
 					"",
 					paste( "### Genes"),
-					paste( collapse=", ", unlist( lapply( genes,  rmdLink, link="https://www.genecards.org/cgi-bin/carddisp.pl?gene=" ))),
+					md_gene_links( genes ),
 					"",
 					paste( "The R package topGO was used to create this output table:"),
 					" ",
@@ -149,9 +147,9 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 					paste( collapse="\n",knitr::kable(GOI_2_genes, caption=paste("The genes mapping to get GO ids" ))),
 					"")
 
-	cellexalObj = storeLogContents( cellexalObj, content, type="Ontology")
+	cellexalObj = storeLogContents( cellexalObj, content, type='Ontology')
 	id = length(cellexalObj@usedObj$sessionRmdFiles)
-	cellexalObj = renderFile( cellexalObj, id, type="Ontology" )
+	cellexalObj = renderFile( cellexalObj, id, type='Ontology' )
 	#close(fileConn)
 
 	invisible(cellexalObj)

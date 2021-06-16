@@ -10,3 +10,5 @@
 /*.lock
 /testSession/
 .*.RData
+*time*
+!cellexalObjOK.RData

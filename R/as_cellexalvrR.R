@@ -1,31 +1,33 @@
-#' This function is part of the conversion path of a BioData::R6 object 
-#' into a ret object.
+#' This function is the default conversion function from any other object.
+#' Depending on which object is to be imported the paramteters differ.
 #'
-#' The function will most likely not be of importance to anybody but me.
 #' @name as_cellexalvrR
-#' @aliases as_cellexalvrR,environment-method
-#' @rdname as_cellexalvrR-methods
 #' @docType methods
-#' @description convert a BioData list (BioData library not loaded) into a ret obejct
-#' @param x the BioData 'object'
-#' @param meta.cell.groups which x$samples column to convert to meta.cell classes
+#' @description convert a supported data set into a cellexalvrR obejct
+#' @param x the object or file to be converted
+#' @param meta.cell.groups which cell annotation columns to convert to meta.cell
 #' @param meta.genes.groups which annotation columns to keep (default NULL)
-#' @param userGroups which x$samples columns to add to the userGroups slot
+#' @param userGroups which cell annotation columns to add to the userGroups slot
 #' @param outpath set the outpath of the object (default getwd())
 #' @param specie set the specie to either mouse or human (default check gene names)
-#' @title convert a BioData object to ret keeping all 3D drc objects.
+#' @param ... allow additional data type specififc parameters 
+#' @title convert a supported object/file to cellexalvrR keeping all 3D drc objects.
 #' @export 
 setGeneric('as_cellexalvrR', ## Name
-	function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie, ... ) { 
+	function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, 
+		outpath=getwd(), specie, ... ) { 
 		standardGeneric('as_cellexalvrR')
 	}
 )
 
+
+#' @rdname as_cellexalvrR
 setMethod('as_cellexalvrR', signature = c ('environment'),
-	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), specie ) {
+	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, 
+		userGroups=NULL, outpath=getwd(), specie ) {
 	## x has to be a BioData object which is read as a simple list here!
 	if ( is.null(meta.cell.groups)){
-		browser()
+		if(interactive()) { browser() }
 		stop( paste(sep="","meta.cell.groups is not defined - please set it to one of\n'", 
 			paste(collapse="', '", colnames(x$samples)) ,"'") )
 	}
@@ -52,7 +54,7 @@ setMethod('as_cellexalvrR', signature = c ('environment'),
 	DRC <- names(x$usedObj)[grep ( 'MDS', names(x$usedObj))]
 	OK = grep ( '_dim_' , DRC, invert= TRUE )
 	if ( length(OK) == 0 ) {
-		stop( "ret does need at least one 3D DRC structure to work on - please create that first!")
+		stop( "cellexalvrR does need at least one 3D DRC structure to work on - please create that first!")
 	}
 	for ( n in DRC[OK] ) {
 		for ( n2 in names(x$usedObj[[n]]) ) {
@@ -73,20 +75,22 @@ setMethod('as_cellexalvrR', signature = c ('environment'),
 } )
 
 
+
+#' @rdname as_cellexalvrR
+#' @param assay Seurat::GetAssayData parameter 'assay' to fetch the expression data (default NULL)
 setMethod('as_cellexalvrR', signature = c ('Seurat'),
-	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, 
-		outpath=getwd(), specie, assay=NULL, slot='data', velocity='none', scale.arrow.travel=20 ) {
+	definition = function ( x, meta.cell.groups=NULL, meta.genes.groups = NULL,
+	 userGroups=NULL, outpath=getwd(), specie, assay=NULL ) {
 
 		ret = methods::new('cellexalvrR')
-		getEmb = function (n, cn) {
-			emb = Embeddings(object = x, reduction = n)
+		getEmb = function (n) {
+			emb = Seurat::Embeddings(object = x, reduction = n)
 			 if ( ncol(emb) ==2){
 			 	emb = cbind(emb, rep(0,nrow(emb)))
 			 }
 			 if ( ncol(emb) > 3) {
 			 	emb = emb[,1:3]
 			 }
-			 rownames(emb) = cn
 			 emb
 		}
 		if ( is.null( meta.cell.groups ) ) {
@@ -97,112 +101,57 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 		if ( .hasSlot(x, 'data')) {
 			warning( "Untested Seurat object version 2.x")
 			ret@data = x@data
-			ret@drc = lapply( names(x@dr), getEmb, colnames(ret@data) )
+			ret@drc = lapply( names(x@dr), getEmb )
 			names(ret@drc) = names(x@dr)
 		}
 		else {
-			ret@data = GetAssayData(object = x, assay = assay, slot = slot )
-			ret@drc = lapply( names(x@reductions), getEmb, colnames(ret@data)  )
+			ret@data = Seurat::GetAssayData(object = x, assay = assay )
+			ret@drc = lapply( names(x@reductions), getEmb  )
 			names(ret@drc) = names(x@reductions)
 		}
-		if ( velocity == 'scvelo') {
-
-			drc = list()
-			for ( n in names(ret@drc)) {
-				if ( length(grep('^velocity_', n)) == 1 ){
-					n_source = stringr::str_replace( n, '^velocity_', '') 
-					drc[[n_source]] = cbind(ret@drc[[n_source]], ret@drc[[n_source]] + ret@drc[[n]] * scale.arrow.travel)
-				}else {
-					drc[[n]] = ret@drc[[n]]
-				}
-
-			}
-
-			ret@drc = drc
-		}
 		ret@meta.cell = make.cell.meta.from.df( x@meta.data, meta.cell.groups)
-		rownames(ret@meta.cell) = colnames(ret@data)
 		ret@meta.gene = matrix( ncol=1,  rownames(ret@data) )
 		colnames(ret@meta.gene) = "Gene Symbol"
-		ret@specie = specie
+
 		ret
 	})
 
 
 
 
+
+#' @rdname as_cellexalvrR
+#' @param embeddings which embeddings to import from the file (default NULL = all)
+#' @param embeddingDims the dimensionality of the embeddings (default 3)
+#' @param velocity import velocity information (default = 'scvelo')
+#' @param scaleArrowTravel scale the velovity arrow for VR (default 20)
+#' @param minCell4gene savety feature for andata import required for CellexalVR (default 10)
 setMethod('as_cellexalvrR', signature = c ('character'),
-	definition = function (x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
-		specie, velocity='scvelo', scale.arrow.travel=20 ){
-		# , embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10
-
-		## re-write of this function:
-		## Use Seurat-Data instead...
-		ok = TRUE
-		if (!require("Seurat", quietly = TRUE ) == T ) {
-			ok =FALSE
-			warning("package 'Seurat' needed for this function to work. Please install it.",
-				call. = FALSE)
-		}
-		if (!require("SeuratDisk", quietly = TRUE ) == T ) {
-			ok =FALSE
-			warning("package 'SeuratDisk' needed for this function to work. Please install it.",
-				call. = FALSE)
-		}
-		ret = NULL
-		if ( ok ) {
-			ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
-			if ( ! file.exists( ifile )){
-				Convert(x, dest = "h5seurat", overwrite = TRUE)
-			}
-			ifile = stringr::str_replace( x, 'h5ad$', 'h5seurat')
-			seurat <- LoadH5Seurat( ifile )
-			ret = as_cellexalvrR(seurat, meta.cell.groups, meta.genes.groups =meta.genes.groups, outpath= outpath, specie=specie, 
-				velocity=velocity, scale.arrow.travel=20 )
-			## to not screw up the database!
-			ret@data = ret@data [which(Matrix::rowSums(ret@data) > 0),]
-		}else {
-			if (!require("hdf5r", quietly = TRUE ) == T ) {
-				stop("fall back package 'hdf5r' needed for this function to work. Please install it.",
-				call. = FALSE)
-			}
-			file = H5File$new(x, mode='r')
-			ret = as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
-				specie, velocity = velocity == 'scvelo', veloScale = scale.arrow.travel, minCell4gene = 1 )
-		}
-		ret
-} )
-
-#setMethod('as_cellexalvrR', signature = c ('character'),
-#	definition = function (x, meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
-#		specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocyto =TRUE, veloScale=20, minCell4gene = 10 ){
-#
-#	if (!require("hdf5r", quietly = TRUE ) == T ) {
-#		stop("package 'hdf5r' needed for this function to work. Please install it.",
-#				call. = FALSE)
-#	}
-#	if ( ! hdf5r::is_hdf5(x)) {
-#		stop( "The variable genes / analyzed VelocytoPy outfile if no h5ad file")
-#	}
-#	file <- H5File$new(x, mode='r')
-#
-#	as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
-#		specie,  embeddings , embeddingDims, velocyto, veloScale, minCell4gene  )
-#
-#})
-
-
-setMethod('as_cellexalvrR', signature = c ('H5File'),
-	definition = function (x,  meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(),
-	 specie, embeddings = c('umap', 'phate'), embeddingDims=3, velocity ='scvelo', scale.arrow.travel=20, minCell4gene = 10) {
+	definition = function (x,   meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
+		specie, embeddings = NULL, embeddingDims=3, velocity ='scvelo', scaleArrowTravel=20, minCell4gene = 10 ){
 
 	if (!require("hdf5r", quietly = TRUE ) == T ) {
 		stop("package 'hdf5r' needed for this function to work. Please install it.",
 				call. = FALSE)
 	}
-		if ( length(embeddings) == 0 ) {
-			stop("A CellexalVR session without 3D embeddings is not making sense! STOP.")
-		}
+	if ( ! hdf5r::is_hdf5(x)) {
+		stop( "The variable genes / analyzed VelocytoPy outfile is no .h5ad file")
+	}
+	file <- hdf5r::H5File$new(x, mode='r')
+
+	as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
+		specie,  embeddings , embeddingDims, velocity, scaleArrowTravel, minCell4gene  )
+
+})
+
+
+
+#' @rdname as_cellexalvrR
+setMethod('as_cellexalvrR', signature = c ('H5File'),
+	definition = function (x,  meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(),
+	 specie, embeddings = NULL, embeddingDims=3, velocity ='scvelo', scaleArrowTravel=20, minCell4gene=10) {
+
+		
 	## parse the data into a sparse matrix
 	toSparse <- function(file){
 		message("reading expression data")
@@ -220,77 +169,113 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
-		
-		rownames(m) = annotation[,'_index']
-		colnames(m) = meta.data[,'_index']
-		
+		if ( is.na(match("_index", colnames(annotation))) ){
+			rownames(m) = rownames(annotation)
+			colnames(m) = rownames(meta.data)
+			annotation[,'_index'] = rownames(m)
+			meta.data[,'_index']  = colnames(m)
+		}else{
+			rownames(m) = annotation[,'_index']
+			colnames(m) = meta.data[,'_index']
+		}
+
 		m
 	}
+
 	m = toSparse( x )
 	meta.data = H5Anno2df( x, 'obs')
 	annotation = H5Anno2df( x, 'var')
+	if ( is.na(match("_index", colnames(annotation))) ){
+		annotation[,'_index'] = rownames(m)
+		meta.data[,'_index']  = colnames(m)
+	}
+	
+	if ( is.null(embeddings) ) {
+		## extract all if embeddings == NULL
+		embeddings = names(x[['obsm']])[grep( '^X_', names(x[['obsm']]))]
+		embeddings = unlist(stringr::str_replace_all(embeddings, '^X_', '' ))
+	}
+	if ( length(embeddings) == 0 ) {
+			message("A CellexalVR session without 3D embeddings is not making sense! STOP?!")
+	}
 
-	#browser()
 	drcs = lapply(embeddings, function(n) {  
 				ret = t(x[['obsm']][[paste(sep="_",'X',n)]][1:embeddingDims,])
 				if ( embeddingDims == 2 ){
 					ret = cbind(ret, rep(0, nrow(ret)) )
 				}
+				rownames(ret) = meta.data[,'_index']
 				ret
 			} )
+
 	names(drcs) = embeddings
-	ret = new( 'cellexalvrR', 
+	cellexalvrR = new( 'cellexalvrR', 
 			data=m, meta.cell=as.matrix(meta.data), 
 			meta.gene=as.matrix(annotation), 
 			drc = drcs, specie = specie )
 	
+	## save the original information
+	cellexalvrR@usedObj$samples = meta.data
 
 	if ( velocity == 'scvelo' ) {
-		for ( n in names(ret@drc)) {
+		for ( n in names(cellexalvrR@drc)) {
 			velo_n = paste( sep="_", 'velocity', n )
-			ret@drc[[n]] = 
-				cbind( 
-					ret@drc[[n]], 
-					ret@drc[[n]][,1:embeddingDims] + t(x[['obsm']][[velo_n]][,] * veloScale)
-				)
-			if ( embeddingDims == 2 ){
-				ret@drc[[n]] =
-					cbind(ret@drc[[n]],rep(0, nrow(ret@drc[[n]])))
+			tryCatch({
+				cellexalvrR@drc[[n]] = 
+					cbind( 
+						cellexalvrR@drc[[n]], 
+						cellexalvrR@drc[[n]][,1:embeddingDims] + t(x[['obsm']][[velo_n]][,] * scaleArrowTravel)
+					)
+				if ( embeddingDims == 2 ){
+					cellexalvrR@drc[[n]] =
+						cbind(cellexalvrR@drc[[n]],rep(0, nrow(cellexalvrR@drc[[n]])))
+				}
+			},
+			error = function(e) { 
+				message( paste( "WARNING: drc", n, "- velocity information not available") )
 			}
+			)
 		}
+	}else if ( is.null(velocity) ) {
+		## that is OK - obviousel no veloctiy information to be imported
+	}
+	else {
+		message( paste( "WARNING: velocity information can only imported for 'scvelo'") )
 	}
 	
-	for ( n in names( ret@drc) ) {
-		rownames(ret@drc[[n]]) = colnames(ret@data)
-	}
 	## and filter the low expression gene, too
-	rsum = FastWilcoxTest::ColNotZero( Matrix::t(m) )
+	rsum = Matrix::rowSums( m )
 	OK_genes = which(rsum >= minCell4gene)
 	mOK = m[OK_genes,]
 	
-	#ret@meta.gene= matrix()
-	ret@data = mOK
-	ret@meta.gene = as.matrix(annotation[OK_genes,])
-	ret@specie = specie
-	ret
+	#cellexalvrR@meta.gene= matrix()
+	cellexalvrR@data = mOK
+	cellexalvrR@meta.gene = as.matrix(annotation[OK_genes,])
+
+	if ( !is.null(meta.cell.groups)){
+		cellexalvrR@meta.cell = make.cell.meta.from.df( cellexalvrR@usedObj$samples, meta.cell.groups )
+	}else {
+		warning( "Please convert the meta.cell data into the requred 0/1 table by using the make.cell.meta.from.df function before exporting theis to VR." )
+	}
+	cellexalvrR
 } )
 
+
 #' @name forceAbsoluteUniqueSample
-#' @aliases forceAbsoluteUniqueSample,ret-method
-#' @rdname forceAbsoluteUniqueSample-methods
 #' @docType methods
 #' @description  This function adds _<id> to all duplicate values thereby enforcing uniques.
 #' @param x the string vector you want to force into uniques
 #' @param separator the separator between orig str and id ( default '_')
-#' @title description of function forceAbsoluteUniqueSample
+#' @title make the cell names unique
 #' @export 
 setGeneric('forceAbsoluteUniqueSample', ## Name
 	function ( x ,separator='_') { ## Argumente der generischen Funktion
-		standardGeneric('forceAbsoluteUniqueSample') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
+		standardGeneric('forceAbsoluteUniqueSample') ## der Aufruf von standardGeneric sorgt für das Dispatching
 	}
 )
 
-setMethod('forceAbsoluteUniqueSample', signature = c ('ret'),
+#' @rdname forceAbsoluteUniqueSample
+setMethod('forceAbsoluteUniqueSample', signature = c ('cellexalvrR'),
 	definition = function ( x ,separator='_') {
 	ret <- vector(length=length(x))
 	last = x[1]
@@ -306,23 +291,24 @@ setMethod('forceAbsoluteUniqueSample', signature = c ('ret'),
 } )
 
 
+#' Convert e.g. a h5ad 'obs' object into a R::data.frame.
 #' @name H5Anno2df
-#' @aliases H5Anno2df,ret-method
-#' @rdname H5Anno2df-methods
 #' @docType methods
 #' @description  convert a H5 annotation (any name) table to a data table
-#' @param x the H5 object
-#' @param slotName the H5 entity tro convert to a data.frame
+#' @param x the H5File object
+#' @param slotName the H5 slot(s) to convert to a data.frame
 #' @param namecol the (optional) rownames column for the data
 #' @param onlyStrings return only columns that not only contain numbers (default FALSE)
-#' @title description of function H5Anno2df
+#' @title convert a H5 annotation (any name) table to a data table
 #' @export 
 setGeneric('H5Anno2df', ## Name
 		function (x, slotName, namecol=NULL, onlyStrings=FALSE ) { ## Argumente der generischen Funktion
-			standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt f\xFCr das Dispatching
+			standardGeneric('H5Anno2df') ## der Aufruf von standardGeneric sorgt für das Dispatching
 		}
 )
 
+
+#' @rdname H5Anno2df
 setMethod('H5Anno2df', signature = c ('H5File'),
 		definition = function (x, slotName, namecol=NULL, onlyStrings=FALSE ) {
 			OK = NULL;
@@ -350,14 +336,16 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 						as.vector(obs[, namecol]) )
 			}else {
 				## now I need to check for strings...
+				
 				OK = unlist(lapply( colnames(obs) , function(id) {
-									a= which( is.na(as.numeric(as.vector(obs[,id])))==T) ## Strings only
-									if ( length(a) > 0) {
-										length(unique(as.vector(obs[a, id])))
-									}else {
-										0
-									}
-								}))
+					suppressWarnings({a= which( is.na(as.numeric(as.vector(obs[,id])))==T) })
+					## Strings only
+					if ( length(a) > 0) {
+						length(unique(as.vector(obs[a, id])))
+					}else {
+						0
+					}
+				}))
 				names(OK) = colnames(obs)
 				# if ( slotName == 'row_attrs'){
 				# 	browser()
@@ -375,5 +363,3 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 			
 			obs
 		} )
-
-

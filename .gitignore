@@ -20,4 +20,5 @@ data/output/
 /file2dd0c17c116.serverR.Rout
 /file34852b2949a8.serverR.Rout
 /file357a5e5a1234.serverR.Rout
-/tests/testthat/data/tiny2.h5seurat
+vignettes/*.R
+vignettes/*.html

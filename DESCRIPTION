@@ -1,55 +1,61 @@
 Package: cellexalvrR
 Title: Provides the backend calculations for CellexalVR
-Version: 0.13.1
+Version: 0.14.6
 Authors@R: c(person("Stefan", "Lang", email = "stefan.lang@med.lu.se", role = c("aut")),
             person("Shamit", "Soneji", email = "shamit.soneji@med.lu.se", role = c("cre")))
 Description: This is the data analysis backend for the CellexalVR application.
 Suggests:
     testthat,
-    Seurat,
-    SeuratData
-biocViews: graph,
+biocViews:
+    AnnotationDbi,
+	DelayedMatrixStats,
+    edgeR,
+	graph,
     org.Mm.eg.db,
     org.Hs.eg.db,
-    AnnotationDbi,
-    topGO,
-    edgeR
+    topGO
 Depends:
-	R (>= 3.6),
-	Matrix
+    Matrix,
+    R (>= 3.6.0)
 Imports:
-	alphashape3d,
 	AnnotationDbi,
 	bookdown,
-	DDRTree,
-	entropy,
-	FastWilcoxTest (>= 0.1.11),
+	DelayedMatrixStats,
+	digest,
+	FastWilcoxTest (>= 0.1.16),
 	GeneNet,
+	ggplot2,
 	gplots,
 	graph,
-	grDevices,   
+	grDevices,
+	irlba,
 	knitr,
 	Matrix.utils,
 	methods,
 	org.Hs.eg.db,
 	org.Mm.eg.db,
-	pheatmap,
 	phytools,
-	ppcor,
+	progress,
+	propr,
+	ps,
 	reshape2,
 	rmarkdown,
 	RSQLite,
 	R.utils,
-	scales,
+	slingshot,
+	sm,
 	stringr,
 	topGO,
 	utils,
-	propr
+	wesanderson,
+	zip
 Remotes: 
-	sonejilab/FastWilcoxTest,
-	mojaveazure/seurat-disk
+	sonejilab/FastWilcoxTest
+Enhances:
+	Seurat
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: bzip2
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

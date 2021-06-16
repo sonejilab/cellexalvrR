@@ -4,16 +4,14 @@ context('exportUserGroups4vr')
 
 prefix = './'
 
-data = file.path(prefix, 'data/cellexalObj.RData')
 
-cellexalObj = loadObject( data )
+datadir <- file.path( prefix, 'data', 'output','exportUserGroups4vr')
+if ( file.exists( datadir )){
+	unlink(datadir, recursive=TRUE)
+}
+dir.create(datadir)
 
-cellexalObj@userGroups=data.frame()
-cellexalObj@usedObj$lastGroup = NULL
-cellexalObj@usedObj$SelectionFiles = list()
-
-datadir <- normalizePath(file.path( prefix, 'data', 'output'))
-cellexalObj@usedObj$sessionPath = cellexalObj@usedObj$sessionRmdFiles = cellexalObj@usedObj$sessionName = NULL
+cellexalObj=reset ( cellexalObj )
 
 cellexalObj@outpath = file.path(datadir)
 
@@ -27,8 +25,8 @@ if ( file.exists( file.path(datadir, 'User.group.1.cgr' ))){
 exportUserGroups4vr(cellexalObj, datadir )
 
 
-old = read.delim( grouping, header=F, row.names=1 )
-new = read.delim(file.path(datadir, 'User.group.1.cgr' ), header=F, row.names=1 )
+old = utils::read.delim( grouping, header=F, row.names=1 )
+new = utils::read.delim(file.path(datadir, 'User.group.1.cgr' ), header=F, row.names=1 )
 
 m = match(rownames(old),rownames(new))
 
