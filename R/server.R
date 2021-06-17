@@ -86,6 +86,7 @@ setMethod('server', signature = c ('character'),
 	## we check for additional screenshots in folder
 	path = file.path(dirname(file), 'Screenshots')
 	oldFiles = newScreenshots( c(), path =path )
+	oldFilters = newFilters( c(), path= cellexalObj@outpath)
 
   	while(TRUE){
   		#print('In the server while loop')
@@ -98,31 +99,46 @@ setMethod('server', signature = c ('character'),
 			}
 			oldFiles = c( oldFiles, newFiles)
 		}
+		newFilters = newFilters( oldFilters, path=cellexalObj@outpath )
+		if ( length(newFilters) > 0 ){
+			for (n in newFilters) {
+				this = file.path( cellexalObj@usedObj$sessionPath, n )
+				n = file.path(cellexalObj@outpath, n)
+				message( paste( 'logFigure will log the file',n ))
+				file.copy( n, this)
+				filter= paste( collapse=" ", scan( this, what=character()))
+				content = paste("\n## New Filter\n\nA new filter has been created in VR:\n\n```", filter,"```\n\n")
+				cellexalObj = storeLogContents( cellexalObj, content, type="VRfilter" )
+				id = length(cellexalObj@usedObj$sessionRmdFiles)
+				cellexalObj = renderFile( cellexalObj, id, type='VRfilter' )
+			}
+			oldFilters = c( oldFilters, newFilters)
+		}
 		if ( ! file.exists(pidfile ) ) {
 			break
 		}
-        if ( file.exists( scriptfile ) ) {
-                while ( file.exists( lockfile ) ) {
-                        Sys.sleep( sleepT )
-                }
-		file.create(lockfile)
+     		if ( file.exists( scriptfile ) ) {
+                	while ( file.exists( lockfile ) ) {
+                       	 Sys.sleep( sleepT )
+               		}
+			file.create(lockfile)
 		
-		cmd = readLines( scriptfile)
-		cmd = stringr::str_replace_all( paste( collapse=" " ,cmd), '\\s+', ' ')
-               	cat ( c("", cmd,""), file= outFile, sep="\n\r", append=TRUE )
-               	message( paste("VR cmd:", cmd) ) ## will go into the R_log.txt
-                try ( {source( scriptfile, local=FALSE ) } )
-                file.remove(scriptfile)
-                file.remove(lockfile)
-        }
-        if ( ! is.null( masterPID ) ){
-        	#
-        	if ( ! ps::ps_is_running( masterPID )) {
-        		message( paste("is the master",masterPID, "became inactive!") )
-        		unlink( pidfile ) ## shutdown in the next cycle.
+			cmd = readLines( scriptfile)
+			cmd = stringr::str_replace_all( paste( collapse=" " ,cmd), '\\s+', ' ')
+               		cat ( c("", cmd,""), file= outFile, sep="\n\r", append=TRUE )
+               		message( paste("VR cmd:", cmd) ) ## will go into the R_log.txt
+                	try ( {source( scriptfile, local=FALSE ) } )
+                	file.remove(scriptfile)
+                	file.remove(lockfile)
         	}
-        }
-        Sys.sleep( sleepT )   
+        	if ( ! is.null( masterPID ) ){
+        		#
+        		if ( ! ps::ps_is_running( masterPID )) {
+	        		message( paste("is the master",masterPID, "became inactive!") )
+        			unlink( pidfile ) ## shutdown in the next cycle.
+        		}
+        	}
+        	Sys.sleep( sleepT )   
 	}
 	message( "Server pid file lost - closing down" );
 	if ( exists('cellexalObj') ) {
@@ -141,13 +157,11 @@ setMethod('server', signature = c ('character'),
 		if(file.exists(file)) { 
 		unlink(file)} 
 	})
+	close(outFile)
 	if ( debug ) {
 		sink()
-		close(outFile)
-		return (0)
 	}
 	if ( ! asFunction ) {
-		close(outFile)
 		q('no')
 	}
 	
@@ -168,6 +182,27 @@ setMethod('server', signature = c ('character'),
 ##' @title internal function!
 newScreenshots <- function(oldFiles, path ='../Screenshots/' ) {
 		files = list.files( path )
+		OK = NULL
+		for ( x in files ){
+			if ( all ( sapply( oldFiles, function(old) { ! old==x } )) ){
+				OK = c(OK, x)
+			}
+		}
+		OK
+	}
+
+
+##' @name newFilters
+##' @aliases newFilters,character-method
+##' @rdname newFilters
+##' @docType methods
+##' @description Check the folder '../' for .fil files
+##' @param oldFiles a vector of old files.
+##' @param path the path to look for file (default '../Screenshots' )
+##' @keywords server
+##' @title internal function!
+newFilters <- function(oldFiles, path ='../' ) {
+		files = list.files( path, pattern = "*.fil$" )
 		OK = NULL
 		for ( x in files ){
 			if ( all ( sapply( oldFiles, function(old) { ! old==x } )) ){

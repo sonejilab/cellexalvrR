@@ -13,13 +13,25 @@ dir.create( opath )
 
 cellexalObj = check(cellexalObj)
 cellexalObj@outpath = opath
+if ( file.exists( file.path(opath, 'cellexalObj.RData'))){
+	unlink( file.path(opath, 'cellexalObj.RData') )
+}
+
 lockedSave( cellexalObj )
 
 cellexalObj = useInbuiltGOIlists(cellexalObj, 'TFs')
 
 cellexalObj = check(cellexalObj)
 
-make.cellexalvr.network ( file.path(opath, 'cellexalObj.RData') , file.path(ipath, 'selection0.txt'), opath )
+expect_true( file.exists( file.path(opath, 'cellexalObj.RData')), label="expected cellexal file exists")
+
+cellexalObj = reset( cellexalObj )
+cellexalObj = sessionPath( cellexalObj, 'logNetworkPNGTest')
+
+make.cellexalvr.network ( cellexalObj , file.path(ipath, 'selection0.txt'), opath )
+
+#cellexalObj = renderReport(cellexalObj)
+#skip("First things first")
 
 for ( f in ofiles ) {
 	ofile = file.path(opath, f )
@@ -28,7 +40,7 @@ for ( f in ofiles ) {
 	expect_true( file.exists( ofile ), paste("outfile exists", ofile) )
 }
 
-## now add the log network test hereprefix = './'
+## now add the log network test here
 
 ## the network image is created by the VR process - hence I need a dummy here!
 
@@ -42,13 +54,23 @@ grDevices::dev.off()
 
 heatmap_png <- file.path(opath, 'tmp', 'a_simple_figure2.png')
 
-cellexalObj = sessionPath (cellexalObj, 'LogNetworkTest' )
+#cellexalObj = sessionPath (cellexalObj, 'logNetworkPNGTest' )
 
-ofile = file.path( cellexalObj@outpath, 'AB_Network_LogNetworkTest.html')
+ofile = file.path( cellexalObj@outpath, 'AC_Network_logNetworkPNGTest.html')
 
 if ( file.exists( ofile ) ) {
 	unlink( ofile )
 }
-cellexalObj = logNetwork(cellexalObj, genes, heatmap_png, file.path(ipath, 'selection0.txt') )
+cellexalObj = logNetworkPNG(cellexalObj, genes, heatmap_png, file.path(ipath, 'selection0.txt') )
 
-expect_true( file.exists( ofile ), paste("outfile exists", ofile) )
+expect_true( file.exists( ofile ), label= paste("outfile exists", ofile) )
+
+cellexalObj = renderReport(cellexalObj)
+
+ofiles = c(  "cellexalObj.RData", "libs", "logNetworkPNGTest", "Networks.nwk", "NwkCentroids.cnt", 
+	"PortableLog_logNetworkPNGTest.zip", "reference-keys.txt", "search_index.json"
+	, "session-log-for-session-logNetworkPNGtest.html", "tmp")
+
+for ( f in ofiles){
+	expect_true( file.exists( file.path(cellexalObj@outpath, f)), label =paste("file", f))
+}

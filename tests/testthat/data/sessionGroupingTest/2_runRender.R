@@ -1,2 +1,0 @@
-setwd( file.path('C:','Users','Stefan','git','cellexalvrR','tests','testthat','data','sessionGroupingTest') )
- rmarkdown::render(input=file.path('C:','Users','Stefan','git','cellexalvrR','tests','testthat','data','sessionGroupingTest','2_Heatmap_paritalLog.Rmd'), output_format= 'html_document', output_file='2_Heatmap_sessionGroupingTest', output_dir='../')

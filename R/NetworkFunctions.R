@@ -242,6 +242,11 @@ setMethod('make.cellexalvr.network', signature = c ('cellexalvrR'),
     utils::write.table(grp.tabs,file.path( outpath,"Networks.nwk"),row.names=F,col.names=T,quote=F,sep="\t",eol="\r\n")
     utils::write.table(cbind(avg.drc.coods,req.graph),file.path( outpath,"NwkCentroids.cnt"),row.names=F,col.names=F,quote=F,sep="\t",eol="\r\n")
     #utils::write.table(layout.tabs,file.path(outpath,"NwkLayouts.lay"),row.names=T,col.names=F,quote=F,sep="\t",eol="\r\n")
+    if ( ! is.null(cellexalObj@usedObj$sessionName) ) {
+        ## write some info to the session.
+        ## how many networks have we already saved?
+        cellexalObj = logNetwork( cellexalObj, grouping=info@gname )
+    }
 	invisible(cellexalObj)
     }
 } )

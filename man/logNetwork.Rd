@@ -7,22 +7,22 @@
 \alias{logNetwork,character-method}
 \title{add one network to the cellexalvrR log system}
 \usage{
-logNetwork(cellexalObj, genes = NULL, png, grouping, ...)
+logNetwork(cellexalObj, genes = NULL, grouping, ...)
 
-\S4method{logNetwork}{cellexalvrR}(cellexalObj, genes = NULL, png, grouping, ...)
+\S4method{logNetwork}{cellexalvrR}(cellexalObj, genes = NULL, grouping, ...)
 
-\S4method{logNetwork}{character}(cellexalObj, genes = NULL, png, grouping, ...)
+\S4method{logNetwork}{character}(cellexalObj, genes = NULL, grouping, ...)
 }
 \arguments{
 \item{cellexalObj}{the cellexalvrR object}
 
 \item{genes}{the genes displayed on the network}
 
-\item{png}{the VR generated network (png)}
-
 \item{grouping}{the grouping file used to create this network}
 
 \item{...}{options you want to send to the ontologyLogPage() function}
+
+\item{the}{VR generated network ()}
 }
 \description{
 create one Network page in the session report

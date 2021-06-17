@@ -1,2 +1,0 @@
-setwd( file.path('C:','Users','Stefan','git','cellexalvrR','tests','testthat','data','2020_08_14_10_55_12') )
- rmarkdown::render(input=file.path('C:','Users','Stefan','git','cellexalvrR','tests','testthat','data','2020_08_14_10_55_12','2_Heatmap_paritalLog.Rmd'), output_format= 'html_document', output_file='2_Heatmap_2020_08_14_10_55_12', output_dir='../')

@@ -1,5 +1,8 @@
-context('server Simple - screenshots')
+context('server Simple SIMPLE on windows')
 
+if ( .Platform$OS.type != 'windows' ) {
+	skip('Test only meaningful under windows')
+}
 skip('not working')
 
 prefix= './'
@@ -18,22 +21,18 @@ cellexalObj@outpath = normalizePath(path)
 #setwd( cellexalObj@outpath )
 
 
-#setTimeLimit(10,10)
+setTimeLimit(10,10)
 
 fileConn<-file(file.path(cellexalObj@outpath,"mainServer.input.R" ))
-writeLines(c(
-	#"setwd(cellexalObj@outpath)",
-	"print('in the source loop')",
-	"browser()",
-	"cellexalObj = renderReport(cellexalObj)", 
-	paste(sep="","unlink('mainServer.pid')") 
+writeLines(c("unlink('mainServer.pid')"
 	), fileConn)
 close(fileConn)
+
 
 server ( file=file.path(cellexalObj@outpath,'mainServer'), debug=TRUE, asFunction=TRUE)
 
 
-#setTimeLimit(Inf,Inf)
+setTimeLimit(Inf,Inf)
 
 files = c(  "mainServer.cellexalvrR.version", "mainServer.pid", "mainServer.sessionName" )
 
@@ -51,4 +50,3 @@ expect_equal( files, list.files(file.path(path, sessionPath)), label ="All expec
 
 #setwd( oldwd )
 print("All is finished")
-browser()

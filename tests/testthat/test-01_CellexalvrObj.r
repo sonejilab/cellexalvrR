@@ -51,18 +51,14 @@ if ( file.exists(opath)){
 dir.create( opath )
 export2cellexalvr( obj, opath, force=T )
 
+files = c( "a.meta.cell", "c.meta.gene", "cellexalObj.RData", "database.sqlite", "test.mds")
 
-# if ( file.exists(file.path(ipath,'cellexalObjOK.RData.lock')) ) {
-# 	unlink(file.path(ipath, 'cellexalObjOK.RData.lock') )
-# }
-# if ( ! file.exists (file.path(ipath,'cellexalObjOK.RData') ) ) {
-# 	stop( paste("Libraray error - test file not found ", 
-# 		file.path(ipath,'cellexalObjOK.RData')) )
-# }
-
+for ( f in files ){
+	ofile = file.path(opath, f ) 
+	expect_true( file.exists( ofile ), label=paste("outfile exists", ofile) )
+}
 
 cellexalObj = check(cellexalObj)
-
 expect_true( cellexalObj@usedObj$checkPassed, label="internal cellexalObj test" )
 
 ofiles = c( 'a.meta.cell', 'c.meta.gene', 'database.sqlite', 'DDRtree.mds', 
@@ -84,13 +80,10 @@ if (! file.exists( opath)) {
 
 export2cellexalvr(cellexalObj , opath )
 
-
 for ( f in ofiles ) {
 	ofile = file.path(opath, f ) 
 	expect_true( file.exists( ofile ), label=paste("outfile exists", ofile) )
 }
-
-
 
 context( "store user groupings" )
 
@@ -98,11 +91,12 @@ if ( file.exists( file.path(cellexalObj@outpath, 'initialTest')) ){
 	 unlink(file.path(cellexalObj@outpath, 'initialTest'), recursive=TRUE)
 }
 
+cellexalObj = reset( cellexalObj )
+
 cellexalObj@outpath = opath
 cellexalObj = sessionPath(cellexalObj, 'initialTest' )
 
 old_length = 0
-cellexalObj@userGroups = data.frame()
 
 cellexalObj = userGrouping(cellexalObj, file.path(ipath, 'selection0.txt') )
 expect_equal( length(cellexalObj@userGroups) , old_length + 2 )
@@ -119,14 +113,15 @@ expect_true( all.equal(origids, ids[m]) == TRUE, 'grouping stored correctly')
 ## and check the order and the colors, too
 
 expect_true( all.equal(cellexalObj@userGroups[m,2], 1:length(m)) == TRUE, 
-	'order stored correctly' )
+	label = 'order stored correctly' )
 expect_true( all.equal(cellexalObj@colors[[1]], as.vector(unique(orig[,2]))) == TRUE, 
-	'color stored correctly' )
+	label = 'color stored correctly' )
 
-expect_true( file.exists( file.path(cellexalObj@outpath, 'initialTest', 'selection0.txt')), 
-	"the selction has not been copied to the session path")
+
+expect_true( file.exists( file.path(cellexalObj@usedObj$sessionPath, 'selection0.txt')), 
+	label = "the selction has been copied to the session path")
 expect_true( file.exists( file.path(cellexalObj@outpath, 'initialTest', 'selection0.txt.group.txt')), 
-	"the selction's internal colname is not stored")
+	label = "the selction's internal colname is stored")
 
 cellexalObj = userGrouping(cellexalObj, file.path(ipath, 'selection0.txt') )
 expect_equal( length(cellexalObj@userGroups) ,old_length +  2 ) # same grouing no adding of the data
