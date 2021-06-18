@@ -93,7 +93,7 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 
 	figureF = correctPath(figureF, cellexalObj)
 	content = paste( sep="\n",
-		paste( "##", "Heatmap from Saved Selection ", n  ),
+		paste( "##", n, "Heatmap from Saved Selection"  ),
 		paste("This selection is available in the R object as group",cellexalObj@usedObj$lastGroup ),
 		"",
 		paste( "### Genes"),

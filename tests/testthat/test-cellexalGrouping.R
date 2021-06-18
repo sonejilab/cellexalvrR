@@ -52,31 +52,29 @@ x = getDifferentials( x, grouping, deg.method='wilcox'	)
 x= renderReport(x)
 
 collect = list(
-	'Statistical result from User.group.2' = 0,
+	'User.group.2 Statistical Result' = 0,
 	'group information table' = 0,
 	'User.group.2.Cpp.csv' = 0, 
 	'2D DRC DDRtree dim 1,2 . User.group.2 .' = 0,
 	'2D DRC DDRtree dim 2,3 . User.group.2 .' = 0,
 	'2D DRC DDRtree dim 1,3 . User.group.2 .' = 0,
-	'Statistical result from Time.group.4' = 0,
+	'Time.group.4 Statistical Result' = 0,
 	'2D DRC DDRtree dim 1,2 . Time.group.4 .' = 0,
 	'2D DRC DDRtree dim 2,3 . Time.group.4 .' = 0,
-	'2D DRC DDRtree dim 1,3 . Time.group.4 .' = 0,
-	'TimeLine control from Saved Selection 1' = 0
+	'2D DRC DDRtree dim 1,3 . Time.group.4 .' = 0
 )
 
 expect = list(
-	'Statistical result from User.group.2' = 2,
+	'User.group.2 Statistical Result' = 2,
 	'group information table' = 4,
 	'User.group.2.Cpp.csv' = 1, 
 	'2D DRC DDRtree dim 1,2 . User.group.2 .' = 2,
 	'2D DRC DDRtree dim 2,3 . User.group.2 .' = 2,
 	'2D DRC DDRtree dim 1,3 . User.group.2 .' = 2,
-	'Statistical result from Time.group.4' = 2,
-	'2D DRC DDRtree dim 1,2 . Time.group.4 .' = 3,
+	'Time.group.4 Statistical Result' = 2,
+	'2D DRC DDRtree dim 1,2 . Time.group.4 .' = 4,
 	'2D DRC DDRtree dim 2,3 . Time.group.4 .' = 4,
-	'2D DRC DDRtree dim 1,3 . Time.group.4 .' = 4,
-	'TimeLine control from Saved Selection 1' = 2
+	'2D DRC DDRtree dim 1,3 . Time.group.4 .' = 4
 )
 
 expect[[x@outpath]] = 0
@@ -86,8 +84,6 @@ ofile = file.path( x@outpath, 'session-log-for-session-cellexalgrouptest.html')
 
 expect_true( file.exists( ofile), label = ofile)
 
-#browser()
 collect = checkFile(collect, ofile, '21321§"!3' ) ## not split the lines!
-#print(collect)
-#browser()
+
 expect_equal( collect, expect, label="simple test of resulting HTML")

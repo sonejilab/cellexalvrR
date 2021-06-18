@@ -73,7 +73,7 @@ expect_true( file.exists( ofile), label= ofile )
 ## check the html file for duplicated entries (sections).
 
 collect = list( 
-	'TimeLine control from Saved Selection' = 0,
+	'Time.group.2 TimeLine control' = 0,
 	'as group Time.group.2' = 0,
 	'Time.group.2.Linear.csv' = 0,
 	'Session Log for Session timeSession_only_one' = 0,
@@ -81,7 +81,7 @@ collect = list(
 )
 
 expt = list( 
-	'TimeLine control from Saved Selection' = 2, # one in the text and one in the TOC
+	'Time.group.2 TimeLine control' = 2, # one in the text and one in the TOC
 	'as group Time.group.2' = 1,
 	'Time.group.2.Linear.csv' = 1,
 	'Session Log for Session timeSession_only_one' = 2, # one in the text and one in the TOC
@@ -90,8 +90,6 @@ expt = list(
 expt[[x@outpath]] = 0
 collect[[x@outpath]] = 0
 collect = checkFile(collect, ofile )
-
-
 
 expect_equal( collect, expt, label="No duplicate entries in the HTMP file")
 

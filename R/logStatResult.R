@@ -54,7 +54,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			sesionFile = x@usedObj$SelectionFiles[[x@usedObj$lastGroup]]
 		}
 		content=paste( sep="\n", collapse = "\n",
-				paste( "##", "Statistical result from ",  x@usedObj$lastGroup ),
+				paste( "##", x@usedObj$lastGroup,"Statistical Result" ),
 				"",
 				tableHTML,
 				"",

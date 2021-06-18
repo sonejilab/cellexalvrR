@@ -71,8 +71,8 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		## but I also want to show the TIME in the drc plot - hence I need a new grouping!
 
 		content = paste( collapse="\n", sep="\n","",
-			paste( "##", "TimeLine control from Saved Selection ", 
-				sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup ) ),"",
+			paste( "##",timeInfo@gname, "TimeLine control"),
+			"",
 			paste("This TimeLine is available in the R object as group",
 				timeInfo@gname ),
 			""
@@ -113,12 +113,11 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 				md_gene_links ( rev(genes[[i]]), label="expand in heatmap order" )
 				)
 		}
-		content = paste( collapse="\n", content,
+		content = paste( sep="\n",collapse="\n", content,
 			#paste(collapse = "\n", sep="\n",drcFiles2HTML(cellexalObj, info, "original selection")), #function definition in file 'drcPlot2D.R'
 			paste(collapse = "\n", sep="\n",drcFiles2HTMLtime(cellexalObj, info, "time line")) #function definition in file 'drcPlot2Dtime.R'
 
 			)
-
 	}
 
 	cellexalObj = storeLogContents( cellexalObj, content, type="OneGroupTime")

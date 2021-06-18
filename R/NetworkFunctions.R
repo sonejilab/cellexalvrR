@@ -245,7 +245,7 @@ setMethod('make.cellexalvr.network', signature = c ('cellexalvrR'),
     if ( ! is.null(cellexalObj@usedObj$sessionName) ) {
         ## write some info to the session.
         ## how many networks have we already saved?
-        cellexalObj = logNetwork( cellexalObj, grouping=info@gname )
+        cellexalObj = logNetworkStats( cellexalObj, grouping=info@gname )
     }
 	invisible(cellexalObj)
     }

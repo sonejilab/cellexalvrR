@@ -93,7 +93,7 @@ expect_true( file.exists( ofile), label= ofile )
 ## check the html file for duplicated entries (sections).
 
 collect = list( 
-	'TimeLine control from Saved Selection' = 0,
+	'Time.group.2 TimeLine control' = 0,
 	'as group Time.group.2' = 0,
 	'Time.group.2.Linear.csv' = 0,
 	'Session Log for Session timeSession_subsets' = 0,
@@ -101,7 +101,7 @@ collect = list(
 	'href="https://www.genecards.org/cgi-bin/' = 0
 )
 expt = list( 
-	'TimeLine control from Saved Selection' = 4, # one in the text and one in the TOC
+	'Time.group.2 TimeLine control' = 4, # one in the text and one in the TOC
 	'as group Time.group.2' = 2,
 	'Time.group.2.Linear.csv' = 2,
 	'Session Log for Session timeSession_subsets' = 2, # one in the text and one in the TOC

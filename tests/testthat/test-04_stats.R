@@ -37,7 +37,7 @@ x = renderReport(x)
 expect_true( file.exists( ofile), label="stats main outfile")
 
 search = list(
-	'statistical-result-from-user.group.1' = 0,
+	'User.group.1 Statistical Result' = 0,
 	'./StatTest/tables/User.group.1.Cpp.csv' =0,
 	"StatTest/png/User.group.1.DDRtree.1_2.png"= 0,
 	"StatTest/png/User.group.1.DDRtree.1_3.png"= 0,
@@ -47,7 +47,7 @@ search = list(
 search = checkFile( search, ofile )
 
 exp= list(
-	'statistical-result-from-user.group.1' = 2,
+	'User.group.1 Statistical Result' = 2,
 	'./StatTest/tables/User.group.1.Cpp.csv' =1,
 	"StatTest/png/User.group.1.DDRtree.1_2.png"= 1,
 	"StatTest/png/User.group.1.DDRtree.1_3.png"= 1,

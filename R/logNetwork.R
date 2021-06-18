@@ -1,32 +1,61 @@
 
 #' logNetwork is a VR helper funtion that stores one network plot into the log document.
+#' This function is directly called from the VR process. Do not alter the function!
 #' @name logNetwork
 #' @docType methods
 #' @description create one Network page in the session report
 #' @param cellexalObj the cellexalvrR object
 #' @param genes the genes displayed on the network
-#' @param  the VR generated network ()
+#' @param png the VR generated network (png)
 #' @param grouping the grouping file used to create this network
 #' @param ... options you want to send to the ontologyLogPage() function
 #' @title add one network to the cellexalvrR log system
 #' @export
-setGeneric("logNetwork", function(cellexalObj, genes = NULL, grouping, ...) {
+setGeneric("logNetwork", function(cellexalObj, genes = NULL, png, grouping, ...) {
     standardGeneric("logNetwork")
 })
 
 
 #' @rdname logNetwork
 setMethod("logNetwork", signature = c("cellexalvrR"), 
-    definition = function(cellexalObj, genes = NULL, grouping, ...) {
+    definition = function(cellexalObj, genes = NULL, png, grouping, ...) {
     ## almost the same page as in the logHeatmap function - including a GO analyis?
 
     ## now I need to create the 2D drc plots for the grouping
-    cellexalObj = userGrouping(cellexalObj, grouping)  #function definition in file 'userGrouping.R'
+
+    # if we got a file - let's read that in!
+    if ( file.exists( grouping)) {
+        cellexalObj = userGrouping( cellexalObj, grouping ) #function definition in file 'userGrouping.R'
+        grouping = cellexalObj@usedObj$lastGroup
+    }
+
+    ## the grouping needs to be matched with the heatmap
+    ## This needs to be added if I manage to think how to do that.
+    ## This might need VR implementation!
+
+    # base = unlist(strsplit( png, '_' ))
+    # base = paste( paste( collapse="_",base[-length(base)] ), sep=".", 'txt')
+
+    # heatmap_core =  basename(base)
+    
+    # ok = which( unlist( lapply( cellexalObj@groupSelectedFrom, 
+    #        function(info){!is.na(match(info@heatmapBasename, heatmap_core )) }
+    # )))
+    # if ( length( ok ) > 0 ){
+    #     grouping = names(rev(ok)[1])
+    # }
 
     cellexalObj = sessionPath(cellexalObj)  #function definition in file 'sessionPath.R'
     sessionPath = cellexalObj@usedObj$sessionPath
 
+    if (!file.exists(png)) {
+        stop(paste("logNetwork the network png file can not be found!", "png"))
+    }
+    figureF= file.path(sessionPath, "png", basename(png))
+    file.copy(png, figureF)
 
+    figureF = correctPath (figureF, cellexalObj )
+    ## now I need to create the 2D drc plots for the grouping
     gInfo = groupingInfo(cellexalObj, cellexalObj@usedObj$lastGroup)  #function definition in file 'groupingInfo.R'
 
     ## gInfo is a list with names grouping, drc, col and order create a file
@@ -40,46 +69,23 @@ setMethod("logNetwork", signature = c("cellexalvrR"),
 
     cellexalObj = sessionRegisterGrouping(cellexalObj, cellexalObj@usedObj$lastGroup)  #function definition in file 'sessionRegisterGrouping.R'
 
-
-    Add = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))[
-        length( list.files( cellexalObj@usedObj$sessionPath, pattern="*Networks.nwk") ) +1
-    ]
-    file.copy( 
-         file.path( cellexalObj@outpath,"Networks.nwk"), 
-           file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"Networks.nwk"))
-    )
-    file.copy( 
-         file.path( cellexalObj@outpath,"NwkCentroids.cnt"), 
-         file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"NwkCentroids.cnt"))
-    )
-    info = groupingInfo( cellexalObj, cellexalObj@usedObj$lastGroup)
-
-    figures = paste( collapse="\n", drcFiles2HTML(cellexalObj, gInfo ))
-
-    content = paste(sep="",
-
-        "\n## Network calculation\n",
+    ## this is the original function
     
-        paste(sep="",
-        "\nA new transcription factor network has been calculated for",
-        " CellexalVR based on the grouping ", info@gname,
-        " and this <a href='./",
-        file.path(cellexalObj@usedObj$session, info@selectionFile),
-        "' download>selection file</a>.\n"),
+    content = paste(
+            
+            paste(sep="", "### ",gInfo@gname, " Network map (from CellexalVR)\n\n"),
 
-        "You can download the network table <a href='./",
-        file.path(cellexalObj@usedObj$sessionName, paste(sep="", Add,"Networks.nwk")),
-        "' download>here</a>.\n\n",
+            paste("This selection is available in the R object as group",
+             gInfo@gname, "and is based on the selection file",
+              basename(gInfo@selectionFile), "\n\n"), 
+            "", 
+            paste("![](", figureF, ")")
+            , sep = "\n", collapse="\n")
 
-        paste( "## The 2D representation(s) of grouping",info@gname,
-        ":\n\nThe grouping originates from the grouping file",
-        info@selectionFile, "\n\n", figures )
-    
-    )
 
-    cellexalObj = storeLogContents( cellexalObj, content, type="Networks" )
+    cellexalObj = storeLogContents(cellexalObj, content, type = "Network")
     id = length(cellexalObj@usedObj$sessionRmdFiles)
-    cellexalObj = renderFile( cellexalObj, id, type='Networks' )
+    cellexalObj = renderFile(cellexalObj, id, type = "Network")
 
     ## if you give me a gene list here you will get a GO analysis ;-) if ( !
     ## is.null(genes)){ if ( file.exists(genes)) { genes =
@@ -94,7 +100,7 @@ setMethod("logNetwork", signature = c("cellexalvrR"),
 
 #' @rdname logNetwork
 setMethod("logNetwork", signature = c("character"), definition = function(cellexalObj,
-    genes = NULL,  grouping, ...) {
+    genes = NULL, png, grouping, ...) {
     cellexalObj <- loadObject(cellexalObj)
-    logNetwork(cellexalObj, genes, , grouping, ...)  #function definition in file 'logNetwork.R'
+    logNetwork(cellexalObj, genes, png, grouping, ...)  #function definition in file 'logNetwork.R'
 })

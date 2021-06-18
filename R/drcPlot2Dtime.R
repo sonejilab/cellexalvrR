@@ -151,5 +151,5 @@ drcFiles2HTMLtime = function( cellexalObj, gInfo, showIDs=TRUE, addOn = NULL ) {
 		paste("![](",drcFiles[3],")"),
 		"","")
 	}
-	paste( str, collapse="\n", sep="" )
+	paste( str, collapse="\n", sep="\n" )
 }

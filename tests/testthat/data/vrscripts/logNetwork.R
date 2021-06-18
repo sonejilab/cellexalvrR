@@ -29,4 +29,4 @@ if ( is.na( topNodes) ) {
 
 cellexalObj <- loadObject(file.path(datadir, "cellexalObj.RData"))
 
-cellexalObj = logNetworkPNG(cellexalObj, genes, heatmap_png, grouping, ontology = ontology, topNodes = topNodes )
+cellexalObj = logNetwork(cellexalObj, genes, heatmap_png, grouping, ontology = ontology, topNodes = topNodes )

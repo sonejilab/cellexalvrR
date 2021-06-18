@@ -26,7 +26,7 @@ cellexalObj = check(cellexalObj)
 expect_true( file.exists( file.path(opath, 'cellexalObj.RData')), label="expected cellexal file exists")
 
 cellexalObj = reset( cellexalObj )
-cellexalObj = sessionPath( cellexalObj, 'logNetworkPNGTest')
+cellexalObj = sessionPath( cellexalObj, 'logNetworkTest')
 
 make.cellexalvr.network ( cellexalObj , file.path(ipath, 'selection0.txt'), opath )
 
@@ -54,22 +54,22 @@ grDevices::dev.off()
 
 heatmap_png <- file.path(opath, 'tmp', 'a_simple_figure2.png')
 
-#cellexalObj = sessionPath (cellexalObj, 'logNetworkPNGTest' )
+#cellexalObj = sessionPath (cellexalObj, 'logNetworkTest' )
 
-ofile = file.path( cellexalObj@outpath, 'AC_Network_logNetworkPNGTest.html')
+ofile = file.path( cellexalObj@outpath, 'AC_Network_logNetworkTest.html')
 
 if ( file.exists( ofile ) ) {
 	unlink( ofile )
 }
-cellexalObj = logNetworkPNG(cellexalObj, genes, heatmap_png, file.path(ipath, 'selection0.txt') )
+cellexalObj = logNetwork(cellexalObj, genes, heatmap_png, file.path(ipath, 'selection0.txt') )
 
 expect_true( file.exists( ofile ), label= paste("outfile exists", ofile) )
 
 cellexalObj = renderReport(cellexalObj)
 
-ofiles = c(  "cellexalObj.RData", "libs", "logNetworkPNGTest", "Networks.nwk", "NwkCentroids.cnt", 
-	"PortableLog_logNetworkPNGTest.zip", "reference-keys.txt", "search_index.json"
-	, "session-log-for-session-logNetworkPNGtest.html", "tmp")
+ofiles = c(  "cellexalObj.RData", "libs", "logNetworkTest", "Networks.nwk", "NwkCentroids.cnt", 
+	"PortableLog_logNetworkTest.zip", "reference-keys.txt", "search_index.json"
+	, "session-log-for-session-logNetworktest.html", "tmp")
 
 for ( f in ofiles){
 	expect_true( file.exists( file.path(cellexalObj@outpath, f)), label =paste("file", f))

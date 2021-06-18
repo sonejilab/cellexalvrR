@@ -297,7 +297,7 @@ context('server VR interface - log network')
 ############################################################
 
 
-#logNetworkPNG ( cellexalObj, genes = NULL, png, grouping, ... )
+#logNetwork ( cellexalObj, genes = NULL, png, grouping, ... )
 hfile = paste( sep=".","testNetwork",'png')
 grDevices::png( file=file.path(  tmpDir, 'Heatmaps',hfile), width=600, height=600 ) 
 plot(1:10,1:10, main= "Network" )
@@ -305,7 +305,7 @@ grDevices::dev.off()
 
 write_lines(
   paste( sep="",
-	"cellexalObj = logNetworkPNG( cellexalObj, grouping= '",
+	"cellexalObj = logNetwork( cellexalObj, grouping= '",
 	file.path( tmpDir, 'selection0.txt'),
 	"', png='",file.path( tmpDir, 'Heatmaps', "testNetwork.png"),"')" 
   )

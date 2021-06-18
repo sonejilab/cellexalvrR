@@ -77,7 +77,7 @@ expect = list(
 	"a href='./test/tables/Time.group.2.Linear.csv' download" = 1,
 	"a href='./test/tables/User.group.3.Cpp.csv' download" = 1,
 	"a href='./test/selection10.txt' download" = 1,
-	'Time.group.2' = 23,
+	'Time.group.2' = 26,
 	'User.group.3' = 13
 )
 

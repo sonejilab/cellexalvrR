@@ -87,20 +87,49 @@ x = renderReport( x)
 expect_true( file.exists(ofile) , label="Main outfile produced")
 
 collect= list(
-  '2D DRC DDRtree dim 1,2 ( Time.group.2 )' = 0,
-  '2D DRC DDRtree dim 2,3 ( Time.group.2 )' = 0,
-  'TimeLine control from Saved Selection 1' = 0,
+  '2D DRC DDRtree dim 1,2 . Time.group.2 .' = 0,
+  '2D DRC DDRtree dim 1,3 . Time.group.2 .'  =0,
+  '2D DRC DDRtree dim 2,3 . Time.group.2 .' = 0,
+  'Time.group.2 Statistical Result' = 0,
+  'Time.group.2 TimeLine control' = 0,
+  'Gene group 1' = 0,
+  'Gene group 2' = 0, 
+  'Gene group 3' = 0,
+  'Gene group 4' = 0,
+  'Gene group 5' = 0,
   'Gene group 6' = 0,
-  'Statistical result from Time.group.3' = 0,
-  '2D DRC DDRtree dim 1,2 ( Time.group.3 )' = 0,
-  '2D DRC DDRtree dim 2,3 ( Time.group.3 )' = 0,
+  'Time.group.3 Statistical Result' = 0,
+  'Time.group.3 TimeLine control' = 0,
+  '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 0,
+  '2D DRC DDRtree dim 1,3 . Time.group.3 .'  =0,
+  '2D DRC DDRtree dim 2,3 . Time.group.3 .' = 0,
   'Comparison between the gene clusters of timeline Time.group.3 or A and timeline Time.group.4 or B' = 0,
-  'The following genes from timeline Time.group.3 or A cluster 1 have ended up in the timeline Time.group.4 or B cluster 3' = 0,
-  'Genes expression in Time.group.3 or A' = 0, 
-  'Genes expression in Time.group.4 or B' = 0
-  )
-
+  'Click to expand gene list' = 0
+)
 
 collect = checkFile( collect, ofile)
+#browser()
+expect= list(
+  '2D DRC DDRtree dim 1,2 . Time.group.2 .' = 4,
+  '2D DRC DDRtree dim 1,3 . Time.group.2 .'  =4,
+  '2D DRC DDRtree dim 2,3 . Time.group.2 .' = 4,
+  'Time.group.2 Statistical Result' = 2,
+  'Time.group.2 TimeLine control' = 2,
+  'Gene group 1' = 3,
+  'Gene group 2' = 3, 
+  'Gene group 3' = 3,
+  'Gene group 4' = 3,
+  'Gene group 5' = 3,
+  'Gene group 6' = 3,
+  'Time.group.3 Statistical Result' = 2,
+  'Time.group.3 TimeLine control' = 2,
+  '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 4,
+  '2D DRC DDRtree dim 1,3 . Time.group.3 .'  =4,
+  '2D DRC DDRtree dim 2,3 . Time.group.3 .' = 4,
+  'Comparison between the gene clusters of timeline Time.group.3 or A and timeline Time.group.4 or B' = 2,
+  'Click to expand gene list' = 18
+)
+
+expect_equal( collect, expect, label="html internals")
 
 
