@@ -180,51 +180,51 @@ context('server VR interface - create heatmap')
 
 testHeatmap = function( selectionFile, startID ) {
 
-expect_true( file.copy( selectionFile, file.path( tmpDir, basename(selectionFile))), label='selection file copy')
+	expect_true( file.copy( selectionFile, file.path( tmpDir, basename(selectionFile))), label='selection file copy')
 
-expect_true( file.exists( file.path( tmpDir, basename(selectionFile) )))
-
-
-if ( ! file.exists( file.path( tmpDir, 'Heatmaps'))){
-	dir.create(file.path( tmpDir, 'Heatmaps') )
-}
-
-write_lines(paste( sep="",
-	"cellexalObj = make.cellexalvr.heatmap.list( cellexalObj, cellidfile = '",
-	file.path( tmpDir, basename(selectionFile) ),
-	"', num.sig = 250, outfile = '",
-	file.path(  tmpDir, 'Heatmaps', paste( sep=".","testHeatmap",startID) ),
-	"', stats_method= 'wilcox')" 
-    )
-) 
-
-wait4server()
-Sys.sleep( 1 )
-
-out = utils::read.delim( output, row.names=NULL, header=F )
+	expect_true( file.exists( file.path( tmpDir, basename(selectionFile) )))
 
 
-for ( file in c(
-	paste( sep=".","testHeatmap",startID),
-	paste( sep=".","testHeatmap",startID,'sqlite3')
-	) ){
-	expect_true( file.exists( file.path( dirname(tmpFile), 'Heatmaps', file )), 
-		label = file )
-}
+	if ( ! file.exists( file.path( tmpDir, 'Heatmaps'))){
+		dir.create(file.path( tmpDir, 'Heatmaps') )
+	}
 
-expect_true ( length(scan(what=character(), 
-	file.path( dirname(tmpFile), 'Heatmaps',paste(sep=".","testHeatmap" ,startID)) ) ) == 253 , label="always get 253 genes instead of 250?" )
+	write_lines(paste( sep="",
+		"cellexalObj = make.cellexalvr.heatmap.list( cellexalObj, cellidfile = '",
+		file.path( tmpDir, basename(selectionFile) ),
+		"', num.sig = 250, outfile = '",
+		file.path(  tmpDir, 'Heatmaps', paste( sep=".","testHeatmap",startID) ),
+		"', stats_method= 'wilcox')" 
+    	)
+	) 
 
-## and now I alsoexpect the results to be in the log!
+	wait4server()
+	Sys.sleep( 1 )
 
-AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
-for ( file in 
-	c(paste(sep="", startID,'_Stats_runRender.R'), paste( AA[startID],'_Stats_paritalLog.Rmd',sep=""), 
-		basename(selectionFile),paste( sep=".",basename(selectionFile) ,'group.txt') ) ){
-	expect_true( 
-		file.exists( file.path( tmpDir, 'testSession', file ))
-		, label=file )
-}
+	out = utils::read.delim( output, row.names=NULL, header=F )
+
+
+	for ( file in c(
+		paste( sep=".","testHeatmap",startID),
+		paste( sep=".","testHeatmap",startID,'sqlite3')
+		) ){
+		expect_true( file.exists( file.path( dirname(tmpFile), 'Heatmaps', file )), 
+			label = file )
+	}
+
+	expect_true ( length(scan(what=character(), 
+		file.path( dirname(tmpFile), 'Heatmaps',paste(sep=".","testHeatmap" ,startID)) ) ) == 253 , label="always get 253 genes instead of 250?" )
+
+	## and now I alsoexpect the results to be in the log!
+
+	AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+	for ( file in 
+		c(paste(sep="", startID,'_Stats_runRender.R'), paste( AA[startID],'_Stats_paritalLog.Rmd',sep=""), 
+			basename(selectionFile),paste( sep=".",basename(selectionFile) ,'group.txt') ) ){
+		expect_true( 
+			file.exists( file.path( tmpDir, 'testSession', file ))
+			, label=file )
+	}
 
 }
 
@@ -238,32 +238,33 @@ context('server VR interface - log heatmap')
 
 testLogHeatmap = function( startID ) {
 
-## first create a fake png - why not in the correct place?
-hfile = paste( sep=".","testHeatmap",startID,'png')
-png( file=file.path(  tmpDir, 'Heatmaps',hfile), width=600, height=600 ) 
-plot(1:10,1:10, main= hfile )
-grDevices::dev.off()
+	## first create a fake png - why not in the correct place?
+	hfile = paste( sep=".","testHeatmap",startID,'png')
+	png( file=file.path(  tmpDir, 'Heatmaps',hfile), width=600, height=600 ) 
+	plot(1:10,1:10, main= hfile )
+	grDevices::dev.off()
 
-write_lines(
-	paste( sep="",
-	"cellexalObj = logHeatmap( cellexalObj, genes= cellexalObj@usedObj$deg.genes, grouping= '",
-	file.path( tmpDir, 'selection10.txt'),
-	"', png='",file.path( tmpDir, 'Heatmaps', hfile ),"')" 
-    )
-) 
-wait4server()
-Sys.sleep( 1 )
+	write_lines(
+		paste( sep="",
+		"cellexalObj = logHeatmap( cellexalObj, genes= cellexalObj@usedObj$deg.genes, grouping= '",
+		file.path( tmpDir, 'selection0.txt'),
+		"', png='",file.path( tmpDir, 'Heatmaps', hfile ),"')" 
+    	)
+	) 
+	wait4server()
+	Sys.sleep( 1 )
 
-AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
-ofile = file.path( tmpDir, 'testSession', paste(sep='_', AA[startID],'Heatmap_paritalLog.Rmd' ))
-expect_true( file.exists( ofile ), label=ofile )
+	AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+	ofile = file.path( tmpDir, 'testSession', paste(sep='_', AA[startID+1],'Heatmap_paritalLog.Rmd' ))
+	expect_true( file.exists( ofile ), label=ofile )
 
 
-ofile = file.path( tmpDir,paste(sep='_', AA[startID],"Heatmap_testSession.html" ) )
-expect_true( file.exists( ofile ), label=ofile )
+	ofile = file.path( tmpDir,paste(sep='_', AA[startID+1],"Heatmap_testSession.html" ) )
+	expect_true( file.exists( ofile ), label=ofile )
 
 }
-testLogHeatmap( 3 )
+
+testLogHeatmap( 2 )
 
 ############################################################
 context('server VR interface - create network')
@@ -314,11 +315,10 @@ write_lines(
 wait4server()
 Sys.sleep( 1 )
 
-
-thisP = file.path( tmpDir, 'testSession', 'AD_Network_paritalLog.Rmd'  )
+thisP = file.path( tmpDir, 'testSession', 'AD_Networks_paritalLog.Rmd'  )
 expect_true( file.exists(thisP), label = thisP)
 
-thisP =  file.path(tmpDir, 'AD_Network_testSession.html' ) 
+thisP =  file.path(tmpDir, 'AD_Networks_testSession.html' ) 
 expect_true( file.exists(thisP), label = thisP)
 
 
@@ -343,7 +343,7 @@ write_lines(
 wait4server()
 Sys.sleep( 1 )
 
-thisP = file.path(tmpDir, 'AE_Figure_testSession.html')
+thisP = file.path(tmpDir, 'AF_Figure_testSession.html')
 expect_true( file.exists(thisP), label = thisP)
 
 
@@ -361,7 +361,8 @@ write_lines(
 wait4server()
 Sys.sleep( 1 )
 
-thisP = file.path(tmpDir, 'AF_Figure_testSession.html')
+
+thisP = file.path(tmpDir, 'AG_Figure_testSession.html')
 expect_true( file.exists(thisP), label = thisP)
 
 
@@ -409,8 +410,9 @@ expect_true ( l == 251 ,
 ## and now I alsoexpect the results to be in the log!
 Sys.sleep( 1 )
 
+
 for ( file in 
-	c('8_OneGroupTime_runRender.R', 'AH_OneGroupTime_paritalLog.Rmd', 
+	c('AH_Stats_paritalLog.Rmd', 'AI_OneGroupTime_paritalLog.Rmd', 
 		'SelectionHSPC_time.txt', 'SelectionHSPC_time.txt.group.txt',
 		'SelectionHSPC_time.txt.time','SelectionHSPC_time.txt.time.points') ){
 	expect_true( 
@@ -418,10 +420,10 @@ for ( file in
 		, label=file )
 }
 
-ofile= file.path( tmpDir,"AG_Stats_testSession.html")
+ofile= file.path( tmpDir,"AH_Stats_testSession.html")
 expect_true( file.exists( ofile), label=ofile ) 
 
-ofile= file.path( tmpDir,"AH_OneGroupTime_testSession.html")
+ofile= file.path( tmpDir,"AI_OneGroupTime_testSession.html")
 expect_true( file.exists( ofile), label=ofile ) 
 
 
@@ -431,9 +433,9 @@ expect_true( file.exists( ofile), label=ofile )
 context('server VR interface - second heatmap')
 ############################################################
 
-testHeatmap( file.path(prefix, 'data', 'selection1.txt' ) , 9 )
+testHeatmap( file.path(prefix, 'data', 'selection1.txt' ) , 10 )
 
-testLogHeatmap( 10 )
+testLogHeatmap( 10)
 
 
 ## now shut down the server
@@ -449,18 +451,42 @@ write_lines(
 )
 wait4server()
 
-if ( file.exists(file.path(prefix, 'data', 'output', 'TestDataset') )){
-	unlink( file.path(prefix, 'data', 'output', 'TestDataset'), recursive=TRUE )
+PID = scan( file.path( tmpDir, paste( basename(tmpFile), sep="",'.pid')))
+server_IO_files = paste( basename(tmpFile), sep="", 
+	c( '.output', '.cellexalvrR.version', paste(sep="",".", PID,'.pid'), '.serverR' )
+	)
+
+files= c( 'cellexalObj.RData', server_IO_files, 'Heatmaps', 'libs', 'Networks', 
+	'png', 'PortableLog_testSession.zip', 'reference-keys.txt', 'search_index.json', 
+	'selection0.txt', 'selection1.txt', 'SelectionHSPC_time.txt', 
+	'SelectionHSPC_time.txt.time', 'SelectionHSPC_time.txt.time.points', 
+	'serverError.txt', 'session-log-for-session-testsession.html', 
+	'testSession'
+)
+
+list.files(tmpDir)
+
+
+############################################################
+context('server VR interface - clean up')
+############################################################
+
+
+prefix= './'
+#prefix = 'tests/testthat'
+outdir = file.path ( prefix, 'data', 'output', 'ServerInterface')
+if ( file.exists (outdir) ){
+	unlink(outdir, recursive=TRUE)
 }
-dir.create( file.path(prefix, 'data', 'output', 'TestDataset') )
-file.copy( tmpDir,  file.path(prefix, 'data', 'output', 'TestDataset'), recursive=TRUE)
 
-#for ( f in c('testSession.zip','session-log-for-session-testsession.html')){
-#	thisP = file.path(tmpDir, f)
-#	expect_true( file.exists(thisP), label = thisP)
-#}
+dir.create( outdir )
 
-#file.copy( file.path(tmpDir, 'testSession.zip'), file.path( prefix, 'data', 'output', ''  ) )
+expect_true(file.exists( file.path( tmpDir, 'PortableLog_testSession.zip' )), label="main outfile 'PortableLog_testSession.zip' exists")
+
+if ( file.exists( file.path( tmpDir, 'PortableLog_testSession.zip' ))){
+	file.copy( file.path( tmpDir, 'PortableLog_testSession.zip' ), outdir )
+}
+
 
 unlink(  file.path( tempdir(), 'Output'), recursive =TRUE )
 

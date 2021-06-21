@@ -122,7 +122,9 @@ t = table(utils::read.delim( SelectionFile, header=F )[,2])
 
 expect_true(length(t) <= 10,  label=paste("same time colors (", sep="", length(t)," > 10)" ) )
 
+####################################################
 context('timeline reproducibility')
+####################################################
 
 ## the output from the time process is the file SelectionHSPC_time.txt.time no higher time resolution available
 ## and this function is reproducible if I get the same thing multiple times - right?
@@ -164,7 +166,7 @@ expect_true( all.equal( old[,3], new[,3] ) ==TRUE )
 
 x= renderReport( x )
 
-ofile = file.path( prefix, 'data','output', 'timeLineTest', 'session-log-for-session-timeSession.html' )
+ofile = file.path( prefix, 'data','output', 'timeLineTest', 'session-log-for-session-timesession.html' )
 expect_true( file.exists( ofile), label= ofile )
 
 collect= list( 

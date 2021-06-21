@@ -6,6 +6,7 @@
 #' @title check if CellexalVR.exe is running (Windows specific)
 #' @export 
 VRmode = function( ){
+	OK = FALSE
 	tryCatch ( {
 		task <- shell('tasklist /fi "imagename eq CellexalVR.exe" /nh /fo csv',
 			intern = TRUE)
@@ -14,7 +15,11 @@ VRmode = function( ){
 	warning = function(err){
 		## likely not working! likely tasklist not available and hence not windows
 		OK = FALSE
-    	}
+    	},
+    error = function(err){
+    	## likely not working! likely tasklist not available and hence not windows
+		OK = FALSE
+   	    }
 	)
 	OK
 }

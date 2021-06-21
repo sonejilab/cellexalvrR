@@ -12,6 +12,7 @@ dir.create(path)
 cellexalObj@outpath = path
 
 cellexalObj= sessionPath( cellexalObj, 'test')
+## A timeline selection file:
 selection = file.path( prefix,'data', 'selection11.txt')
 
 ## output files from VR:
@@ -24,11 +25,19 @@ expect_true( file.exists(selection), label=paste("selection file", selection) )
 dir.create( file.path( path, 'Heatmaps'))
 cellexalObj = make.cellexalvr.heatmap.list(cellexalObj, cellidfile = selection, num.sig=250, outfile= file.path(path, 'Heatmaps' , 'heatmap_07-36-01.txt') )
 
-files = c(  "AA_Start_test.html","AB_Stats_test.html", 
-	"AC_OneGroupTime_test.html", "Heatmaps", "mainServer.sessionName", "selection11.txt",
-  "selection11.txt.time", "selection11.txt.time.points", "test" )
 
-expect_equal(list.files(path), files, label="All expected outfiles #1" )
+files = c( "AA_Start_test.html", "AB_Stats_test.html", "AC_OneGroupTime_test.html",
+	 "Heatmaps", "mainServer.sessionName", "selection11.txt", "selection11.txt.time",
+	 "selection11.txt.time.points", "test"  )
+
+expect_equal( list.files(path), files, label="All expected outfiles #1" )
+
+expect_true( file.exists( file.path( path, "AA_Start_test.html")), label="log start")
+expect_true( file.exists( file.path( path, "AB_Stats_test.html")), label="log stats")
+expect_true( file.exists( file.path( path, "selection11.txt.time")), label="timeline basics")
+expect_true( file.exists( file.path( path, "AC_OneGroupTime_test.html")), label="log timeline detailed analysis")
+
+
 
 files = c("heatmap_07-36-01.txt", "heatmap_07-36-01.txt.sqlite3" )
 expect_equal( list.files(file.path(path, 'Heatmaps')), files , label="Heatmap VR files" )
@@ -57,6 +66,8 @@ files = c( "cellexalObj.RData", "Heatmaps", "libs", 'png', "PortableLog_test.zip
 	"selection11.txt.time.points", "session-log-for-session-test.html", "test")
 
 expect_equal(sort(list.files(path)), sort(files), label="All expected outfiles #2" )
+
+expect_true( file.exists( file.path( path,'png')), label="cellexalTime::renderReport() output exixts")
 
 
 source( 'function.R' )

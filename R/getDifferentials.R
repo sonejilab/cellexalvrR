@@ -121,7 +121,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 				}
 				message('creating reports')
 				x  = createStats( cellexalTime, x,  num.sig= num.sig )
-				
+
 				ret = createReport(cellexalTime, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
 					info = groupingInfo( x, info@gname ) 

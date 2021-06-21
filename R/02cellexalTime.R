@@ -1185,7 +1185,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
   	values = wesanderson::wes_palette("Zissou1", 10,type = "continuous")[1:10],
   	aesthetics = c("colour", "fill")
   ) +  
-  ggplot2::guides(fill=FALSE)
+  ggplot2::guides(fill="none")
 
 
 	for ( a in 1:length(dat) ){

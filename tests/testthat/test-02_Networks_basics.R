@@ -69,7 +69,8 @@ cellexalObj = renderReport(cellexalObj)
 
 ofiles = c(  "cellexalObj.RData", "libs", "logNetworkTest", "Networks.nwk", "NwkCentroids.cnt", 
 	"PortableLog_logNetworkTest.zip", "reference-keys.txt", "search_index.json"
-	, "session-log-for-session-logNetworktest.html", "tmp")
+	, "session-log-for-session-lognetworktest.html", "tmp")
+
 
 for ( f in ofiles){
 	expect_true( file.exists( file.path(cellexalObj@outpath, f)), label =paste("file", f))
