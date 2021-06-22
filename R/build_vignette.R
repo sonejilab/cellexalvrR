@@ -29,7 +29,7 @@ buildVignette <- function(dir =".") {
 			warning( "The expected portable log file could not be copied!")
 			browser()
 		}
-		}, error(err) { 
+		}, error=function(err) { 
 			setwd( origDir )
 			error(err)
 		}
