@@ -1,8 +1,25 @@
+## ----setup, include = FALSE---------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## ----message=FALSE------------------------------------------------------------
 library(cellexalvrR)
 
-cellexalObj@outpath = tempdir()
-cellexalObj = sessionPath(cellexalObj, 'linearExample')
+cellexalObj = reset( cellexalObj )
+cellexalObj
 
+
+## ----message=FALSE------------------------------------------------------------
+head( read.delim( system.file("extdata", "SelectionHSPC_time.txt", package="cellexalvrR"), header=F ) )
+
+
+## ----message=FALSE------------------------------------------------------------
+cellexalObj@outpath = getwd()
+cellexalObj = sessionPath( cellexalObj, 'linearExample')
+
+## ----message=FALSE------------------------------------------------------------
 selectionFile = system.file("extdata", "SelectionHSPC_time.txt",package= "cellexalvrR")
 cellexalObj = userGrouping( cellexalObj, selectionFile )
 cellexalObj = pseudotimeTest3D(cellexalObj, grouping= cellexalObj@usedObj$lastGroup )
@@ -11,6 +28,16 @@ cellexalObj = createStats( "lastEntry" , cellexalObj,  num.sig= 250 )
 bossLinearSelection = cellexalObj@usedObj$linearSelections[["lastEntry"]]
 cellexalObj = createReport(bossLinearSelection, cellexalObj, info = bossLinearSelection)$cellexalObj
 
+
+# the statistics table
+print ( head( cellexalObj@usedObj$sigGeneLists$lin[[ cellexalObj@usedObj$lastGroup ]] ))
+
+length( cellexalObj@usedObj$deg.genes)
+
+## ---- message=FALSE-----------------------------------------------------------
+cellexalObj@usedObj$linearSelections
+
+## ---- message=FALSE-----------------------------------------------------------
 linearSelection = getLinearSelection(cellexalObj, bossLinearSelection)
 
 subset1 = rownames(linearSelection@dat)[seq(1,nrow(linearSelection@dat),2)]
@@ -41,6 +68,7 @@ cellexalObj = compareGeneClusters (
 	 cellexalObj, altGroupNames=c("subset A", "subset B" ) 
 )
 
+
+## ---- message=FALSE-----------------------------------------------------------
 cellexalObj = renderReport( cellexalObj)
 
-file.copy( list.files(tempdir(),full.names=TRUE, pattern="*.zip"), '../inst/extdata/' )
