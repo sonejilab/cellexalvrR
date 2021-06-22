@@ -3,18 +3,18 @@
 \docType{methods}
 \name{checkTime}
 \alias{checkTime}
-\alias{checkTime,cellexalTime,ANY-method}
-\alias{checkTime,cellexalTime,cellexalvrR-method}
-\title{check a cellexalTime's internals}
+\alias{checkTime,cellexalLinear,ANY-method}
+\alias{checkTime,cellexalLinear,cellexalvrR-method}
+\title{check a cellexalLinear's internals}
 \usage{
 checkTime(x, cellexalObj = NULL)
 
-\S4method{checkTime}{cellexalTime,ANY}(x, cellexalObj = NULL)
+\S4method{checkTime}{cellexalLinear,ANY}(x, cellexalObj = NULL)
 
-\S4method{checkTime}{cellexalTime,cellexalvrR}(x, cellexalObj = NULL)
+\S4method{checkTime}{cellexalLinear,cellexalvrR}(x, cellexalObj = NULL)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 
 \item{cellexalObj}{an optional cellexalvrR object - if given ONLY the drc models are checked.}
 }

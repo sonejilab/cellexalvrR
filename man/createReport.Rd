@@ -4,23 +4,23 @@
 \name{createReport}
 \alias{createReport}
 \alias{createReport,character,cellexalvrR,character-method}
-\alias{createReport,cellexalTime,cellexalvrR,character-method}
-\alias{createReport,cellexalTime,cellexalvrR,cellexalTime-method}
-\alias{createReport,cellexalTime,cellexalvrR,cellexalGrouping-method}
-\title{create a report for one cellexalTime object (interactive mode only)}
+\alias{createReport,cellexalLinear,cellexalvrR,character-method}
+\alias{createReport,cellexalLinear,cellexalvrR,cellexalLinear-method}
+\alias{createReport,cellexalLinear,cellexalvrR,cellexalGrouping-method}
+\title{create a report for one cellexalLinear object (interactive mode only)}
 \usage{
 createReport(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
 
 \S4method{createReport}{character,cellexalvrR,character}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
 
-\S4method{createReport}{cellexalTime,cellexalvrR,character}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
+\S4method{createReport}{cellexalLinear,cellexalvrR,character}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
 
-\S4method{createReport}{cellexalTime,cellexalvrR,cellexalTime}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
+\S4method{createReport}{cellexalLinear,cellexalvrR,cellexalLinear}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
 
-\S4method{createReport}{cellexalTime,cellexalvrR,cellexalGrouping}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
+\S4method{createReport}{cellexalLinear,cellexalvrR,cellexalGrouping}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
 }
 \arguments{
-\item{x}{the cellexalTime object or a time name}
+\item{x}{the cellexalLinear object or a linear grouping name}
 
 \item{cellexalObj}{the object to get the data from}
 
@@ -31,13 +31,13 @@ createReport(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
 \item{num.sig}{number of signififcant genes (default 250)}
 }
 \description{
-3D plot the time with a line in the time
+3D plot using linear order colors
 }
 \details{
-This report is the main go to analysis for a timeline.
+This report is the main go to analysis for a linearSelection.
 It will produce gene clusters and plot the mean expression of these genes clusters as beautiful xy plots.
 It also populates the CellexalTime geneClusters slot with a list entries containing
 the gene clusters (clusters), the max 1000 cells zscored data (matrix) and the location of the main figure (png file path; figure)
 
-After this function two cellexalTime objects can be compared to another using the function compareGeneClusters.
+After this function two cellexalLinear objects can be compared to another using the function compareGeneClusters.
 }

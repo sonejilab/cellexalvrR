@@ -8,11 +8,12 @@ if ( file.exists( path)) {
 	unlink(path, recursive=TRUE)
 }
 dir.create(path)
-
+cellexalObj =reset(cellexalObj)
 cellexalObj@outpath = path
 
+
 cellexalObj= sessionPath( cellexalObj, 'test')
-## A timeline selection file:
+## A linearSelection selection file:
 selection = file.path( prefix,'data', 'selection11.txt')
 
 ## output files from VR:
@@ -34,8 +35,8 @@ expect_equal( list.files(path), files, label="All expected outfiles #1" )
 
 expect_true( file.exists( file.path( path, "AA_Start_test.html")), label="log start")
 expect_true( file.exists( file.path( path, "AB_Stats_test.html")), label="log stats")
-expect_true( file.exists( file.path( path, "selection11.txt.time")), label="timeline basics")
-expect_true( file.exists( file.path( path, "AC_OneGroupTime_test.html")), label="log timeline detailed analysis")
+expect_true( file.exists( file.path( path, "selection11.txt.time")), label="linearSelection basics")
+expect_true( file.exists( file.path( path, "AC_OneGroupTime_test.html")), label="log linearSelection detailed analysis")
 
 
 
@@ -44,7 +45,7 @@ expect_equal( list.files(file.path(path, 'Heatmaps')), files , label="Heatmap VR
 
 
 
-## create a heatmap file that should show the timeline.
+## create a heatmap file that should show the linearSelection.
 file.copy( heatmap, file.path(path, 'Heatmaps') )
 png = file.path(path, 'Heatmaps', basename(heatmap)) 
 
@@ -54,6 +55,7 @@ cellexalObj = make.cellexalvr.heatmap.list(cellexalObj, cellidfile = selection2,
 cellexalObj = logHeatmap( cellexalObj, png=png, grouping=cellexalObj@usedObj$lastGroup  )
 
 selectionFiles = lapply( cellexalObj@groupSelectedFrom, function(x){x@selectionFile})
+
 for( f in selectionFiles){
 	expect_true( file.exists(file.path(cellexalObj@outpath, f)), label=paste("selection file", f))
 }
@@ -67,7 +69,7 @@ files = c( "cellexalObj.RData", "Heatmaps", "libs", 'png', "PortableLog_test.zip
 
 expect_equal(sort(list.files(path)), sort(files), label="All expected outfiles #2" )
 
-expect_true( file.exists( file.path( path,'png')), label="cellexalTime::renderReport() output exixts")
+expect_true( file.exists( file.path( path,'png')), label="cellexalLinear::renderReport() output exixts")
 
 
 source( 'function.R' )

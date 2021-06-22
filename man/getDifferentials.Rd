@@ -71,7 +71,7 @@ Calculates the statistics for one CellexalVR selection file.
 Identify differentially expressed genes.
 
 This function makes two statistics available for the VR process 
-(1) 'timeline' will automaticly be choosen if there is only one group in the data
+(1) 'linearSelection' will automaticly be choosen if there is only one group in the data
 (2) 'wilcox' a c++ re-implementation of the Seurat::FindAllMarkers function (default)
 }
 \examples{

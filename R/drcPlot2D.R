@@ -179,8 +179,8 @@ correctPath = function( f, cellexalObj ) {
 drcFiles2HTML = function( cellexalObj, gInfo, showIDs=TRUE, addOn = NULL ) {
 	## gInfo is a list with names grouping, drc, col and order
 	# create a file containing the grouping info (and thereby color) and the drc info - do not create doubles
-	if ( nrow(gInfo@timeObj@dat) > 0 ) {
-		return( drcFiles2HTMLtime( cellexalObj, gInfo@timeObj, showIDs= showIDs, addOn =addOn ) )
+	if ( nrow(gInfo@linarObj@dat) > 0 ) {
+		return( drcFiles2HTMLlinear( cellexalObj, gInfo@linarObj, showIDs= showIDs, addOn =addOn ) )
 	}	
 	drcFiles =sapply( drcPlots2D( cellexalObj, gInfo, showIDs=showIDs ), correctPath, cellexalObj )
 	str = c(

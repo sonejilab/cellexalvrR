@@ -3,15 +3,15 @@
 \docType{methods}
 \name{toString}
 \alias{toString}
-\title{stringify the timeline (print/show)}
+\title{stringify the linearSelection (print/show)}
 \usage{
-\S4method{toString}{cellexalTime}(x)
+\S4method{toString}{cellexalLinear}(x)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 }
 \description{
-summarize a cellexalTime object as string
+summarize a cellexalLinear object as string
 }
 \details{
 Intern method to convert the object to a string for the show function.

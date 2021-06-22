@@ -3,12 +3,12 @@
 \docType{methods}
 \name{plotDataOnTime_rmd}
 \alias{plotDataOnTime_rmd}
-\alias{plotDataOnTime_rmd,cellexalTime-method}
+\alias{plotDataOnTime_rmd,cellexalLinear-method}
 \title{create the Rmd figure strings for the plotTime files}
 \usage{
 plotDataOnTime_rmd(x, dat, color = NULL, ofile, cellexalObj)
 
-\S4method{plotDataOnTime_rmd}{cellexalTime}(x, dat, color = NULL, ofile, cellexalObj)
+\S4method{plotDataOnTime_rmd}{cellexalLinear}(x, dat, color = NULL, ofile, cellexalObj)
 }
 \arguments{
 \item{x}{the object}
@@ -22,5 +22,5 @@ plotDataOnTime_rmd(x, dat, color = NULL, ofile, cellexalObj)
 \item{cellexalObj}{the cellexal object to adjust the path for the markdown file.}
 }
 \description{
-plot linear data on the time in a 2d figure
+plot linear data on the speudo time in a 2d figure
 }

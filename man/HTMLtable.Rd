@@ -3,18 +3,18 @@
 \docType{methods}
 \name{HTMLtable}
 \alias{HTMLtable}
-\alias{HTMLtable,cellexalTime-method}
+\alias{HTMLtable,cellexalLinear-method}
 \alias{HTMLtable,cellexalGrouping-method}
 \title{log specififc - create an HTML summary table for this selection}
 \usage{
 HTMLtable(x)
 
-\S4method{HTMLtable}{cellexalTime}(x)
+\S4method{HTMLtable}{cellexalLinear}(x)
 
 \S4method{HTMLtable}{cellexalGrouping}(x)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 }
 \description{
 Create a html table that descibes a grouping (multi group or pseudo time)

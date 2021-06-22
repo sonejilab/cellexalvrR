@@ -5,7 +5,7 @@
 \alias{logTimeLine}
 \alias{logTimeLine,cellexalvrR-method}
 \alias{logTimeLine,character-method}
-\title{add the timeline information to the log system}
+\title{add the linearSelection information to the log system}
 \usage{
 logTimeLine(
   cellexalObj,

@@ -73,22 +73,22 @@ setClass(
 
 
 
-#' the cellexalTime class is representing one linear ordered cell group
+#' the cellexalLinear class is representing one linear ordered cell group
 #' 
 #' 
-#' @name cellexalTime-class
-#' @title cellexalTime class definition
+#' @name cellexalLinear-class
+#' @title cellexalLinear class definition
 #' @description  A simple wrapper to handle the linear order and respective color mappings.
 #' @slot dat all (drc) data needed for plotting and group creation
 #' @slot gname the group name
 #' @slot drc the drc name this object has been selected from
 #' @slot error the error message if a catched not fatal error has occured
-#' @slot geneClusters a list of gene clusters that are linked to a timeline
+#' @slot geneClusters a list of gene clusters that are linked to a linearSelection
 #' @slot id the md5sum representation of thei object's dat (to prohibit duplicates)
 #' @slot parentSelection the cellexalGrouping name that was basis for this linear order
-#' @exportClass cellexalTime
+#' @exportClass cellexalLinear
 
-setClass("cellexalTime", 
+setClass("cellexalLinear", 
 	slots=list(
 		dat="data.frame",
 		gname="character",
@@ -115,7 +115,7 @@ setClass("cellexalTime",
 #' @slot drc the drc name this object has been selected from
 #' @slot col the color vector for these groups
 #' @slot error a string vector that contains all error messages
-#' @slot timeObj an optional slot to store a cellexalTime object
+#' @slot linarObj an optional slot to store a cellexalLinear object
 #' @slot heatmapBasename the filename basis for the heatmap related to this grouping
 #' @exportClass cellexalGrouping
 setClass("cellexalGrouping", 
@@ -128,7 +128,7 @@ setClass("cellexalGrouping",
 		drc="character",
 		col="character",
 		error="character",
-		timeObj="cellexalTime",
+		linarObj="cellexalLinear",
 		heatmapBasename='character'
 		)
 )

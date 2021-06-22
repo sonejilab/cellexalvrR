@@ -2,15 +2,15 @@
 #'
 #' @name toString
 #' @docType methods
-#' @description summarize a cellexalTime object as string
-#' @param x the cellexalTime object
-#' @title stringify the timeline (print/show)
+#' @description summarize a cellexalLinear object as string
+#' @param x the cellexalLinear object
+#' @title stringify the linearSelection (print/show)
 #' @export 
-setMethod('toString', signature = c ('cellexalTime'),
+setMethod('toString', signature = c ('cellexalLinear'),
 definition = function ( x ) {
 	txt = paste(
 		paste("An object of class", class(x),"with id", x@id,"\n" ),
-		paste( 'with',nrow(x@dat),'time points and', ncol(x@dat),' values.',"\n"),
+		paste( 'with',nrow(x@dat),'linearly ordered points and', ncol(x@dat),' values.',"\n"),
 		paste( 'The object is basis for the cellexalvrR grouping', x@gname),
 		paste( 	"\nand is based on the selection", x@parentSelection)
 	)
@@ -30,11 +30,11 @@ definition = function ( x ) {
 #' @name show
 #' @docType methods
 #' @description  show the cellexalvrR
-#' @param object the cellexalTime object
+#' @param object the cellexalLinear object
 #' @return nothing at all
 #' @title show the object contents
 #' @export show
-setMethod('show', signature = c ('cellexalTime'),
+setMethod('show', signature = c ('cellexalLinear'),
 definition = function ( object ) {
 	cat ( toString(object) )
 }
@@ -46,11 +46,11 @@ definition = function ( object ) {
 #' @name addSelection
 #' @docType methods
 #' @rdname addSelection
-#' @description add this cellexalTime to the corresponding cellexal object
-#' @param x the cellexalTime object
-#' @param cellexalObj the cellexalvrR object to add the time as group
-#' @param upstreamSelection which group was the basis for this timeline?
-#' @title savely add a cellexalTime object to a cellexalvR object
+#' @description add this cellexalLinear to the corresponding cellexal object
+#' @param x the cellexalLinear object
+#' @param cellexalObj the cellexalvrR object to add the linear selection as group
+#' @param upstreamSelection which group was the basis for this linearSelection?
+#' @title savely add a cellexalLinear object to a cellexalvR object
 #' @export 
 #if ( ! isGeneric('renew') ){
 setGeneric('addSelection', ## Name
@@ -62,7 +62,7 @@ function ( x, cellexalObj, upstreamSelection=NULL  ) {
 
 
 #' @rdname addSelection
-setMethod('addSelection', signature = c ('cellexalTime', 'cellexalvrR'),
+setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	if ( is.null(upstreamSelection)){
@@ -71,17 +71,17 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 	id= (ncol(cellexalObj@userGroups) /2) + 1
 
 	x@gname = paste( "Time.group", id, sep="." ) 
-	if ( is.null( cellexalObj@usedObj$timelines )){
-		cellexalObj@usedObj$timelines= list()
+	if ( is.null( cellexalObj@usedObj$linearSelections )){
+		cellexalObj@usedObj$linearSelections= list()
 	}else{
-		## Is this timeline a copy of an other?
+		## Is this linearSelection a copy of an other?
 		done=0
-		for ( n in names(cellexalObj@usedObj$timelines)){
-			if ( cellexalObj@usedObj$timelines[[n]]@id == x@id ) {
-				x@gname = cellexalObj@usedObj$timelines[[n]]@gname
-				cellexalObj@usedObj$timelines[[n]] = x
-				cellexalObj@groupSelectedFrom[[ x@gname ]]@timeObj = x
-				cellexalObj@usedObj$timelines[['lastEntry']] = x
+		for ( n in names(cellexalObj@usedObj$linearSelections)){
+			if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
+				x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
+				cellexalObj@usedObj$linearSelections[[n]] = x
+				cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
+				cellexalObj@usedObj$linearSelections[['lastEntry']] = x
 				done=1
 			}
 		}
@@ -89,13 +89,13 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 			return( invisible( cellexalObj) )
 		}
 	}
-	cellexalObj@usedObj$timelines[['lastEntry']] = x
-	cellexalObj@usedObj$timelines[[ x@gname ]] = x
+	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
+	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
 	## I need to create a new one named 
 	info = groupingInfo(cellexalObj, upstreamSelection )
 
 	info@selectionFile = basename(paste( sep=".", cellexalObj@usedObj$SelectionFiles[[ upstreamSelection ]], 'time'))
-	info@timeObj = x
+	info@linarObj = x
 
 	info@gname = x@gname
 
@@ -116,7 +116,7 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 	}
 
 	if ( length(which(is.na(m)))>0){
-		stop("ERROR: This timeline describes cells that are not in the cellexalvrR object!")
+		stop("ERROR: This linearSelection describes cells that are not in the cellexalvrR object!")
 	}
 
 	m = match( rownames(x@dat), colnames(cellexalObj@data) )
@@ -149,9 +149,9 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 #' @rdname checkTime
 #' @docType methods
 #' @description checks for NA elements in the checkTime object and removes them
-#' @param x the cellexalTime object
+#' @param x the cellexalLinear object
 #' @param cellexalObj an optional cellexalvrR object - if given ONLY the drc models are checked.
-#' @title check a cellexalTime's internals
+#' @title check a cellexalLinear's internals
 #' @export 
 #if ( ! isGeneric('renew') ){
 setGeneric('checkTime', ## Name
@@ -163,7 +163,7 @@ function (x, cellexalObj=NULL) {
 
 
 #' @rdname checkTime
-setMethod('checkTime', signature = c ('cellexalTime'),
+setMethod('checkTime', signature = c ('cellexalLinear'),
 definition = function (x, cellexalObj=NULL) {
 	if ( nrow(x@dat) == 0 ){
 		warning("empty object")
@@ -171,7 +171,7 @@ definition = function (x, cellexalObj=NULL) {
 	}
 	bad=which( is.na(x@dat$time))
 	if ( length(bad) > 0 ){
-		warning("Missing values detected in the time - dropping these")
+		warning("Missing values detected in the linear order - dropping these")
 		x@dat= x@dat[-bad,]
 	}
 	x@dat = x@dat[order(x@dat$time),]
@@ -186,7 +186,7 @@ definition = function (x, cellexalObj=NULL) {
 
 	if ( !is.null( x@geneClusters[['collapsedExp']] )){
 		if ( ncol(x@geneClusters[['collapsedExp']] ) > 1000 ) {
-			warning("Timeline collapsedExp too much data!")
+			warning("Linear selection collapsedExp too much data!")
 		}
 	}	
 	invisible(x)
@@ -194,14 +194,14 @@ definition = function (x, cellexalObj=NULL) {
 
 
 #' @rdname checkTime
-setMethod('checkTime', signature = c ('cellexalTime', 'cellexalvrR'),
+setMethod('checkTime', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function (x, cellexalObj=NULL) {
 
 	error = NULL
 	#browser()
 	if ( is.null(cellexalObj@drc[[x@drc]])){
 		error = c( error, paste( sep="",
-			"The basis drc for this timeline (", cellexalObj@drc,
+			"The basis drc for this linearSelection (", cellexalObj@drc,
 			") is not part of this cellexal object" ))
 	}else {
 		mine = x@dat[,c('a','b','c')]
@@ -233,8 +233,8 @@ definition = function (x, cellexalObj=NULL) {
 #' @rdname color
 #' @docType methods
 #' @description return the color in exactly the right format to color the given cell names
-#' @param x the cellexalTime object
-#' @param names the cells to color with the time color
+#' @param x the cellexalLinear object
+#' @param names the cells to color with the pseudo time color
 #' @title return a pseudo time color vector for a given cell names list
 #' @export 
 #if ( ! isGeneric('renew') ){
@@ -247,7 +247,7 @@ function (x, names) {
 
 
 #' @rdname color
-setMethod('color', signature = c ('cellexalTime'),
+setMethod('color', signature = c ('cellexalLinear'),
 	definition = function (x, names) {
 	col = rep( gray(0.6), length(names) )
 	m = match( names, rownames(x@dat) )
@@ -257,9 +257,9 @@ setMethod('color', signature = c ('cellexalTime'),
 
 #' @name compactTime
 #' @docType methods
-#' @description create a global gene z-score and merged virtual samples over the timeline
-#' @param cellexalObj if x is a cellexalTime object this is necessary to create the zscored matrix.
-#' @title merge cells based on time order
+#' @description create a global gene z-score and merged virtual samples over the linearSelection
+#' @param cellexalObj if x is a cellexalLinear object this is necessary to create the zscored matrix.
+#' @title merge cells based on linear order
 #' @export 
 #if ( ! isGeneric('renew') ){
 setGeneric('compactTime', ## Name
@@ -273,9 +273,9 @@ setGeneric('compactTime', ## Name
 #' @rdname compactTime
 setMethod('compactTime', signature = c ('cellexalvrR'),
 definition = function (  cellexalObj ) {
-	## now I need to check which timelines I have
-	for (tName in names(cellexalObj@usedObj$timelines)[-1]) {
-		time = cellexalObj@usedObj$timelines[[tName]]
+	## now I need to check which linearSelections I have
+	for (tName in names(cellexalObj@usedObj$linearSelections)[-1]) {
+		time = cellexalObj@usedObj$linearSelections[[tName]]
 		n = nrow(time@dat)
 		loc = reduceTo( cellexalObj, what='col', to=rownames(time@dat))
 		if ( n > 1000 ){
@@ -286,9 +286,9 @@ definition = function (  cellexalObj ) {
 			B <- Matrix::Matrix(B, sparse = TRUE)
 			rownames(B) = rownames(cellexalObj@data)
 			colnames(B) = 1:1000
-			cellexalObj@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] = B
+			cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = B
 		}else {
-			cellexalObj@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] = loc@data
+			cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = loc@data
 		}
 		
 	}
@@ -298,14 +298,14 @@ definition = function (  cellexalObj ) {
  
 #' This function should be run on the main cellexalObj including all data.
 #' It will create (for a subset of genes) a z-scored dataset and will then 
-#' sum up the expression in the time orientation to represent 1000 'cells' in the timeline.
+#' sum up the expression in the linear orientation to represent 1000 'cells' in the linearSelection.
 #' @name compactTimeZscore
 #' @docType methods
-#' @description create a global gene z-score and virtual samples over the timeline
-#' @param x the cellexalTime object
+#' @description create a global gene z-score and virtual samples over the linearSelection
+#' @param x the cellexalLinear object
 #' @param deg.genes a list of genes  cluster the genes for (list)
-#' @param cellexalObj if x is a cellexalTime object this is necessary to create the zscored matrix.
-#' @title merge and z-score gene expression for a cellexalTime object
+#' @param cellexalObj if x is a cellexalLinear object this is necessary to create the zscored matrix.
+#' @title merge and z-score gene expression for a cellexalLinear object
 #' @export 
 #if ( ! isGeneric('renew') ){
 setGeneric('compactTimeZscore', ## Name
@@ -316,7 +316,7 @@ function ( x, deg.genes,  cellexalObj ) {
 #}
 
 #' @rdname compactTimeZscore
-setMethod('compactTimeZscore', signature = c ('cellexalTime', 'character', 'cellexalvrR'),
+setMethod('compactTimeZscore', signature = c ('cellexalLinear', 'character', 'cellexalvrR'),
 definition = function ( x, deg.genes, cellexalObj ) {
 	
 	cellexalObj = compactTime ( cellexalObj )
@@ -325,10 +325,10 @@ definition = function ( x, deg.genes, cellexalObj ) {
 
 	collapsedData = NULL
 	collapseNames = NULL
-	for ( tName in names(cellexalObj@usedObj$timelines)[-1]) {
-		collapsedData =cbind(collapsedData, cellexalObj@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] )
-		collapseNames = c( collapseNames, rep(cellexalObj@usedObj$timelines[[tName]]@gname
-			, ncol(cellexalObj@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']]) ))
+	for ( tName in names(cellexalObj@usedObj$linearSelections)[-1]) {
+		collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
+		collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
+			, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
 	}
 	colnames( collapsedData ) = collapseNames
 	B = FastWilcoxTest::ZScoreAll( collapsedData )
@@ -352,22 +352,22 @@ definition = function ( x, deg.genes, cellexalObj ) {
 })
 
 
-#' This is a none VR method to compare two different timelines.
-#' The main usage for this function is to run the same genes trough trough one timeline 
+#' This is a none VR method to compare two different linearSelections.
+#' The main usage for this function is to run the same genes trough trough one linearSelection 
 #' that has been split into two sub-sections like young and old or teated and untreated.
-#' This function only allows to compare two cellexalTime objects.
-#' This function highligts which genes follow different expression patterns in both timelines.
+#' This function only allows to compare two cellexalLinear objects.
+#' This function highligts which genes follow different expression patterns in both linearSelections.
 #'
 #' @name compareGeneClusters
 #' @docType methods
 #' @description return the color in exactly the right format to color the names
-#' @param x the cellexalTime object
-#' @param other the other timeline (the parentSelection has to match)
+#' @param x the cellexalLinear object
+#' @param other the other linearSelection (the parentSelection has to match)
 #' @param cellexalObj the cellexalObj to add the report to.
 #' @param altGroupNames you can give alternative group names here
 #' @param color a vector of colors - one for each group
 #' @param GOIs a different group of genes - might need to re-run the analysis
-#' @title compare two cellexalTime objects (interactive mode only)
+#' @title compare two cellexalLinear objects (interactive mode only)
 #' @export 
 #if ( ! isGeneric('renew') ){
 setGeneric('compareGeneClusters', ## Name
@@ -381,13 +381,13 @@ function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL) {
 #' @rdname compareGeneClusters
 setMethod('compareGeneClusters', signature = c ('character', 'character', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
-	compareGeneClusters( x=getTime( cellexalObj, x), other=getTime(cellexalObj, other),
+	compareGeneClusters( x=getLinearSelection( cellexalObj, x), other=getLinearSelection(cellexalObj, other),
 		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
 })
 
 
 #' @rdname compareGeneClusters
-setMethod('compareGeneClusters', signature = c ('cellexalTime', 'cellexalTime', 'cellexalvrR' ),
+setMethod('compareGeneClusters', signature = c ('cellexalLinear', 'cellexalLinear', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
 
 	if ( x@parentSelection != other@parentSelection) {
@@ -396,10 +396,10 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 	if ( length(x@geneClusters) == 0 || length(other@geneClusters) == 0){
 		stop( paste( sep="\n",
 			"Either the one or the other object's geneClusters == 0",
-		 	"For both timelines the function 'createReport' has to be run first.") )
+		 	"For both linearSelections the function 'createReport' has to be run first.") )
 	}
 	#if ( is.null(x@geneClusters[[x@gname]]) || is.null(other@geneClusters[[other@gname]]) ) {
-	#	stop("For both timelines the createReport has to be run for the own selection.")
+	#	stop("For both linearSelections the createReport has to be run for the own selection.")
 	#}
 
 	if ( is.null(color) ) {
@@ -425,11 +425,11 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 		R.utils::getRelativePath( other@geneClusters[[other@gname]]$figure, cellexalObj@outpath),
 		')</td><tr></table>',"\n\n")
 	text = paste(
-   	"## Comparison between the gene clusters of timeline", 
-   	altGroupNames[1],"and timeline", altGroupNames[2], "\n\n"
+   	"## Comparison between the gene clusters of linearSelection", 
+   	altGroupNames[1],"and linearSelection", altGroupNames[2], "\n\n"
    )
 	text = paste(text, 
-   	paste("Both timelines have been run based on the selection", 
+   	paste("Both linearSelections have been run based on the selection", 
    		x@parentSelection,
     	"\n\n")
    )
@@ -476,16 +476,16 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
    				cellexalObj@outpath)
    			circleB = paste(sep="","<img src='",circleB, "' height='15'/>")
    			text = paste( text, paste( 
-   				"The following genes from timeline",altGroupNames[1], "cluster",i,
+   				"The following genes from linearSelection",altGroupNames[1], "cluster",i,
    				circleA,
-   				"have ended up in the timeline",altGroupNames[2],"cluster",a,":",
+   				"have ended up in the linearSelection",altGroupNames[2],"cluster",a,":",
    				circleB,
    				"\n\n"
    				) 
 				)
    			
 
-				## And now I need the two heatmaps in the two different timelines:
+				## And now I need the two heatmaps in the two different linearSelections:
 				
 				of = paste(sep="_", "directComp",  x@gname, i, other@gname, a,"heatmap" )
 				of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
@@ -530,13 +530,14 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 
 
 
-#' collapse the time to a max of 1000 enrties rendering the timeline incompatible with cellexalvrR
-#' but allowing the correlation of collapsed expression to the time.
+#' collapse the linear selection to a max of 1000 entries rendering the 
+#' linearSelection incompatible with cellexalvrR
+#' but allowing the correlation of collapsed expression to the pseudo time.
 #' @name collapseTime
 #' @docType methods
 #' @description return the color in exactly the right format to color the names
-#' @param x the cellexalTime object
-#' @param to the max amnount of time points
+#' @param x the cellexalLinear object
+#' @param to the max amnount of pseudo time points
 #' @title sum up cells based on the pseudo time
 #' @export 
 #if ( ! isGeneric('renew') ){
@@ -549,7 +550,7 @@ function (x, to =1000) {
 
 
 #' @rdname collapseTime
-setMethod('collapseTime', signature = c ('cellexalTime' ),
+setMethod('collapseTime', signature = c ('cellexalLinear' ),
 definition = function (x, to=1000 ) {
 	n= nrow(x@dat)
 	if ( n > to ) {
@@ -570,22 +571,22 @@ definition = function (x, to=1000 ) {
 })
 
 
-#' This report is the main go to analysis for a timeline.
+#' This report is the main go to analysis for a linearSelection.
 #' It will produce gene clusters and plot the mean expression of these genes clusters as beautiful xy plots.
 #' It also populates the CellexalTime geneClusters slot with a list entries containing
 #' the gene clusters (clusters), the max 1000 cells zscored data (matrix) and the location of the main figure (png file path; figure)
 #'
-#' After this function two cellexalTime objects can be compared to another using the function compareGeneClusters.
+#' After this function two cellexalLinear objects can be compared to another using the function compareGeneClusters.
 #'
 #' @name createReport
 #' @docType methods
-#' @description 3D plot the time with a line in the time
-#' @param x the cellexalTime object or a time name
+#' @description 3D plot using linear order colors
+#' @param x the cellexalLinear object or a linear grouping name
 #' @param cellexalObj the object to get the data from
 #' @param info a cellexalGrouping or grouping name
 #' @param deg.genes a list of genes to create the report for
 #' @param num.sig number of signififcant genes (default 250)
-#' @title create a report for one cellexalTime object (interactive mode only)
+#' @title create a report for one cellexalLinear object (interactive mode only)
 #' @export 
 #if ( ! isGeneric('createReport') ){
 setGeneric('createReport', ## Name
@@ -599,28 +600,28 @@ function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250) {
 #' @rdname createReport
 setMethod('createReport', signature = c ('character', 'cellexalvrR', 'character'),
 definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
-	createReport ( x =getTime(cellexalObj, x), cellexalObj=cellexalObj, info=groupingInfo(x,info), deg.genes=deg.genes )
+	createReport ( x =getLinearSelection(cellexalObj, x), cellexalObj=cellexalObj, info=groupingInfo(x,info), deg.genes=deg.genes )
 })
 
 #' @rdname createReport
-setMethod('createReport', signature = c ('cellexalTime', 'cellexalvrR', 'character'),
+setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'character'),
 definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 	info = groupingInfo(cellexalObj, info )
 	createReport ( x =x, cellexalObj=cellexalObj, info=groupingInfo(x,info), deg.genes=deg.genes )
 })
 
 #' @rdname createReport
-setMethod('createReport', signature = c ('cellexalTime', 'cellexalvrR', 'cellexalTime'),
+setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'cellexalLinear'),
 definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 	info = groupingInfo(cellexalObj, info@gname )
 	createReport ( x =x, cellexalObj=cellexalObj, info=info, deg.genes=deg.genes )
 })
 
 #' @rdname createReport
-setMethod('createReport', signature = c ('cellexalTime', 'cellexalvrR', 'cellexalGrouping'),
+setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'cellexalGrouping'),
 definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 
-#print( paste( "I am in cellexalTime::createReport and was called from here:", deparse(sys.calls()[[sys.nframe()-2]]) ) )
+#print( paste( "I am in cellexalLinear::createReport and was called from here:", deparse(sys.calls()[[sys.nframe()-2]]) ) )
 
 	text = NULL
 	if ( is.null(deg.genes)){
@@ -672,7 +673,7 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 			smoothedClusters = ret$smoothedClusters,
 			MaxInCluster = ret$MaxInCluster
 		)
-		#print( "logTimeline" )
+		#print( "logLinear selection" )
 		cellexalObj = logTimeLine( cellexalObj, ps, ret$genes, 
 			info = x, 
 			png = c( ret$ofile, ret$pngs ),
@@ -685,15 +686,15 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 	cellexalObj = addSelection( x, cellexalObj )
 	#	print ( paste("4: createReport: The dims of the cellexalObj:", paste(collapse=", ", dim(cellexalObj@data))))
 
-	invisible( list( cellexalObj = cellexalObj, timeline = x) )
+	invisible( list( cellexalObj = cellexalObj, linearSelection = x) )
 	} )
 
 
-#' Calculates linear peason statistics for the timeline and the 
+#' Calculates linear peason statistics for the linearSelection and the 
 #' expression data in the cellexalvrR object.
 #' @name createStats
 #' @docType methods
-#' @description Create statistics for the timeline.
+#' @description Create statistics for the linearSelection.
 #' @param x the object
 #' @param cellexalObj the object to get the data from
 #' @param num.sig the amountof genes to return as top genes (default 250)
@@ -711,11 +712,11 @@ function ( x, cellexalObj, num.sig=250, p.cut = NULL ) {
 #' @rdname createStats
 setMethod('createStats', signature = c ( 'character', 'cellexalvrR' ),
 	definition = function ( x, cellexalObj, num.sig=250, p.cut = NULL ) {
-		createStats(x= getTime(cellexalObj, x ), cellexalObj=cellexalObj, num.sig=num.sig, p.cut=p.cut )
+		createStats(x= getLinearSelection(cellexalObj, x ), cellexalObj=cellexalObj, num.sig=num.sig, p.cut=p.cut )
 })
 
 #' @rdname createStats
-setMethod('createStats', signature = c ( 'cellexalTime', 'cellexalvrR' ),
+setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 	definition = function ( x, cellexalObj, num.sig=250, p.cut = NULL ) {
 
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
@@ -763,7 +764,7 @@ setMethod('createStats', signature = c ( 'cellexalTime', 'cellexalvrR' ),
 			 (conv -mean(conv)) / stats::sd(conv)
 			} )
 		info = groupingInfo( cellexalObj, x@gname )
-		info@timeObj = x
+		info@linarObj = x
 		gr = clusterGenes( t(conv),deg.genes=NULL, info=info)
 		cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[order(gr$geneClusters)]
 
@@ -783,8 +784,8 @@ setMethod('createStats', signature = c ( 'cellexalTime', 'cellexalvrR' ),
 		if ( ! is.null(p.cut)){
 			cellexalObj@usedObj$deg.genes = rownames(ps)[which( ps[,'p.value'] < p.cut ) ]
 		}
-		if ( is.null( cellexalObj@usedObj$timelines)) {
-			cellexalObj@usedObj$timelines = list()
+		if ( is.null( cellexalObj@usedObj$linearSelections)) {
+			cellexalObj@usedObj$linearSelections = list()
 		}
 		cellexalObj = addSelection( x, cellexalObj)
 		cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = ps
@@ -800,18 +801,18 @@ setMethod('createStats', signature = c ( 'cellexalTime', 'cellexalvrR' ),
 
  
 #' This function utilizes slingshot to identify the longest possible pseudo 
-#' timeline for this selection.
+#' linearSelection for this selection.
 #' In short the drc model of the selected genes is clustered using kmeans
 #' and the first and last selected cell is used to determine the start and end points of the
 #' anlysis in the drc model.
 #' Subsequently slignshot is used to calculate the pseudo time over the selection.
-#' This function will create the same timeline if the same cells are used as input.
+#' This function will create the same linearSelection if the same cells are used as input.
 #' @name createTime
 #' @docType methods
-#' @description calculate time based on the internal table a b and c columns
+#' @description calculate pseudo time based on the internal table a b and c columns
 #' @param x the object
-#' @param parentSelection the selection name this time bases on.
-#' @title craete the pseudo time for the selection 
+#' @param parentSelection the selection name this linear selection bases on.
+#' @title create the pseudo time / linear selection for the selection 
 #' @export
 #if ( ! isGeneric('createTime') ){
 setGeneric('createTime', ## Name
@@ -822,10 +823,10 @@ function ( x, parentSelection=NULL ) {
 #}
 
 #' @rdname createTime
-setMethod('createTime', signature = c ('cellexalTime'),
+setMethod('createTime', signature = c ('cellexalLinear'),
 definition = function ( x, parentSelection=NULL ) {
 	if ( is.null(parentSelection) && length(x@parentSelection)==0 ){
-		stop( "cellexalTime::createTime needs to know the parentSelection")
+		stop( "cellexalLinear::createTime needs to know the parentSelection")
 	}
 	if ( !is.null( parentSelection )){
 		x@parentSelection = parentSelection@gname
@@ -877,7 +878,7 @@ definition = function ( x, parentSelection=NULL ) {
 	}
 	#})
 	if ( is.null(sling)) {
-		stop("Slingshot has not returned a timeline in time - please select a more linear set of cells")
+		stop("Slingshot has not returned a linearSelection in time - please select a more linear set of cells")
 	}
 	slingTime = slingshot::slingPseudotime( sling )
 
@@ -889,7 +890,7 @@ definition = function ( x, parentSelection=NULL ) {
 		use = which(tmp == max(tmp))
 	}
 	if ( length(which(is.na(slingTime[,use]))) > 0 ){
-		print("The timeline could not reach all cells - possibly worth a debug session")
+		print("The linearSelection could not reach all cells - possibly worth a debug session")
 	}
 	o = order( slingTime[,use])
 	
@@ -920,10 +921,10 @@ definition = function ( x, parentSelection=NULL ) {
 
 #' @name exportSelection
 #' @docType methods
-#' @description Export this time as selection file
+#' @description Export this linear selection as CellexalVR selection file
 #' @param x the object
 #' @param fname the file to write the info to
-#' @title export a cellexalTime object for CellexalVR
+#' @title export a cellexalLinear object for CellexalVR
 #' @export 
 #if ( ! isGeneric('exportSelection') ){
 	setGeneric('exportSelection', ## Name
@@ -935,7 +936,7 @@ definition = function ( x, parentSelection=NULL ) {
 
 
 #' @rdname exportSelection
-setMethod('exportSelection', signature = c ('cellexalTime'),
+setMethod('exportSelection', signature = c ('cellexalLinear'),
 	definition = function (x, fname) {
 
 	dat = x@dat[order(x@dat$time),]
@@ -956,7 +957,7 @@ setMethod('exportSelection', signature = c ('cellexalTime'),
 #' @name HTMLtable
 #' @docType methods
 #' @description Create a html table that descibes a grouping (multi group or pseudo time)
-#' @param x the cellexalTime object
+#' @param x the cellexalLinear object
 #' @title log specififc - create an HTML summary table for this selection
 #' @export 
 #if ( ! isGeneric('HTMLtable') ){
@@ -969,13 +970,13 @@ setMethod('exportSelection', signature = c ('cellexalTime'),
 
 
 #' @rdname HTMLtable
-setMethod('HTMLtable', signature = c ('cellexalTime'),
+setMethod('HTMLtable', signature = c ('cellexalLinear'),
 definition = function (x) {
 
 	cellCount = table(x@dat[,'col'])
 	tableHTML = paste( sep="\n",
 			"### group information table",'',
-			"<p> This is information on a timeline - VR and R ids are not set at the moment<p>",
+			"<p> This is information on a linearSelection - VR and R ids are not set at the moment<p>",
 		'<table>',
 		'  <tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th></tr>',
 
@@ -990,23 +991,23 @@ definition = function (x) {
 					)
 				}))
 			, '</table> ',
-			"<p> Linear statistics were applied to the whole set of genes vs. the pseudotime described in the table.</p>"
+			"<p> Linear statistics were applied to the whole set of genes vs. the pseudo time described in the table.</p>"
 	)
 
 	tableHTML
 } )
 
 
-#' inverts the time in the object.
+#' inverts the time in the cellexalLinear object.
 #' 
-#' Occational the algorithm fails and inverts the time.
-#' This function is used to easily invert a timeline that 
+#' Occational the algorithm fails and inverts the linear order.
+#' This function is used to easily invert a (inverted) linearSelection that 
 #' runs from end to start instead the otherway around.
 #' @name invert
 #' @docType methods
 #' @description reverse the time orientaion
 #' @param x the object
-#' @title reverse the time order for a cellexalTime object
+#' @title reverse the time order for a cellexalLinear object
 #' @export 
 #if ( ! isGeneric('invert') ){
 setGeneric('invert', ## Name
@@ -1019,7 +1020,7 @@ function ( x ) {
 
 
 #' @rdname invert
-setMethod('invert', signature = c ('cellexalTime'),
+setMethod('invert', signature = c ('cellexalLinear'),
 	definition = function ( x ) {
 	oldT = x
 	x@dat$time = (x@dat$time -max(x@dat$time))*-1
@@ -1041,9 +1042,9 @@ setMethod('invert', signature = c ('cellexalTime'),
 #' 
 #' @name plotTime
 #' @docType methods
-#' @description 3D plot the time with a line in the time
+#' @description 3D plot the cellexalLinear object
 #' @param x the object
-#' @title plot the drc with time colors
+#' @title plot the drc with pseudo time colors
 #' @export 
 #if ( ! isGeneric('plotTime') ){
 setGeneric('plotTime', ## Name
@@ -1056,7 +1057,7 @@ function ( x ) {
 
 
 #' @rdname plotTime
-setMethod('plotTime', signature = c ('cellexalTime'),
+setMethod('plotTime', signature = c ('cellexalLinear'),
 definition = function ( x ) {
 	#if ( var(x@dat[,'c'] )== 0 ) {
 	plot( x@dat$a, x@dat$b, col=as.vector(x@dat$col))
@@ -1071,7 +1072,7 @@ definition = function ( x ) {
 
 #' @name plotDataOnTime_rmd
 #' @docType methods
-#' @description plot linear data on the time in a 2d figure
+#' @description plot linear data on the speudo time in a 2d figure
 #' @param x the object
 #' @param dat the linear data to plot
 #' @param color the color(s) the data should be plotted in
@@ -1088,23 +1089,23 @@ function ( x, dat, color=NULL, ofile, cellexalObj  ) {
 #}
 
 #' @rdname plotDataOnTime_rmd
-setMethod('plotDataOnTime_rmd', signature = c ('cellexalTime'),
+setMethod('plotDataOnTime_rmd', signature = c ('cellexalLinear'),
 definition = function ( x, dat, color=NULL, ofile, cellexalObj ) {
 	plotDataOnTime( x, dat, color=NULL, ofile )
 	return(paste("![](", correctPath(ofile, cellexalObj),")" ))
 })
 
 
-#' Plot a list of data values on the timeline the vectors in the list must have cell names
+#' Plot a list of data values on the linearSelection the vectors in the list must have cell names
 #' @name plotDataOnTime
 #' @docType methods
-#' @description plot linear data on the time in a 2d figure
-#' @param x the cellexalTime object or a data.frame (use the cellexalTime object)
+#' @description plot linear data on the linear selection in a 2d figure
+#' @param x the cellexalLinear object or a data.frame (use the cellexalLinear object)
 #' @param dat the linear data to plot
 #' @param color the color(s) the data should be plotted in
 #' @param ofile the figure file (png)
 #' @param smooth add a smoothed line to the graph (default TRUE)
-#' @title plot data on the cellexalTime time information as XY plots
+#' @title plot data on the cellexalLinear time information as XY plots
 #' @export 
 #if ( ! isGeneric('plotDataOnTime') ){
 setGeneric('plotDataOnTime', ## Name
@@ -1115,7 +1116,7 @@ function ( x, dat, color=NULL, ofile, smooth=TRUE ) {
 #}
 
 #' @rdname plotDataOnTime
-setMethod('plotDataOnTime', signature = c ('cellexalTime', 'list'),
+setMethod('plotDataOnTime', signature = c ('cellexalLinear', 'list'),
 definition = function ( x, dat, color=NULL, ofile, smooth=TRUE ) {
 	toPlot = data.frame(x@dat[,c('time', 'col')])
 	plotDataOnTime( x= toPlot, dat=dat, color=color, ofile=ofile, smooth=smooth)
@@ -1206,7 +1207,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 		close(fileConn)
 	}
 	#pl = pl + ggplot2::theme(panel.background = ggplot2::element_blank())
-	pl = pl + ggplot2::ggtitle('Gene sets expression changes over the selected pseudotime')
+	pl = pl + ggplot2::ggtitle('Gene sets expression changes over the selected linear selection')
 	pl = pl + ggplot2::ylab( "Smoothed mean expression of gene sets" )
 	pl = pl + ggplot2::xlab( "pseudotime" )
 	## get the global min and max.
@@ -1251,7 +1252,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 #' @param color the color of the border around the heatmap
 #' @param circleF a file for a small colored circle as svg file (needed for the reports)
 #' @title description of function plotTimeHeatmap
-#' @returns create a heatmap figure file for a cellexalTime object
+#' @returns create a heatmap figure file for a cellexalLinear object
 #' @export
 #if ( ! isGeneric('plotTimeHeatmap') ){
 setGeneric('plotTimeHeatmap', ## Name
@@ -1326,26 +1327,16 @@ definition = function ( x, ofile, cellexalObj, color=NULL ) {
 
 
 
-#' Subset a time object based on a list of cells.
+#' Subset a cellexalLinear object based on a list of cells.
 #'
-#' @name subsetTime
+#' @name subset
 #' @docType methods
-#' @description subset a cellexalTime object
+#' @description subset a cellexalLinear object
 #' @param x the object
-#' @param cells the cell names to subset the time to
-#' @title subset a cellexalTime object
+#' @param cells the cell names to subset the object to
+#' @title subset a cellexalLinear object
 #' @export 
-#if ( ! isGeneric('subsetTime') ){
-setGeneric('subsetTime', ## Name
-function ( x, cells ) { 
-	standardGeneric('subsetTime')
-}
-)
-#}
-
-
-#' @rdname subsetTime
-setMethod('subsetTime', signature = c ('cellexalTime'),
+setMethod('subset', signature = c ('cellexalLinear'),
 definition = function ( x, cells) {
 	m = match( cells, rownames(x@dat) )
 	m = m[which(!is.na(m))]
@@ -1361,31 +1352,31 @@ definition = function ( x, cells) {
 
 
 #' To run this method efficiently it is recommended to first subset the drc the selection is based on.
-#' Next it is recommended to add this drc subset to the cellexal object and use the subsetTime function to also subset the timeline.
+#' Next it is recommended to add this drc subset to the cellexal object and use the subset function to also subset the linearSelection.
 #' This way one can assure that the timepoints can be compared across the analyses.
 #' This function will run the statistics and create a report for the new subset.
 #' 
 #' This function is highly experimental and not meant to be used from within VR!
 #' 
-#' @name timeAnalysisSubset
+#' @name linearAnalysisSubset
 #' @docType methods
 #' @description create a time report for a subset of cells only
 #' @param x the object
 #' @param cellexalObj the cellexal object to process
-#' @param deg.genes dummary over these genes of the cellexalObj@usedObj$deg.genes populated during the createStats() run
+#' @param deg.genes summary over these genes of the cellexalObj@usedObj$deg.genes populated during the createStats() run
 #' @title old method combining createStats and createReport functions
 #' @export 
-#if ( ! isGeneric('timeAnalysisSubset') ){
-setGeneric('timeAnalysisSubset', ## Name
+#if ( ! isGeneric('linearAnalysisSubset') ){
+setGeneric('linearAnalysisSubset', ## Name
 function ( x, cellexalObj, deg.genes=NULL ) { 
-	standardGeneric('timeAnalysisSubset')
+	standardGeneric('linearAnalysisSubset')
 }
 )
 #}
 
 
-#' @rdname timeAnalysisSubset
-setMethod('timeAnalysisSubset', signature = c ('cellexalTime'),
+#' @rdname linearAnalysisSubset
+setMethod('linearAnalysisSubset', signature = c ('cellexalLinear'),
 definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
 	loc = reduceTo( cellexalObj,what='col', to= rownames(x@dat) )
@@ -1407,7 +1398,7 @@ definition = function ( x, cellexalObj, deg.genes=NULL ) {
 	loc = reduceTo(cellexalObj, what='row', to=deg.genes)
 	ret = createReport(x, loc, groupingInfo( cellexalObj, x@gname ) )
 
-	x = ret$timeline
+	x = ret$linearSelection
 	#cellexalObj = ret$cellexalObj
 	cellexalObj = addSelection( x, cellexalObj, x@parentSelection)
 

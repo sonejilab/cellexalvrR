@@ -4,14 +4,14 @@
 \name{createStats}
 \alias{createStats}
 \alias{createStats,character,cellexalvrR-method}
-\alias{createStats,cellexalTime,cellexalvrR-method}
+\alias{createStats,cellexalLinear,cellexalvrR-method}
 \title{linear correlation between the pseudo time and the gene expression}
 \usage{
 createStats(x, cellexalObj, num.sig = 250, p.cut = NULL)
 
 \S4method{createStats}{character,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL)
 
-\S4method{createStats}{cellexalTime,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL)
+\S4method{createStats}{cellexalLinear,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL)
 }
 \arguments{
 \item{x}{the object}
@@ -23,9 +23,9 @@ createStats(x, cellexalObj, num.sig = 250, p.cut = NULL)
 \item{p.cut}{use a p value cut of instead of a number of significant genes}
 }
 \description{
-Create statistics for the timeline.
+Create statistics for the linearSelection.
 }
 \details{
-Calculates linear peason statistics for the timeline and the 
+Calculates linear peason statistics for the linearSelection and the 
 expression data in the cellexalvrR object.
 }

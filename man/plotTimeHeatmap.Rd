@@ -20,7 +20,7 @@ plotTimeHeatmap(x, ofile, color = NULL, circleF = NULL)
 \item{circleF}{a file for a small colored circle as svg file (needed for the reports)}
 }
 \value{
-create a heatmap figure file for a cellexalTime object
+create a heatmap figure file for a cellexalLinear object
 }
 \description{
 create a really simple heatmap of the zscored data

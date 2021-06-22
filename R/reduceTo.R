@@ -39,10 +39,10 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 						}
 						x@data <- x@data[useOnly,]
 						x@meta.gene <- x@meta.gene[useOnly,]
-						for ( tName in names( x@usedObj$timelines)[-1]){
-							if ( ! is.null( x@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] ) ) {
-								x@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']] = 
-									x@usedObj$timelines[[tName]]@geneClusters[['collapsedExp']][useOnly,]
+						for ( tName in names( x@usedObj$linearSelections)[-1]){
+							if ( ! is.null( x@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] ) ) {
+								x@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = 
+									x@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']][useOnly,]
 							}
 						}
 					}else {
@@ -93,9 +93,9 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 							}
 							
 						}
-						for( na in names(x@userGroups$timelines) ) {
-							if ( length( which (is.na(match( rownames(x@userGroups$timelines[[na]]), colnames(x@data)) ))) > 0 ){
-								x@userGroups$timelines[[na]] = subsetTime( x@userGroups$timelines[[na]], colnames(x@data) )
+						for( na in names(x@userGroups$linearSelections) ) {
+							if ( length( which (is.na(match( rownames(x@userGroups$linearSelections[[na]]), colnames(x@data)) ))) > 0 ){
+								x@userGroups$linearSelections[[na]] = subset( x@userGroups$linearSelections[[na]], colnames(x@data) )
 							}
 						}
 												

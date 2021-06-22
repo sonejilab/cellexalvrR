@@ -3,17 +3,17 @@
 \docType{methods}
 \name{color}
 \alias{color}
-\alias{color,cellexalTime-method}
+\alias{color,cellexalLinear-method}
 \title{return a pseudo time color vector for a given cell names list}
 \usage{
 color(x, names)
 
-\S4method{color}{cellexalTime}(x, names)
+\S4method{color}{cellexalLinear}(x, names)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 
-\item{names}{the cells to color with the time color}
+\item{names}{the cells to color with the pseudo time color}
 }
 \description{
 return the color in exactly the right format to color the given cell names

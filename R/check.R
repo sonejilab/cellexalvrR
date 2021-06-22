@@ -132,10 +132,10 @@ setMethod('check', signature = c ('cellexalvrR'),
 		}
 	}
 
-	# the timelines (if some exist)
-	if ( ! is.null(x@usedObj$timelines)){
-		for (n in names(x@usedObj$timelines)){
-			x@usedObj$timelines[[n]] = checkTime( x@usedObj$timelines[[n]], x )
+	# the linearSelections (if some exist)
+	if ( ! is.null(x@usedObj$linearSelections)){
+		for (n in names(x@usedObj$linearSelections)){
+			x@usedObj$linearSelections[[n]] = checkTime( x@usedObj$linearSelections[[n]], x )
 		}
 	}
 

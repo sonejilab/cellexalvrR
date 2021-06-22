@@ -60,12 +60,3 @@ for ( fn in names(search)[3:5]) {
 	expect_true(file.exists( file.path(x@outpath, fn) ), label=fn)
 }
 
-
-
-
-#gene1 = getDifferentials(x, grouping, 'anova', num.sig=100 )
-
-
-
-
-## get a grouping added?

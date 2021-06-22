@@ -6,7 +6,7 @@
 \alias{show}
 \title{show the object contents}
 \usage{
-\S4method{show}{cellexalTime}(object)
+\S4method{show}{cellexalLinear}(object)
 
 \S4method{show}{cellexalGrouping}(object)
 

@@ -3,22 +3,22 @@
 \docType{methods}
 \name{addSelection}
 \alias{addSelection}
-\alias{addSelection,cellexalTime,cellexalvrR-method}
-\title{savely add a cellexalTime object to a cellexalvR object}
+\alias{addSelection,cellexalLinear,cellexalvrR-method}
+\title{savely add a cellexalLinear object to a cellexalvR object}
 \usage{
 addSelection(x, cellexalObj, upstreamSelection = NULL)
 
-\S4method{addSelection}{cellexalTime,cellexalvrR}(x, cellexalObj, upstreamSelection = NULL)
+\S4method{addSelection}{cellexalLinear,cellexalvrR}(x, cellexalObj, upstreamSelection = NULL)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 
-\item{cellexalObj}{the cellexalvrR object to add the time as group}
+\item{cellexalObj}{the cellexalvrR object to add the linear selection as group}
 
-\item{upstreamSelection}{which group was the basis for this timeline?}
+\item{upstreamSelection}{which group was the basis for this linearSelection?}
 }
 \description{
-add this cellexalTime to the corresponding cellexal object
+add this cellexalLinear to the corresponding cellexal object
 }
 \details{
 Method to copy a selection from cellexalObj to cellexalObj.

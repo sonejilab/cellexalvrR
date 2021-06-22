@@ -22,3 +22,5 @@ data/output/
 /file357a5e5a1234.serverR.Rout
 vignettes/*.R
 vignettes/*.html
+/doc/
+/Meta/

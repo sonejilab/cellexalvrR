@@ -85,8 +85,8 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 	gInfo = groupingInfo( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'groupingInfo.R'
 
 	tableHTML = HTMLtable ( gInfo) 
-	if ( nrow( gInfo@timeObj@dat) > 0 ){
-		tableHTML = HTMLtable ( gInfo@timeObj )
+	if ( nrow( gInfo@linarObj@dat) > 0 ){
+		tableHTML = HTMLtable ( gInfo@linarObj )
 	}
 	
 	

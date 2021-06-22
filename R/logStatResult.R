@@ -40,15 +40,15 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		tableHTML = HTMLtable(gInfo)
 		gname = gInfo@gname
 
-		if ( nrow(gInfo@timeObj@dat) > 0 ) {
-			tableHTML = HTMLtable(gInfo@timeObj)
+		if ( nrow(gInfo@linarObj@dat) > 0 ) {
+			tableHTML = HTMLtable(gInfo@linarObj)
 			gname = gInfo@gname
 		}
 		tableHTML = paste(tableHTML, "\n")
 		## this need to become a relative path - relative to the final outfile
 
 		if (length(grep('Time.group', x@usedObj$lastGroup)) > 0 ) {
-			gname = x@usedObj$timeline[[x@usedObj$lastGroup]]@parentSelection
+			gname = x@usedObj$linearSelection[[x@usedObj$lastGroup]]@parentSelection
 			sesionFile = x@usedObj$SelectionFiles[[gname]]
 		}else {
 			sesionFile = x@usedObj$SelectionFiles[[x@usedObj$lastGroup]]

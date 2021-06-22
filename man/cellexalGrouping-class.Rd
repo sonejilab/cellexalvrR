@@ -29,7 +29,7 @@ The cellexalGrouping class represents exactly one multi group selection in VR.
 
 \item{\code{error}}{a string vector that contains all error messages}
 
-\item{\code{timeObj}}{an optional slot to store a cellexalTime object}
+\item{\code{linarObj}}{an optional slot to store a cellexalLinear object}
 
 \item{\code{heatmapBasename}}{the filename basis for the heatmap related to this grouping}
 }}

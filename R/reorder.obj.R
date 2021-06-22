@@ -66,11 +66,11 @@ setMethod('reorderSamples', signature = c ('cellexalvrR'),
 		dataObj@groupSelectedFrom[[n]]@grouping= dataObj@groupSelectedFrom[[n]]@grouping[ids]
 	}
 	dataObj = check(dataObj)
-	if ( ! is.null (dataObj@usedObj$timelines)) {
-		for ( name in names( dataObj@usedObj$timelines ) ) {
-			if ( length(dataObj@usedObj$timelines[[name]]@error) > 0 ){
-				warning( paste("timeline", name,"is invalid - removed!"))
-				dataObj@usedObj$timelines[[name]] = NULL
+	if ( ! is.null (dataObj@usedObj$linearSelections)) {
+		for ( name in names( dataObj@usedObj$linearSelections ) ) {
+			if ( length(dataObj@usedObj$linearSelections[[name]]@error) > 0 ){
+				warning( paste("linearSelection", name,"is invalid - removed!"))
+				dataObj@usedObj$linearSelections[[name]] = NULL
 			}
 		}
 	}

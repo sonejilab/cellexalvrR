@@ -61,13 +61,13 @@ for ( i in 4:6){
 merger@outpath = tempdir(check = FALSE)
 
 
-context('GrabDRCs - Object usability - timelines')
+context('GrabDRCs - Object usability - linearSelections')
 
 merger = sessionPath(merger)
 
 merger@userGroups=data.frame()
 merger@usedObj$groupSelectedFrom = list()
-merger@usedObj$timelines = list()
+merger@usedObj$linearSelections = list()
 
 #selectionF = file.path(prefix,'data','SelectionHSPC_time.txt')
 #merger = getDifferentials(merger, selectionF, 'wilcox')

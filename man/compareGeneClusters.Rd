@@ -4,8 +4,8 @@
 \name{compareGeneClusters}
 \alias{compareGeneClusters}
 \alias{compareGeneClusters,character,character,cellexalvrR-method}
-\alias{compareGeneClusters,cellexalTime,cellexalTime,cellexalvrR-method}
-\title{compare two cellexalTime objects (interactive mode only)}
+\alias{compareGeneClusters,cellexalLinear,cellexalLinear,cellexalvrR-method}
+\title{compare two cellexalLinear objects (interactive mode only)}
 \usage{
 compareGeneClusters(
   x,
@@ -25,7 +25,7 @@ compareGeneClusters(
   GOIs = NULL
 )
 
-\S4method{compareGeneClusters}{cellexalTime,cellexalTime,cellexalvrR}(
+\S4method{compareGeneClusters}{cellexalLinear,cellexalLinear,cellexalvrR}(
   x,
   other,
   cellexalObj,
@@ -35,9 +35,9 @@ compareGeneClusters(
 )
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 
-\item{other}{the other timeline (the parentSelection has to match)}
+\item{other}{the other linearSelection (the parentSelection has to match)}
 
 \item{cellexalObj}{the cellexalObj to add the report to.}
 
@@ -51,9 +51,9 @@ compareGeneClusters(
 return the color in exactly the right format to color the names
 }
 \details{
-This is a none VR method to compare two different timelines.
-The main usage for this function is to run the same genes trough trough one timeline 
+This is a none VR method to compare two different linearSelections.
+The main usage for this function is to run the same genes trough trough one linearSelection 
 that has been split into two sub-sections like young and old or teated and untreated.
-This function only allows to compare two cellexalTime objects.
-This function highligts which genes follow different expression patterns in both timelines.
+This function only allows to compare two cellexalLinear objects.
+This function highligts which genes follow different expression patterns in both linearSelections.
 }

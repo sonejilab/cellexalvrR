@@ -3,12 +3,12 @@
 \docType{methods}
 \name{invert}
 \alias{invert}
-\alias{invert,cellexalTime-method}
-\title{reverse the time order for a cellexalTime object}
+\alias{invert,cellexalLinear-method}
+\title{reverse the time order for a cellexalLinear object}
 \usage{
 invert(x)
 
-\S4method{invert}{cellexalTime}(x)
+\S4method{invert}{cellexalLinear}(x)
 }
 \arguments{
 \item{x}{the object}
@@ -17,9 +17,9 @@ invert(x)
 reverse the time orientaion
 }
 \details{
-inverts the time in the object.
+inverts the time in the cellexalLinear object.
 
-Occational the algorithm fails and inverts the time.
-This function is used to easily invert a timeline that 
+Occational the algorithm fails and inverts the linear order.
+This function is used to easily invert a (inverted) linearSelection that 
 runs from end to start instead the otherway around.
 }

@@ -4,15 +4,15 @@
 \name{compactTime}
 \alias{compactTime}
 \alias{compactTime,cellexalvrR-method}
-\title{merge cells based on time order}
+\title{merge cells based on linear order}
 \usage{
 compactTime(cellexalObj)
 
 \S4method{compactTime}{cellexalvrR}(cellexalObj)
 }
 \arguments{
-\item{cellexalObj}{if x is a cellexalTime object this is necessary to create the zscored matrix.}
+\item{cellexalObj}{if x is a cellexalLinear object this is necessary to create the zscored matrix.}
 }
 \description{
-create a global gene z-score and merged virtual samples over the timeline
+create a global gene z-score and merged virtual samples over the linearSelection
 }

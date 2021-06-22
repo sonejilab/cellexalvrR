@@ -1,7 +1,7 @@
 #' Identify differentially expressed genes.
 #' 
 #' This function makes two statistics available for the VR process 
-#' (1) 'timeline' will automaticly be choosen if there is only one group in the data
+#' (1) 'linearSelection' will automaticly be choosen if there is only one group in the data
 #' (2) 'wilcox' a c++ re-implementation of the Seurat::FindAllMarkers function (default)
 #' 
 #' @name getDifferentials
@@ -93,7 +93,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 			if(  length(table(info@grouping)) == 1 ){
 				deg.method = 'Linear'
 				#stop( "Please selecting more than one group!")
-				message('cor.stat linear gene stats timeline')
+				message('cor.stat linear gene stats linearSelection')
 				if ( is.null( info@drc )) {
 					message(paste("The linear stats has not gotten the drc information -- choosing the first possible" , names(loc@drc )[1] )) 
 					info@drc = names(loc@drc )[1]
@@ -109,26 +109,26 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 				 	drc = x@drc[[ 1 ]]
 				}
 				
-				cellexalTime = NULL
-				if (  nrow(info@timeObj@dat) == 0 ){
+				cellexalLinear = NULL
+				if (  nrow(info@linarObj@dat) == 0 ){
 					message('defining time')
 					x = pseudotimeTest3D( x, grouping= info@gname )
 					info = groupingInfo( x, info@gname ) ## load changes
-					cellexalTime = info@timeObj
+					cellexalLinear = info@linarObj
 				}
 				else {
-					cellexalTime = info@timeObj
+					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
-				x  = createStats( cellexalTime, x,  num.sig= num.sig )
+				x  = createStats( cellexalLinear, x,  num.sig= num.sig )
 
-				ret = createReport(cellexalTime, 
+				ret = createReport(cellexalLinear, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
 					info = groupingInfo( x, info@gname ) 
 				)
-				timeN = cellexalTime@gname
-				x@usedObj$timelines[['lastEntry']] = x@usedObj$timelines[[timeN]] =
-					 ret$cellexalObj@usedObj$timelines[[timeN]]
+				timeN = cellexalLinear@gname
+				x@usedObj$linearSelections[['lastEntry']] = x@usedObj$linearSelections[[timeN]] =
+					 ret$cellexalObj@usedObj$linearSelections[[timeN]]
 				
 				deg.genes = x@usedObj$deg.genes
 

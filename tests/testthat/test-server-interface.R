@@ -368,7 +368,7 @@ expect_true( file.exists(thisP), label = thisP)
 
 
 ############################################################
-context('server VR interface - create timeline')
+context('server VR interface - create linearSelection')
 ############################################################
 
 #  make.cellexalvr.heatmap.list (cvrObj,cellidfile,num.sig,outfile, stats_method=NA)

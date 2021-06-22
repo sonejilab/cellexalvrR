@@ -24,23 +24,23 @@ grouping <- normalizePath (file.path(prefix, 'data', 'SelectionHSPC_time.txt' ))
 x = userGrouping( x, grouping)
 x = pseudotimeTest3D( x, grouping = x@usedObj$lastGroup )
 
-x = createStats( x@usedObj$timelines[[1]], x)
+x = createStats( x@usedObj$linearSelections[[1]], x)
 
-timeline = x@usedObj$timelines[[1]]
+linearSelection = x@usedObj$linearSelections[[1]]
 
 ##that is the first time we produce a time in a test script
 ## Time to test this!
-expect_equal( timeline@gname, 'Time.group.2', "time gname is correct" )
-expect_equal( timeline@parentSelection, 'User.group.1', "time parentSelection is correct" )
-expect_equal( timeline@geneClusters, list(), label="geneClsuters are not populated" )
-expect_equal( timeline@id, "7e508e3670c18c3438feeddc8e793ebe", label="id correct" )
-expect_equal( timeline@drc, "DDRtree", label="drc correct" )
-expect_equal( length(timeline@error), 0 , label="no error" )
+expect_equal( linearSelection@gname, 'Time.group.2', "time gname is correct" )
+expect_equal( linearSelection@parentSelection, 'User.group.1', "time parentSelection is correct" )
+expect_equal( linearSelection@geneClusters, list(), label="geneClsuters are not populated" )
+expect_equal( linearSelection@id, "7e508e3670c18c3438feeddc8e793ebe", label="id correct" )
+expect_equal( linearSelection@drc, "DDRtree", label="drc correct" )
+expect_equal( length(linearSelection@error), 0 , label="no error" )
 
 
 fname= file.path(x@usedObj$sessionPath,'png', 'simpleHeatmap' )
 
-res = simplePlotHeatmaps (x, info = groupingInfo( x, timeline@gname), fname )
+res = simplePlotHeatmaps (x, info = groupingInfo( x, linearSelection@gname), fname )
 expect_equal( names(res), c("genes", "ofile", "pngs", "groupColors", "error",
  'smoothedClusters', 'MaxInCluster', "mat" ) )
 expect_equal( length(res$genes), 6, label="6 gene groups")

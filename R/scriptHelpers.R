@@ -19,7 +19,7 @@ R.exe = function() {
     paste("", rscript, "", sep = "\"")
 }
 
-#' Convert a file 'A/B/C.txt' into the string 'file.path('A','B','C.txt')'.
+#' Convert a file 'A/B/C.txt' into the string "file.path('A','B','C.txt')".
 #' @param path the file to convert
 #' @param mustWork default = FALSE
 #' @export

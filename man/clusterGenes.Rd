@@ -3,9 +3,9 @@
 \docType{methods}
 \name{clusterGenes}
 \alias{clusterGenes}
-\alias{clusterGenes,cellexalTime-method}
+\alias{clusterGenes,cellexalLinear-method}
 \alias{clusterGenes,matrix-method}
-\title{cluster the genes for a timeline analysis}
+\title{cluster the genes for a linearSelection analysis}
 \usage{
 clusterGenes(
   x,
@@ -15,7 +15,7 @@ clusterGenes(
   geneclusters = NULL
 )
 
-\S4method{clusterGenes}{cellexalTime}(
+\S4method{clusterGenes}{cellexalLinear}(
   x,
   deg.genes = NULL,
   info = NULL,
@@ -32,13 +32,13 @@ clusterGenes(
 )
 }
 \arguments{
-\item{x}{either the z-scored matrix or a cellexalTime object}
+\item{x}{either the z-scored matrix or a cellexalLinear object}
 
 \item{deg.genes}{a list of genes}
 
 \item{info}{the group to cluster the genes for (list)}
 
-\item{cellexalObj}{if x is a cellexalTime object this is necessary to create the zscored matrix.}
+\item{cellexalObj}{if x is a cellexalLinear object this is necessary to create the zscored matrix.}
 
 \item{geneclusters}{ovverride the WSS based optimal group count search (default NULL)}
 }
@@ -46,7 +46,7 @@ clusterGenes(
 get a - hopefully - optimal grouing of a list of genes
 }
 \details{
-Tries to answer the question: how do these genes differ over the timeline.
+Tries to answer the question: how do these genes differ over the linearSelection.
 It answers this in a graphical, not a statistical way.
 Hence you can feed whichever genelist you like into this function.
 }

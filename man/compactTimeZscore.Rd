@@ -3,25 +3,25 @@
 \docType{methods}
 \name{compactTimeZscore}
 \alias{compactTimeZscore}
-\alias{compactTimeZscore,cellexalTime,character,cellexalvrR-method}
-\title{merge and z-score gene expression for a cellexalTime object}
+\alias{compactTimeZscore,cellexalLinear,character,cellexalvrR-method}
+\title{merge and z-score gene expression for a cellexalLinear object}
 \usage{
 compactTimeZscore(x, deg.genes, cellexalObj)
 
-\S4method{compactTimeZscore}{cellexalTime,character,cellexalvrR}(x, deg.genes, cellexalObj)
+\S4method{compactTimeZscore}{cellexalLinear,character,cellexalvrR}(x, deg.genes, cellexalObj)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 
 \item{deg.genes}{a list of genes  cluster the genes for (list)}
 
-\item{cellexalObj}{if x is a cellexalTime object this is necessary to create the zscored matrix.}
+\item{cellexalObj}{if x is a cellexalLinear object this is necessary to create the zscored matrix.}
 }
 \description{
-create a global gene z-score and virtual samples over the timeline
+create a global gene z-score and virtual samples over the linearSelection
 }
 \details{
 This function should be run on the main cellexalObj including all data.
 It will create (for a subset of genes) a z-scored dataset and will then 
-sum up the expression in the time orientation to represent 1000 'cells' in the timeline.
+sum up the expression in the linear orientation to represent 1000 'cells' in the linearSelection.
 }

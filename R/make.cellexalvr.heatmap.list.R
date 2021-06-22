@@ -44,7 +44,7 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 			cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@heatmapBasename = basename( outfile )
 
 			if ( length( grep('Time', cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@gname)) > 0 ){
-				partentGroup = getTime( cvrObj, cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@gname )@parentSelection
+				partentGroup = getLinearSelection( cvrObj, cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@gname )@parentSelection
 				cvrObj@groupSelectedFrom[[partentGroup]]@heatmapBasename = basename( outfile )
 			}
 			gene.cluster.order = cvrObj@usedObj$deg.genes

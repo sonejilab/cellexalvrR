@@ -3,18 +3,18 @@
 \docType{methods}
 \name{plotTime}
 \alias{plotTime}
-\alias{plotTime,cellexalTime-method}
-\title{plot the drc with time colors}
+\alias{plotTime,cellexalLinear-method}
+\title{plot the drc with pseudo time colors}
 \usage{
 plotTime(x)
 
-\S4method{plotTime}{cellexalTime}(x)
+\S4method{plotTime}{cellexalLinear}(x)
 }
 \arguments{
 \item{x}{the object}
 }
 \description{
-3D plot the time with a line in the time
+3D plot the cellexalLinear object
 }
 \details{
 Plot the linear data with the correct colors.

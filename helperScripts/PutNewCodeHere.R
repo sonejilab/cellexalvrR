@@ -1,3 +1,3 @@
-CompareToSubset <- function (x, timeline, cells ) {
+CompareToSubset <- function (x, linearSelection, cells ) {
 	
 }

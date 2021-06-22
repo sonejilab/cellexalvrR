@@ -3,12 +3,12 @@
 \docType{methods}
 \name{exportSelection}
 \alias{exportSelection}
-\alias{exportSelection,cellexalTime-method}
-\title{export a cellexalTime object for CellexalVR}
+\alias{exportSelection,cellexalLinear-method}
+\title{export a cellexalLinear object for CellexalVR}
 \usage{
 exportSelection(x, fname)
 
-\S4method{exportSelection}{cellexalTime}(x, fname)
+\S4method{exportSelection}{cellexalLinear}(x, fname)
 }
 \arguments{
 \item{x}{the object}
@@ -16,5 +16,5 @@ exportSelection(x, fname)
 \item{fname}{the file to write the info to}
 }
 \description{
-Export this time as selection file
+Export this linear selection as CellexalVR selection file
 }

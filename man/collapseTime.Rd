@@ -3,22 +3,23 @@
 \docType{methods}
 \name{collapseTime}
 \alias{collapseTime}
-\alias{collapseTime,cellexalTime-method}
+\alias{collapseTime,cellexalLinear-method}
 \title{sum up cells based on the pseudo time}
 \usage{
 collapseTime(x, to = 1000)
 
-\S4method{collapseTime}{cellexalTime}(x, to = 1000)
+\S4method{collapseTime}{cellexalLinear}(x, to = 1000)
 }
 \arguments{
-\item{x}{the cellexalTime object}
+\item{x}{the cellexalLinear object}
 
-\item{to}{the max amnount of time points}
+\item{to}{the max amnount of pseudo time points}
 }
 \description{
 return the color in exactly the right format to color the names
 }
 \details{
-collapse the time to a max of 1000 enrties rendering the timeline incompatible with cellexalvrR
-but allowing the correlation of collapsed expression to the time.
+collapse the linear selection to a max of 1000 entries rendering the 
+linearSelection incompatible with cellexalvrR
+but allowing the correlation of collapsed expression to the pseudo time.
 }

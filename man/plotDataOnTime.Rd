@@ -3,18 +3,18 @@
 \docType{methods}
 \name{plotDataOnTime}
 \alias{plotDataOnTime}
-\alias{plotDataOnTime,cellexalTime,list-method}
+\alias{plotDataOnTime,cellexalLinear,list-method}
 \alias{plotDataOnTime,data.frame,list-method}
-\title{plot data on the cellexalTime time information as XY plots}
+\title{plot data on the cellexalLinear time information as XY plots}
 \usage{
 plotDataOnTime(x, dat, color = NULL, ofile, smooth = TRUE)
 
-\S4method{plotDataOnTime}{cellexalTime,list}(x, dat, color = NULL, ofile, smooth = TRUE)
+\S4method{plotDataOnTime}{cellexalLinear,list}(x, dat, color = NULL, ofile, smooth = TRUE)
 
 \S4method{plotDataOnTime}{data.frame,list}(x, dat, color = NULL, ofile, smooth = TRUE)
 }
 \arguments{
-\item{x}{the cellexalTime object or a data.frame (use the cellexalTime object)}
+\item{x}{the cellexalLinear object or a data.frame (use the cellexalLinear object)}
 
 \item{dat}{the linear data to plot}
 
@@ -25,8 +25,8 @@ plotDataOnTime(x, dat, color = NULL, ofile, smooth = TRUE)
 \item{smooth}{add a smoothed line to the graph (default TRUE)}
 }
 \description{
-plot linear data on the time in a 2d figure
+plot linear data on the linear selection in a 2d figure
 }
 \details{
-Plot a list of data values on the timeline the vectors in the list must have cell names
+Plot a list of data values on the linearSelection the vectors in the list must have cell names
 }

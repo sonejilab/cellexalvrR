@@ -45,14 +45,14 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 	}
 
 
-	## now I need to cellexalTime object:
-	ti = x@usedObj$timelines[[info@gname]]
+	## now I need to cellexalLinear object:
+	ti = x@usedObj$linearSelections[[info@gname]]
 	
 	if ( is.null( ti ) ){
 		## oops - we got a parentSelection?
 		## best guess
-		if ( x@usedObj$timelines[["lastEntry"]]@parentSelection == info@gname){
-			ti = x@usedObj$timelines[["lastEntry"]]
+		if ( x@usedObj$linearSelections[["lastEntry"]]@parentSelection == info@gname){
+			ti = x@usedObj$linearSelections[["lastEntry"]]
 			info = groupingInfo(  x, ti@gname)
 		}
 	}
@@ -96,7 +96,7 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 	}
 	## could I use this here to create a heatmap with the cluster info
 	grDevices::png(  paste(fname, "groupColors", 'png',sep="."), width=1000, height=300)
-	graphics::image( matrix(as.numeric(info@timeObj@dat$col),ncol=1), col= levels(info@timeObj@dat$col))
+	graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
 	grDevices::dev.off()
 
 	for( i in 1:(length(gr)-2)  ) {
@@ -129,21 +129,21 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 
 
 
-#' Tries to answer the question: how do these genes differ over the timeline.
+#' Tries to answer the question: how do these genes differ over the linearSelection.
 #' It answers this in a graphical, not a statistical way.
 #' Hence you can feed whichever genelist you like into this function.
 #'
 #' @name clusterGenes
-#' @aliases clusterGenes,cellexalTime-method
+#' @aliases clusterGenes,cellexalLinear-method
 #' @rdname clusterGenes
 #' @docType methods
 #' @description get a - hopefully - optimal grouing of a list of genes 
-#' @param x either the z-scored matrix or a cellexalTime object
+#' @param x either the z-scored matrix or a cellexalLinear object
 #' @param deg.genes a list of genes 
 #' @param info the group to cluster the genes for (list)
-#' @param cellexalObj if x is a cellexalTime object this is necessary to create the zscored matrix.
+#' @param cellexalObj if x is a cellexalLinear object this is necessary to create the zscored matrix.
 #' @param geneclusters ovverride the WSS based optimal group count search (default NULL)
-#' @title cluster the genes for a timeline analysis
+#' @title cluster the genes for a linearSelection analysis
 #' @export 
 #if ( ! isGeneric('clusterGenes') ){
 setGeneric('clusterGenes', ## Name
@@ -156,7 +156,7 @@ setGeneric('clusterGenes', ## Name
 
 
 #' @rdname clusterGenes
-setMethod('clusterGenes', signature = c ('cellexalTime'),
+setMethod('clusterGenes', signature = c ('cellexalLinear'),
 	definition = function ( x, deg.genes=NULL, info=NULL, cellexalObj=NULL, geneclusters=NULL ) {
 
 		if ( ! is.null(deg.genes)){
@@ -228,8 +228,8 @@ setMethod('clusterGenes', signature = c ('matrix'),
 		names(gn) = rownames(x)
 		geneTrajectories = list(MaxInCluster = list())
 		
-		if ( ! is.null(info@timeObj ) ) {
-			cT = collapseTime( info@timeObj )
+		if ( ! is.null(info@linarObj ) ) {
+			cT = collapseTime( info@linarObj )
 			m = match( colnames(x), rownames(cT@dat))
 			if ( length(is.na(m)) == 1000 ) {
 				colnames(x) = rownames(cT@dat)

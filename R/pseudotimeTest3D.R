@@ -80,7 +80,7 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 	drc = loc@drc[[info@drc]][,1:3]
 	colnames(drc) = c('a', 'b' ,'c')
 
-	res = new('cellexalTime', dat= data.frame(drc), drc=info@drc)
+	res = new('cellexalLinear', dat= data.frame(drc), drc=info@drc)
 	info = groupingInfo(loc, grouping )
 	res = createTime( res, info )
 
@@ -91,7 +91,7 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 
 
 	## does the time look ok when copied to the cellexal object?
-	#fnames = drcPlots2Dtime( x, groupingInfo(x, colnames(x@userGroups)[ncol(x@userGroups) -1]) )
+	#fnames = drcPlots2Dlinear( x, groupingInfo(x, colnames(x@userGroups)[ncol(x@userGroups) -1]) )
 	#system( paste('display', fnames[1]))
 
 	## create the .time selection file for cellexalVR
