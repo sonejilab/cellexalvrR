@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Stefan Lang &amp; Shamit Soneji" />
+
+<meta name="date" content="2021-06-23" />
+
+<title>A guide to using cellexalvrR - Quick Start</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">A guide to using cellexalvrR - Quick Start</h1>
+<h4 class="author">Stefan Lang &amp; Shamit Soneji</h4>
+<h4 class="date">2021-06-23</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This document describes how to use <code>cellexalvrR</code>, an R package that accompanies <a href="wwww.cellexalvr.med.lu.se">CellexalVR</a> which is a virtual reality environment to analyze single-cell RNAseq data. <code>cellexalvrR</code> has two functions:</p>
+<ol style="list-style-type: decimal">
+<li>To aid the formatting and export of data that can be imported by CellexalVR.</li>
+<li>To perform backend calculations during a CellexalVR session.</li>
+</ol>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>The easiest way to install <code>cellexalvrR</code> is directly from github using the <code>devtools</code> package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;sonejilab/cellexalvrR&quot;</span>)</span></code></pre></div>
+<p><strong>If you are installing this on your VR workstation then make sure you install <code>cellexalvrR</code> system-wide. Right-click the R icon, and then “Run as administrator” before issuing the commands above. Also make sure that you also have the <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a> installed on your Windows machine which provides C and C++ compilers.</strong></p>
+</div>
+<div id="quick-start" class="section level2">
+<h2>Quick start</h2>
+<div id="exporting-files-from-a-seurat-object" class="section level3">
+<h3>Exporting files from a Seurat object</h3>
+<p>We have a simple function to convert a Seurat ovject to a cellexalvr object prior to export. To demonstrate this we will use the their pbmc example. We have processed the data as per the vignette <a href="https://satijalab.org/seurat/v3.2/pbmc3k_tutorial.html">here</a>, and we pick it up from where the UMAP/tSNE is made. You can get an rds file from <a href="http://cellexalvr.med.lu.se/downloadable/pbmc.zip">here</a> (unzip first) to follow along.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We are using the seurat example pbmc_small</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We will now calculate a UMAP and tSNE, but in each case embedding to 3 dimensions: </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>pbmc_small <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(pbmc_small, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">n.components =</span> <span class="dv">3</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 Read 80 rows and found 10 numeric columns</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; **************************************************|</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\Rtmp6L1UEd\file17145c5b67cc</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:07 Annoy recall = 100%</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:08 Commencing smooth kNN distance calibration using 1 thread</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:08 7 smooth knn distance failures</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:09 Initializing from normalized Laplacian + noise</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:09 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15:44:10 Optimization finished</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(pbmc_small,<span class="st">&quot;umap&quot;</span>)[<span class="dv">1</span>,]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    UMAP_1    UMAP_2    UMAP_3 </span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -1.912597 -1.099849  1.826431</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#pbmc_small &lt;- RunTSNE(pbmc_small, dims = 1:10,dim.embed = 3)</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#Embeddings(pbmc_small,&quot;tsne&quot;)[1,]</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we convert the object to a cellexalvr object using </span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># the cell identity and cluster as metadata for the cells (and any others you wish):</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>cvr <span class="ot">&lt;-</span> <span class="fu">as_cellexalvrR</span>(pbmc_small,<span class="fu">c</span>(<span class="st">&quot;orig.ident&quot;</span>,<span class="st">&quot;groups&quot;</span>), <span class="at">specie=</span><span class="st">&quot;human&quot;</span> )</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>cvr</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 230 genes and 80  cells. </span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (230,1): &#39;Gene Symbol&#39;   </span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (80,3): &#39;orig.ident@SeuratProject&#39;, &#39;groups@g2&#39;, &#39;groups@g1&#39;   </span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 3 drc object(s)</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">#We&#39;re ready to export. Fist make a folder if you haven&#39;t already:</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;PBMC&quot;</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check(x): meta.gene rownames set to data rownames</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;tsne.mds&quot;         </span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [7] &quot;umap.mds&quot;</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+<p>Copy the PBMC folder and contents to the “Data”&quot; folder where you downloaded and unpacked CellexalVR. It will then be available for loading when you step into CellexalVR.</p>
+</div>
+<div id="using-anndata-objects" class="section level3">
+<h3>Using AnnData objects</h3>
+<p>Currently we do not have a package to export a Scanpy object directly to cellexalVR ready files (just yet), but a quick route is to use <a href="https://github.com/mojaveazure/seurat-disk">seurat-disk</a> to import the h5ad file into a Seurat and use the steps above. Get the 3k PBMC h5ad file from <a href="http://cellexalvr.med.lu.se/downloadable/pbmc3k.zip">here</a> and unzip. It was made using <a href="https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html">this Scanpy tutorial</a> where the only change we made was to embed the UMAP into 3 dims using <code>sc.tl.umap(adata,n_components=3)</code> :</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>remote <span class="ot">=</span> <span class="st">&#39;http://cellexalvr.med.lu.se/downloadable/pbmc3k.zip&#39;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>local <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;pbmc3k.zip&#39;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(remote, <span class="at">destfile =</span> local)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">unzip</span>( local, <span class="at">exdir =</span> <span class="fu">tempdir</span>() )</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>cvr <span class="ot">&lt;-</span> <span class="fu">as_cellexalvrR</span>( <span class="fu">file.path</span>( <span class="fu">tempdir</span>(), <span class="st">&quot;pbmc3k.h5ad&quot;</span>), </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">meta.cell.groups =</span> <span class="fu">c</span>( <span class="st">&quot;leiden&quot;</span>) , <span class="at">embeddingDims =</span> <span class="dv">3</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">specie =</span> <span class="st">&quot;human&quot;</span>, <span class="at">velocity =</span> <span class="cn">NULL</span> )</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reading expression data</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in value[[3L]](cond): using method 2 to read the data</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>cvr</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 1838 genes and 2638  cells. </span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1838,14): &#39;_index&#39;, &#39;dispersions&#39;, &#39;dispersions_norm&#39;, &#39;gene_ids&#39;, &#39;highly_variable&#39;, &#39;mean&#39;, &#39;mean_counts&#39;, &#39;means&#39;, &#39;mt&#39;, &#39;n_cells&#39;, &#39;n_cells_by_counts&#39;, &#39;pct_dropout_by_counts&#39;, &#39;std&#39;, &#39;total_counts&#39;   </span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (2638,8): &#39;leiden@0&#39;, &#39;leiden@2&#39;, &#39;leiden@1&#39;, &#39;leiden@4&#39;, &#39;leiden@3&#39;, &#39;leiden@5&#39;, &#39;leiden@6&#39;, &#39;leiden@7&#39;   </span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to human</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;PBMC3K&quot;</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;umap.mds&quot;</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+</div>
+<div id="using-anndata-objects-from-an-scvelo-run" class="section level3">
+<h3>Using AnnData objects from an scvelo run</h3>
+<p>If you have used scvelo to caculate cell velocities then only a couple more options need to be added to the export. In this example we ran the <a href="https://scvelo.readthedocs.io/VelocityBasics.html">demo</a> with two extra lines:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sc.tl.umap</span>(adata,<span class="at">n_components=</span><span class="dv">3</span>) <span class="co"># embed to 3 dims</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sc.tl.leiden</span>(adata) <span class="co">#get clusters</span></span></code></pre></div>
+<p>You can get a zip of the resulting h5ad file from <a href="http://cellexalvr.med.lu.se/downloadable/pancreas_scvelo.zip">here</a>. The rest is almost the same as above (in R):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Convert(&quot;pancreas_scvelo.h5ad&quot;, dest = &quot;h5seurat&quot;, overwrite = TRUE)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#pancreas &lt;- LoadH5Seurat(&quot;pancreas_scvelo.h5seurat&quot;)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>remote <span class="ot">=</span> <span class="st">&#39;http://cellexalvr.med.lu.se/downloadable/pancreas_scvelo.zip&#39;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>local <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;pancreas_scvelo.zip&#39;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(remote, <span class="at">destfile =</span> local)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">unzip</span>( local, <span class="at">exdir =</span> <span class="fu">tempdir</span>() )</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>cvr <span class="ot">&lt;-</span> <span class="fu">as_cellexalvrR</span>(<span class="fu">file.path</span>( <span class="fu">tempdir</span>(),<span class="st">&quot;pancreas_scvelo.h5ad&quot;</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;clusters&quot;</span>,<span class="st">&quot;leiden&quot;</span>), <span class="at">specie=</span><span class="st">&quot;human&quot;</span>,<span class="at">velocity=</span><span class="st">&quot;scvelo&quot;</span>, </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">scaleArrowTravel=</span><span class="dv">30</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reading expression data</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span><span class="al">WARNING</span><span class="co">: drc pca - velocity information not available</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># The deltas can be quite small, so in the line above we have &#39;scaleArrowTravel&#39; </span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># which multiples delta by factor specified to increase the path of travel for </span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># each cell to make them more visible.</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;Pancreas_scvelo&quot;</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;umap.mds&quot;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+<p><strong>In general, to enable velocity visualisation in CellexalVR one supplies 6-column .mds files, where the last three columns denote the destination x/y/z coordinate for each cell</strong></p>
+</div>
+<div id="exporting-scatac-data-from-a-seurat-object" class="section level3">
+<h3>Exporting scATAC data from a Seurat object</h3>
+<p>We followed the example <a href="https://satijalab.org/seurat/v3.0/atacseq_integration_vignette.html">here</a>, again embedding to 3 dimensions as shown above. A zip of the RDS file can be obtained <a href="http://cellexalvr.med.lu.se/downloadable/pbmc.atac.zip">here</a> which is a seurat object. Exporting the data:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>remote <span class="ot">=</span> <span class="st">&#39;http://cellexalvr.med.lu.se/downloadable/pbmc.atac.zip&#39;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>local <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="st">&#39;pbmc.atac.zip&#39;</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(remote, <span class="at">destfile =</span> local)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>utils<span class="sc">::</span><span class="fu">unzip</span>( local, <span class="at">exdir =</span> <span class="fu">tempdir</span>() )</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>pbmc.atac <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;pbmc.atac.rds&quot;</span>))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># convert the object using the gene activity assay</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>cvr <span class="ot">&lt;-</span> <span class="fu">as_cellexalvrR</span>(pbmc.atac,<span class="fu">c</span>(<span class="st">&quot;seurat_clusters&quot;</span>),<span class="at">specie=</span><span class="st">&quot;human&quot;</span>,<span class="at">assay=</span><span class="st">&quot;ACTIVITY&quot;</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>cvr</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 18969 genes and 7866  cells. </span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (18969,1): &#39;Gene Symbol&#39;   </span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (7866,17): &#39;seurat_clusters@0&#39;, &#39;seurat_clusters@2&#39;, &#39;seurat_clusters@7&#39;, &#39;seurat_clusters@14&#39;, &#39;seurat_clusters@13&#39;, &#39;seurat_clusters@1&#39;, &#39;seurat_clusters@3&#39;, &#39;seurat_clusters@6&#39;, &#39;seurat_clusters@5&#39;, &#39;seurat_clusters@8&#39;, &#39;seurat_clusters@4&#39;, &#39;seurat_clusters@12&#39;, &#39;seurat_clusters@10&#39;, &#39;seurat_clusters@11&#39;, &#39;seurat_clusters@9&#39;, &#39;seurat_clusters@16&#39;, &#39;seurat_clusters@15&#39;   </span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#We&#39;re ready to export. Fist make a folder if you haven&#39;t already:</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;scATAC&quot;</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check(x): meta.gene rownames set to data rownames</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;lsi.mds&quot;           &quot;umap.mds&quot;</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+</div>
+<div id="making-and-exporting-a-cellexalvr-object-from-its-elements." class="section level3">
+<h3>Making and exporting a cellexalVR object from it’s elements.</h3>
+<p>If you aren’t using Seurat the following guide will show you how to make a cellexalVR oject from scratch using our in-built functions. The requirments are very simple and examples are shown below.</p>
+<p>The data from <a href="http://www.bloodjournal.org/content/128/8/e20.long?sso-checked=true">Nestorowa <em>et al</em></a> can be downloaded from <a href="http://cellexalvr.med.lu.se/downloadable/cvrQuickStartData.zip">here</a>. Unpack them and set your working directory to where they are.</p>
+<p>First, load the library:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span></code></pre></div>
+<p>Then load the data:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;exdata.RData&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;facs.RData&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;cell.ids.RData&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;diff.proj.RData&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;ddr.proj.RData&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;tsne.proj.RData&quot;</span>)</span></code></pre></div>
+<p><code>exdata</code> is a sparse matrix of highly variable genes in log2 form. The first 10 columns and 10 rows look as so:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>exdata[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 x 10 sparse Matrix of class &quot;dgCMatrix&quot;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    [[ suppressing 10 column names &#39;HSPC_001&#39;, &#39;HSPC_002&#39;, &#39;HSPC_003&#39; ... ]]</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                                </span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Clec1b         .         .        .         .        1.039889 1.172368 .       </span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Kdm3a          .         .        .         .        .        8.313856 7.042431</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coro2b         9.4755769 .        .         .        1.637906 1.172368 .       </span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8430408G22Rik  .         .        .         .        .        .        .       </span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Clec9a         .         .        .         .        .        .        .       </span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Phf6           7.7333697 7.271829 9.4130405 2.677008 5.832172 7.856124 3.298544</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Usp14          1.4788998 3.378561 8.6774851 1.659063 7.391105 3.091340 8.689676</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Tmem167b       .         9.093340 0.8302297 .        1.637906 .        .       </span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Kbtbd7        10.0456005 2.861341 1.3538522 1.659063 2.385231 7.902221 .       </span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Rag2           0.5329056 2.047347 0.8302297 .        6.381515 .        .       </span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                         </span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Clec1b        .        1.486056 .       </span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Kdm3a         2.732774 2.202400 2.209467</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coro2b        1.090491 .        .       </span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8430408G22Rik .        .        .       </span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Clec9a        .        .        .       </span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Phf6          9.103079 6.695850 1.491864</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Usp14         7.566973 2.202400 8.129944</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Tmem167b      .        1.486056 1.491864</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Kbtbd7        .        .        .       </span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Rag2          1.704399 7.365545 1.491864</span></span></code></pre></div>
+<p>Note the cell IDs are in the column names, and the gene names are the row names.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(exdata)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dgCMatrix&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;package&quot;)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Matrix&quot;</span></span></code></pre></div>
+<p><code>facs</code> is a matrix of cell surface marker intensities captured during index sorting:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(facs)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               CD34      CD16     c.Kit      EPCR      Flk2     CD150      CD48</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_001 0.6037796 0.4322826 1.3509535 1.5235524 0.3618872 0.3036440 0.4359241</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_002 0.3652949 0.5923082 1.1668190 1.5575771 0.3985330 0.1802330 0.3413969</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_003 1.1688350 0.3103070 1.2716602 0.1796609 0.2225457 0.2708689 1.4005640</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_004 0.7234537 0.5098244 1.2890254 0.1047645 0.7382823 0.1746147 1.0903352</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_006 0.7806266 0.2244971 0.8613574 0.1909399 0.7124364 0.4767371 1.1907472</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008 0.8303475 0.5984071 1.2414646 1.4069329 0.4826786 0.2322792 0.3781136</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                Lin      Sca1</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_001 0.2989843 1.3179900</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_002 0.4922320 1.5137737</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_003 0.4194964 0.6391425</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_004 0.5070497 0.5363241</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_006 0.3140937 0.5699483</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008 0.2573233 1.2604954</span></span></code></pre></div>
+<p>Cell IDs are in the row names, and the name of the surface protein in the columns.</p>
+<p><code>cell.ids</code> is a 1/0 matrix that assigns metadata to the each cell. In this case it shows the cell type each cell was sorted as:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cell.ids)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          LTHSC_broad LMPP_broad MPP_broad CMP_broad MEP_broad GMP_broad</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_001           0          0         1         0         0         0</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_002           1          0         0         0         0         0</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_003           0          0         1         0         0         0</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_004           0          1         0         0         0         0</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_006           0          1         0         0         0         0</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008           0          1         0         0         0         0</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          MPP1_broad MPP2_broad MPP3_broad STHSC_broad LTHSC LMPP MPP CMP MEP</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_001          0          0          0           1     0    0   0   0   0</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_002          0          0          0           0     1    0   0   0   0</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_003          0          0          1           0     0    0   0   0   0</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_004          0          0          0           0     0    1   0   0   0</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_006          0          0          0           0     0    1   0   0   0</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008          0          0          0           0     0    1   0   0   0</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          GMP MPP1 MPP2 MPP3 STHSC ESLAM HSC1 Projected</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_001   0    0    0    0     0     0    0         0</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_002   0    0    0    0     0     0    0         0</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_003   0    0    0    0     0     0    0         0</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_004   0    0    0    0     0     0    0         0</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_006   0    0    0    0     0     0    0         0</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008   0    0    0    0     0     0    0         0</span></span></code></pre></div>
+<p>Cell IDs are in the row names, and the name of the meta data in the columns. A 1 is given if the cell belongs to a metadata class, 0 otherwise.</p>
+<p><code>diff.proj</code>,<code>tsne.proj</code>,and <code>diff.proj</code> are the results from three different dimension reduction methods applied to <code>exdata</code>, specifically DDRTree, tSNE and diffusion map respectively. Each is a three column matrix of x/y/z coordinates. For example:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(diff.proj)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                   DC1          DC2          DC3</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_001 -0.014760110 -0.024119177 -0.007998293</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_002 -0.010255308 -0.019970919 -0.015754327</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_003 -0.003649320  0.027297654  0.014202316</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_004 -0.012653205 -0.002990825  0.025813077</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_006 -0.005876981  0.021537658  0.035740656</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008 -0.015699148 -0.018777106  0.007916241</span></span></code></pre></div>
+<p>The first step is to put all the dimension reduction outputs into a single list:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>proj.list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">diffusion=</span>diff.proj,<span class="at">DDRtree=</span>ddr.proj,<span class="at">tSNE=</span>tsne.proj)</span></code></pre></div>
+<p>The next is to make a <code>cellexalvr</code> object by calling <code>MakeCellexaVRObj</code> and passing the required objects to it:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cellvr <span class="ot">&lt;-</span> <span class="fu">MakeCellexalVRObj</span>(exdata,<span class="at">drc.list=</span>proj.list,<span class="at">specie=</span><span class="st">&quot;mouse&quot;</span>,<span class="at">cell.meta=</span>cell.ids,<span class="at">facs.data=</span>facs)</span></code></pre></div>
+<p>In the same step we also set the specie as mouse which ensures the correct transcription factor IDs are using during network construction if implemented in CellexalVR.</p>
+<p>Calling the object name will detail it’s contents:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cellvr</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 4709 genes and 1654  cells. </span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1,1): &#39;&#39;   </span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (1654,23): &#39;LTHSC_broad&#39;, &#39;LMPP_broad&#39;, &#39;MPP_broad&#39;, &#39;CMP_broad&#39;, &#39;MEP_broad&#39;, &#39;GMP_broad&#39;, &#39;MPP1_broad&#39;, &#39;MPP2_broad&#39;, &#39;MPP3_broad&#39;, &#39;STHSC_broad&#39;, &#39;LTHSC&#39;, &#39;LMPP&#39;, &#39;MPP&#39;, &#39;CMP&#39;, &#39;MEP&#39;, &#39;GMP&#39;, &#39;MPP1&#39;, &#39;MPP2&#39;, &#39;MPP3&#39;, &#39;STHSC&#39;, &#39;ESLAM&#39;, &#39;HSC1&#39;, &#39;Projected&#39;   </span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 3 drc object(s)</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to mouse</span></span></code></pre></div>
+<p>The last step is to call <code>export2cellexalvr</code> which will write the neccessary files from the <code>cellvr</code> object to a specified directory:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;CellexalOut/&quot;</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cellvr,<span class="st">&quot;CellexalOut/&quot;</span>)</span></code></pre></div>
+<p>All the files needed by CellexalVR are created at this point. The entire “CellexalOut/” folder should then be moved/copied to the “Data” folder in your CellexalVR setup. See the <a href="https://www.cellexalvr.med.lu.se/manual">manual</a> for more details including a schematic of the folder structure.</p>
+</div>
+</div>
+<div id="making-a-cellexalvr-object-from-scratch" class="section level2">
+<h2>Making a <code>cellexalvr</code> object from scratch</h2>
+<p>While <code>MakeCellexalVRObj</code> is the most convenient way to make the object, sometimes you want to make one manually. This is done calling <code>new</code>:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cell.vr.scr <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">&quot;cellexalvr&quot;</span>,<span class="at">data=</span>Matrix<span class="sc">::</span><span class="fu">Matrix</span>(exdata,<span class="at">sparse=</span>T),<span class="at">drc=</span><span class="fu">list</span>(<span class="at">tsne=</span>tsne.proj))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>cell.vr.scr</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvr </span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 4709 genes and 1654  cells. </span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1,1): &#39;&#39;   </span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (1,1): &#39;&#39;   </span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 1 drc object(s)</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span></code></pre></div>
+<p>We can add another set of dimension reduction coordinates using the <code>addMDS2cellexalvr</code> function:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cell.vr.scr <span class="ot">&lt;-</span> <span class="fu">addDRC2cellexalvr</span>(cell.vr.scr,ddr.proj,<span class="st">&quot;DDRTree&quot;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cell.vr.scr</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvr </span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 4709 genes and 1654  cells. </span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1,1): &#39;&#39;   </span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (1,1): &#39;&#39;   </span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span></code></pre></div>
+<p>To add metadata for each cell use <code>addCellMeta2cellexalvr</code>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>cell.vr.scr <span class="ot">&lt;-</span> <span class="fu">addCellMeta2cellexalvr</span>(cell.vr.scr,cell.ids)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>cell.vr.scr</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvr </span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 4709 genes and 1654  cells. </span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1,1): &#39;&#39;   </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (1654,23): &#39;LTHSC_broad&#39;, &#39;LMPP_broad&#39;, &#39;MPP_broad&#39;, &#39;CMP_broad&#39;, &#39;MEP_broad&#39;, &#39;GMP_broad&#39;, &#39;MPP1_broad&#39;, &#39;MPP2_broad&#39;, &#39;MPP3_broad&#39;, &#39;STHSC_broad&#39;, &#39;LTHSC&#39;, &#39;LMPP&#39;, &#39;MPP&#39;, &#39;CMP&#39;, &#39;MEP&#39;, &#39;GMP&#39;, &#39;MPP1&#39;, &#39;MPP2&#39;, &#39;MPP3&#39;, &#39;STHSC&#39;, &#39;ESLAM&#39;, &#39;HSC1&#39;, &#39;Projected&#39;   </span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span></code></pre></div>
+<p>To add FACS for each cell use <code>addFACS2cellexalvr</code>:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cell.vr.scr <span class="ot">&lt;-</span> <span class="fu">addFACS2cellexalvr</span>(cell.vr.scr,facs)</span></code></pre></div>
+<p>Setting the specie is done using the <code>set.specie</code> function:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>cell.vr.scr <span class="ot">&lt;-</span> <span class="fu">set.specie</span>(cell.vr.scr,<span class="st">&quot;mouse&quot;</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>cell.vr.scr</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvr </span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 4709 genes and 1654  cells. </span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1,1): &#39;&#39;   </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (1654,23): &#39;LTHSC_broad&#39;, &#39;LMPP_broad&#39;, &#39;MPP_broad&#39;, &#39;CMP_broad&#39;, &#39;MEP_broad&#39;, &#39;GMP_broad&#39;, &#39;MPP1_broad&#39;, &#39;MPP2_broad&#39;, &#39;MPP3_broad&#39;, &#39;STHSC_broad&#39;, &#39;LTHSC&#39;, &#39;LMPP&#39;, &#39;MPP&#39;, &#39;CMP&#39;, &#39;MEP&#39;, &#39;GMP&#39;, &#39;MPP1&#39;, &#39;MPP2&#39;, &#39;MPP3&#39;, &#39;STHSC&#39;, &#39;ESLAM&#39;, &#39;HSC1&#39;, &#39;Projected&#39;   </span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to mouse</span></span></code></pre></div>
+<p>##Making cell metadata from a data frame</p>
+<p>CellexalVR requires metadata in the form of a 1/0 matrix, but many packages store it as a data frame. CellexalvrR has function to convert a data frame into a 1/0 matrix. First, lets make a data frame:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>meta.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">CellType=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;Type1&quot;</span>,<span class="st">&quot;Type2&quot;</span>,<span class="st">&quot;Type3&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T),</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Phase=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;G1&quot;</span>,<span class="st">&quot;G2M&quot;</span>,<span class="st">&quot;S&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Treatment=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;WT&quot;</span>,<span class="st">&quot;Dox&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T))</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(meta.df)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType Phase Treatment</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    Type3   G2M        WT</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    Type1     S        WT</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    Type2   G2M        WT</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    Type1    G1       Dox</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    Type3     S        WT</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    Type1    G1       Dox</span></span></code></pre></div>
+<p>We can now make a correctly formatted cell metadata matrix by applying the function <code>make.cell.meta.from.df</code> using only the fields we need, in this case the “CellType” and “Treatment” columns:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>required.cell.metad <span class="ot">&lt;-</span> <span class="fu">make.cell.meta.from.df</span>(meta.df,<span class="fu">c</span>(<span class="st">&quot;CellType&quot;</span>,<span class="st">&quot;Treatment&quot;</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(required.cell.metad)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType@Type3 CellType@Type1 CellType@Type2 Treatment@WT Treatment@Dox</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1              1              0              0            1             0</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2              0              1              0            1             0</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3              0              0              1            1             0</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4              0              1              0            0             1</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5              1              0              0            1             0</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6              0              1              0            0             1</span></span></code></pre></div>
+<p>It can be seen the field name is placed in the column heading preceeding a “@”, and this is used by CellexalVR to form catagories on the menu system, so “CellType” and “Treatment” will be on separate tabs. This metadata matrix can now be added to a <code>cellexalvrR</code> object as decribed above using the <code>addCellMeta2cellexalvr</code> function.</p>
+<!-- ##Making and adding a 3D RNA Velocity plot for CellexalVR -->
+<!-- Adding RNA velocity trajectories simply means adding 3 extra columns to DR plot, and these specify the trajectory of each cell. For this example we will use the Seurat example and show how this information is extracted and added to a cellexalVR object so that it may be viewed in VR. -->
+<!-- The following code is taken from the Seurat page describing their wrapper function to create velocity trajectories from an existing embedding which can be seen [here](https://htmlpreview.github.io/?https://github.com/satijalab/seurat.wrappers/blob/master/docs/velocity.html). We have duplicated the code below **and highlighted where changes have been made in the comments**. -->
+<!-- ```{r,eval=F} -->
+<!-- if ( FALSE ) { -->
+<!-- library(Seurat) -->
+<!-- library(velocyto.R) -->
+<!-- library(SeuratWrappers) -->
+<!-- library(cellexalvrR) -->
+<!-- # If you don't have velocyto's example mouse bone marrow dataset, download with the CURL command -->
+<!-- # curl::curl_download(url = 'http://pklab.med.harvard.edu/velocyto/mouseBM/SCG71.loom', destfile -->
+<!-- # = '~/Downloads/SCG71.loom') -->
+<!-- curl::curl_download(url = 'http://pklab.med.harvard.edu/velocyto/mouseBM/SCG71.loom', destfile= 'SCG71.loom') -->
+<!-- ldat <- ReadVelocity(file = "SCG71.loom") -->
+<!-- bm <- as.Seurat(x = ldat) -->
+<!-- bm <- SCTransform(object = bm, assay = "spliced") -->
+<!-- bm <- RunPCA(object = bm, verbose = FALSE) -->
+<!-- bm <- FindNeighbors(object = bm, dims = 1:20) -->
+<!-- bm <- FindClusters(object = bm) -->
+<!-- # Note the change in the following line! -->
+<!-- bm <- RunUMAP(object = bm, dims = 1:20,n.components=3) # Project the UMAP onto 3 dimensions instead of 2 by adding n.components=3 -->
+<!-- bm <- RunVelocity(object = bm, deltaT = 1, kCells = 25, fit.quantile = 0.02) -->
+<!-- ident.colors <- (scales::hue_pal())(n = length(x = levels(x = bm))) -->
+<!-- names(x = ident.colors) <- levels(x = bm) -->
+<!-- cell.colors <- ident.colors[Idents(object = bm)] -->
+<!-- names(x = cell.colors) <- colnames(x = bm) -->
+<!-- # Two changes in the following command! -->
+<!-- vel.out <- show.velocity.on.embedding.cor(emb = Embeddings(object = bm, reduction = "umap"), vel = Tool(object = bm, slot = "RunVelocity"), n = 200, scale = "sqrt", cell.colors = ac(x = cell.colors, alpha = 0.5), cex = 0.8, arrow.scale = 3, show.grid.flow = TRUE, min.grid.cell.mass = 0.5, grid.n = 40, arrow.lwd = 1, do.par = FALSE, cell.border.alpha = 0.1,return.details=T) # Add the option return.details=T so the coordinates that define the arrows are returned into vel.out -->
+<!-- vel.emb <- vel.out$arrows #pull out the coordinates defining the trajectories -->
+<!-- colnames(vel.emb) <- c("dr1","dr2","dr3","vv1","vv2","vv3") # correct the column headings as Velocity.R assumes the embedding is done in 2 dimensions. -->
+<!-- #reduce the Seurat object to the cells used for the velocity run: -->
+<!-- bm.red <- bm[rownames(vel.emb)] -->
+<!-- #convert the Seurat object to a cellexalVR object -->
+<!-- cvr <- as_cellexalvrR(bm.red,c("seurat_clusters"),specie="mouse") -->
+<!-- cvr <- addVelocityToExistingDR(cvr,vel.emb,"UMAP") # This function will add the last 3 columns to an existing embedding, in this case the UMAP -->
+<!-- #If you do NOT have an existing DR plot to add to then use: -->
+<!-- cvr <- addNewVelocity(cvr,vel.emb,"NewVel") # The plot will appear in  CellexalVR names "NewVel" -->
+<!-- dir.create("Velo_Test") # make a new folder -->
+<!-- export2cellexalvr(cvr,"Velo_Test") #Export the files to the created folder.s -->
+<!-- }else { -->
+<!--    message("not recommended - use the Seurat importer as_cellexalvrR() instead.") -->
+<!-- } -->
+<!-- ``` -->
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

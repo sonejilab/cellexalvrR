@@ -152,7 +152,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>To aid the formatting and export of data that can be imported by CellexalVR.</li>
 <li>To perform backend calculations during a CellexalVR session.</li>
 </ol>
-<p>##Installation The easiest way to install <code>cellexalvrR</code> is directly from github using the <code>devtools</code> package:</p>
+<p>##Installation</p>
+<p>The easiest way to install <code>cellexalvrR</code> is directly from github using the <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;sonejilab/cellexalvrR&quot;</span>)</span></code></pre></div>
 <p><strong>If you are installing this on your VR station then be sure to install <code>cellexalvrR</code> system-wide, so on your Windows 10 machine right-click the R icon, and then “Run as administrator” before issuing the commands above.</strong></p>
@@ -191,13 +192,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>   </span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Then load the data:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;log2data.RData&quot;</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;facs.RData&quot;</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;cell.ids.RData&quot;</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;diff.proj.RData&quot;</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;ddr.proj.RData&quot;</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;tsne.proj.RData&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;log2data.RData&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;facs.RData&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;cell.ids.RData&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;diff.proj.RData&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;ddr.proj.RData&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;tsne.proj.RData&quot;</span>)</span></code></pre></div>
 <p><code>log2data</code> is a matrix of highly variable genes in log2 form. The first 10 columns and 10 rows look as so:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>log2data[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 HSPC_001 HSPC_002  HSPC_003 HSPC_004 HSPC_006 HSPC_008 HSPC_009</span></span>
@@ -275,10 +275,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; HSPC_008 -0.015699148 -0.018777106  0.007916241</span></span></code></pre></div>
 <p>The first step is to put all the dimension reduction outputs into a single list:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>proj.list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">diffusion=</span>diff.proj,<span class="at">DDRtree=</span>ddr.proj,<span class="at">tSNE=</span>tsne.proj)</span></code></pre></div>
-<p>The next is to make a <code>cellexalvr</code> object by calling <code>MakeCellexalVRObj</code> and passing the required objects to it:</p>
+<p>The next is to make a <code>cellexalvrR</code> object by calling <code>MakeCellexalVRObj</code> and passing the required objects to it:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cellvr <span class="ot">&lt;-</span> <span class="fu">MakeCellexalVRObj</span>( Matrix<span class="sc">::</span><span class="fu">Matrix</span>(log2data, <span class="at">sparse=</span><span class="cn">TRUE</span>),</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">drc.list=</span>proj.list,<span class="at">specie=</span><span class="st">&quot;mouse&quot;</span>,<span class="at">cell.meta=</span>cell.ids,<span class="at">facs.data=</span><span class="cn">NULL</span>)</span></code></pre></div>
-<p>In the same step we also set the specie as mouse which ensures the correct transcription factor IDs are using during network construction if implemented in CellexalVR.</p>
+<p>In the same step we also set the specie as mouse which ensures the correct transcription factor IDs are used during VR network construction.</p>
 <p>Calling the object name will detail it’s contents:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cellvr</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
@@ -293,8 +293,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Make sure that this directory exists.</p>
 <p>All the files needed by CellexalVR are created at this point. The entire “CellexalOut/” folder should then be moved/copied to the “Data” folder in your CellexalVR setup. See the <a href="https://www.cellexalvr.med.lu.se/manual">manual</a> for more details including a schematic of the folder structure.</p>
 </div>
-<div id="making-a-cellexalvr-object-from-scratch" class="section level2">
-<h2>Making a <code>cellexalvr</code> object from scratch</h2>
+<div id="making-a-cellexalvrr-object-from-scratch" class="section level2">
+<h2>Making a <code>cellexalvrR</code> object from scratch</h2>
 <p>While <code>MakeCellexalVRObj</code> is the most convenient way to make the object, sometimes you want to make one manually. This is done calling <code>new</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cell.vr.scr <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">&quot;cellexalvr&quot;</span>,<span class="at">data=</span>Matrix<span class="sc">::</span><span class="fu">Matrix</span>(log2data,<span class="at">sparse=</span>T),<span class="at">drc=</span><span class="fu">list</span>(<span class="at">tsne=</span>tsne.proj))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cell.vr.scr</span>
@@ -337,32 +337,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to mouse</span></span></code></pre></div>
-<p>##Making cell metadata from a data frame</p>
+</div>
+<div id="making-cell-metadata-from-a-data-frame" class="section level2">
+<h2>Making cell metadata from a data frame</h2>
 <p>CellexalVR requires metadata in the form of a 1/0 matrix, but many packages store it as a data frame. CellexalvrR has function to convert a data frame into a 1/0 matrix. First, lets make a data frame:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>meta.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">CellType=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;Type1&quot;</span>,<span class="st">&quot;Type2&quot;</span>,<span class="st">&quot;Type3&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T),</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Phase=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;G1&quot;</span>,<span class="st">&quot;G2M&quot;</span>,<span class="st">&quot;S&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T),</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Treatment=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;WT&quot;</span>,<span class="st">&quot;Dox&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T))</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(meta.df)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType Phase Treatment</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    Type3    G1        WT</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    Type1   G2M        WT</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    Type2    G1       Dox</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    Type2   G2M        WT</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    Type2     S       Dox</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    Type3   G2M       Dox</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>meta.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">CellType=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;Type1&quot;</span>,<span class="st">&quot;Type2&quot;</span>,<span class="st">&quot;Type3&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Phase=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;G1&quot;</span>,<span class="st">&quot;G2M&quot;</span>,<span class="st">&quot;S&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Treatment=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;WT&quot;</span>,<span class="st">&quot;Dox&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(meta.df)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType Phase Treatment</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    Type1     S        WT</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    Type3    G1        WT</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    Type1    G1        WT</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    Type2    G1        WT</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    Type1   G2M        WT</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    Type3   G2M       Dox</span></span></code></pre></div>
 <p>We can now make a correctly formatted cell metadata matrix by applying the function <code>make.cell.meta.from.df</code> using only the fields we need, in this case the “CellType” and “Treatment” columns:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>required.cell.metad <span class="ot">&lt;-</span> <span class="fu">make.cell.meta.from.df</span>(meta.df,<span class="fu">c</span>(<span class="st">&quot;CellType&quot;</span>,<span class="st">&quot;Treatment&quot;</span>))</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(required.cell.metad)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType@Type3 CellType@Type1 CellType@Type2 Treatment@WT Treatment@Dox</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1              1              0              0            1             0</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2              0              1              0            1             0</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3              0              0              1            0             1</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4              0              0              1            1             0</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5              0              0              1            0             1</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6              1              0              0            0             1</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>required.cell.metad <span class="ot">&lt;-</span> <span class="fu">make.cell.meta.from.df</span>(meta.df,<span class="fu">c</span>(<span class="st">&quot;CellType&quot;</span>,<span class="st">&quot;Treatment&quot;</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(required.cell.metad)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType@Type1 CellType@Type3 CellType@Type2 Treatment@WT Treatment@Dox</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1              1              0              0            1             0</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2              0              1              0            1             0</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3              1              0              0            1             0</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4              0              0              1            1             0</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5              1              0              0            1             0</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6              0              1              0            0             1</span></span></code></pre></div>
 <p>It can be seen the field name is placed in the column heading preceeding a “@”, and this is used by CellexalVR to form catagories on the menu system, so “CellType” and “Treatment” will be on separate tabs. This metadata matrix can now be added to a <code>cellexalvrR</code> object as decribed above using the <code>addCellMeta2cellexalvr</code> function.</p>
-<p>##Converting a Seurat object to a cellexalvr object</p>
+</div>
+<div id="converting-a-seurat-object-to-a-cellexalvr-object" class="section level2">
+<h2>Converting a Seurat object to a cellexalvr object</h2>
 <p>For those using <a href="https://satijalab.org/seurat/">Seurat</a>, cellexalvrR offers some basic functionality to convert a Seurat object to a cellexalvr object. It takes the data from the <code>@dat</code> slot, and cell identities from the <code>@ident</code> slot, and will also take the cell-cycle phase assignments if this has been done. If PCA has been performed the first three components are taken as MDS coordinates, and the same if tSNE has been implemented using the <code>dim.embed=3</code> option when calling <code>RunTSNE</code> from Seurat.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mca comes from from https://satijalab.org/seurat/v3.0/mca.html</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>mca <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(mca, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">75</span>, <span class="at">min.dist =</span> <span class="fl">0.75</span>,<span class="at">n.components=</span><span class="dv">3</span>)</span>

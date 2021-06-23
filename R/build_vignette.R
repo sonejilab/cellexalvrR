@@ -8,11 +8,13 @@
 #' @export 
 buildVignette <- function(dir =".") {
 	dir = normalizePath(dir)
-	tools::buildVignettes(dir = dir, tangle=TRUE)
-	if ( ! file.exists( file.path(dir,"inst","doc")) ){
-		dir.create(file.path(dir,"inst","doc"))
+	try({ tools::buildVignettes(dir = dir, tangle=TRUE) })
+
+	if ( file.exists( file.path(dir,"inst","doc") )){
+		unlink( file.path(dir,"inst","doc"), recursive = TRUE)
 	}
-	file.copy(dir("vignettes", full.names=TRUE), file.path(dir,"inst","doc"), overwrite=TRUE)
+	dir.create(file.path(dir,"inst","doc"))
+	file.copy(list.files( file.path(dir,"vignettes"), full.names=TRUE, pattern='html$'), file.path(dir,"inst","doc"), overwrite=TRUE)
 
 
 	## now let's update the portable log, too

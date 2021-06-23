@@ -26,6 +26,7 @@ This document describes how to use `cellexalvrR`, an R package that accompanies 
 2. To perform backend calculations during a CellexalVR session.
 
 ##Installation
+
 The easiest way to install `cellexalvrR` is directly from github using the `devtools` package:
 
 ```{r,eval=F}
@@ -76,7 +77,6 @@ if ( ! file.exists("log2data.RData") ) {
 
 Then load the data:
 ```{r, fig.show='hold',eval=TRUE}
-	
 load("log2data.RData")
 load("facs.RData")
 load("cell.ids.RData")
@@ -122,14 +122,14 @@ The first step is to put all the dimension reduction outputs into a single list:
 proj.list <- list(diffusion=diff.proj,DDRtree=ddr.proj,tSNE=tsne.proj)
 ```
 
-The next is to make a `cellexalvr` object by calling `MakeCellexalVRObj` and passing the required objects to it:
+The next is to make a `cellexalvrR` object by calling `MakeCellexalVRObj` and passing the required objects to it:
 
 ```{r, fig.show='hold',eval=T}
 cellvr <- MakeCellexalVRObj( Matrix::Matrix(log2data, sparse=TRUE),
   drc.list=proj.list,specie="mouse",cell.meta=cell.ids,facs.data=NULL)
 ```
 In the same step we also set the specie as mouse which ensures the correct 
-transcription factor IDs are using during network construction if implemented in CellexalVR.
+transcription factor IDs are used during VR network construction.
 
 Calling the object name will detail it's contents:
 
@@ -149,7 +149,8 @@ All the files needed by CellexalVR are created at this point. The entire "Cellex
 moved/copied to the "Data" folder in your CellexalVR setup. See the [manual](https://www.cellexalvr.med.lu.se/manual)
  for more details including a schematic of the folder structure.
 
-## Making a `cellexalvr` object from scratch
+## Making a `cellexalvrR` object from scratch
+
 While `MakeCellexalVRObj` is the most convenient way to make the object, sometimes you want to make one manually. 
 This is done calling `new`:
 
@@ -184,12 +185,13 @@ cell.vr.scr <- set.specie(cell.vr.scr,"mouse")
 cell.vr.scr
 ```
 
-##Making cell metadata from a data frame
+## Making cell metadata from a data frame
 
 CellexalVR requires metadata in the form of a 1/0 matrix, but many packages store it as a data frame. 
 CellexalvrR has function to convert a data frame into a 1/0 matrix. First, lets make a data frame:
 
 ```{r,fig.show='hold',eval=T}
+set.seed(1)
 meta.df <- data.frame(CellType=sample(c("Type1","Type2","Type3"),10,replace=T),
                       Phase=sample(c("G1","G2M","S"),10,replace=T),
                       Treatment=sample(c("WT","Dox"),10,replace=T))
@@ -199,8 +201,8 @@ head(meta.df)
 
 We can now make a correctly formatted cell metadata matrix by applying the function `make.cell.meta.from.df` 
 using only the fields we need, in this case the "CellType" and "Treatment" columns:
-```{r,fig.show='hold',eval=T}
 
+```{r,fig.show='hold',eval=T}
 required.cell.metad <- make.cell.meta.from.df(meta.df,c("CellType","Treatment"))
 head(required.cell.metad)
 
@@ -211,7 +213,7 @@ CellexalVR to form catagories on the menu system, so "CellType" and "Treatment" 
 This metadata matrix can now be added to a `cellexalvrR` object as decribed above using the `addCellMeta2cellexalvr` 
 function.
 
-##Converting a Seurat object to a cellexalvr object
+## Converting a Seurat object to a cellexalvr object
 
 For those using [Seurat](https://satijalab.org/seurat/), cellexalvrR offers some basic functionality 
 to convert a Seurat object to a cellexalvr object. It takes the data from the `@dat` slot, and cell 

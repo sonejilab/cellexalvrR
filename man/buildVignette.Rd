@@ -14,6 +14,6 @@ buildVignette(dir = ".")
 Build Vignettes and make them available
 }
 \details{
-Hack to build the vignettes and make them available in devtools::install_github()
-Found on https://community.rstudio.com/t/browsevignettes-mypackage-saying-no-vignettes-found/68656/6
+Hack to build the vignettes and make them available to devtools::install_github()
+Found this fix on https://community.rstudio.com/t/browsevignettes-mypackage-saying-no-vignettes-found/68656/6
 }

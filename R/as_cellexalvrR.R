@@ -101,7 +101,16 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 		if ( .hasSlot(x, 'data')) {
 			warning( "Untested Seurat object version 2.x")
 			ret@data = x@data
-			ret@drc = lapply( names(x@dr), getEmb )
+			ret@drc = lapply( names(x@dr), function(drc){ 
+				drc = getEmb(drc)
+				if ( ncol(drc) ==2){
+					drc = cbind( drc, rep(0, nrow(drc)))
+				}else if (  ncol(drc) > 3 ) {
+					drc = drc[,1:3]
+				}
+				drc
+				}
+			)
 			names(ret@drc) = names(x@dr)
 		}
 		else {
@@ -182,7 +191,31 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		m
 	}
 
-	m = toSparse( x )
+	m = NULL
+	m = tryCatch( { toSparse( x )},
+		error = function(err) {
+			if ( ! is.na(match('read', names(x[['X']])))) {
+				warning( "using method 2 to read the data")
+				m = x[['X']][['read']]()
+				m = Matrix( m, sparse=TRUE)
+				meta.data = H5Anno2df( x, 'obs')
+				annotation = H5Anno2df( x,'var')
+				if ( is.na(match("_index", colnames(annotation))) ){
+					rownames(m) = rownames(annotation)
+					colnames(m) = rownames(meta.data)
+					annotation[,'_index'] = rownames(m)
+					meta.data[,'_index']  = colnames(m)
+				}else{
+					rownames(m) = annotation[,'_index']
+					colnames(m) = meta.data[,'_index']
+				}
+			}
+			m = m
+		}
+	)
+	if ( is.null(m) ) {
+		stop( "I could not obtain the expression data from the h5 file")
+	}
 	meta.data = H5Anno2df( x, 'obs')
 	annotation = H5Anno2df( x, 'var')
 	if ( is.na(match("_index", colnames(annotation))) ){
@@ -209,6 +242,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			} )
 
 	names(drcs) = embeddings
+
 	cellexalvrR = new( 'cellexalvrR', 
 			data=m, meta.cell=as.matrix(meta.data), 
 			meta.gene=as.matrix(annotation), 
@@ -217,7 +251,10 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	## save the original information
 	cellexalvrR@usedObj$samples = meta.data
 
-	if ( velocity == 'scvelo' ) {
+	if ( is.null(velocity) ) {
+		## that is OK - obviousel no veloctiy information to be imported
+	}
+	else if ( velocity == 'scvelo' ) {
 		for ( n in names(cellexalvrR@drc)) {
 			velo_n = paste( sep="_", 'velocity', n )
 			tryCatch({
@@ -236,15 +273,13 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			}
 			)
 		}
-	}else if ( is.null(velocity) ) {
-		## that is OK - obviousel no veloctiy information to be imported
-	}
-	else {
+	}else {
 		message( paste( "WARNING: velocity information can only imported for 'scvelo'") )
 	}
 	
 	## and filter the low expression gene, too
-	rsum = Matrix::rowSums( m )
+
+	rsum = FastWilcoxTest::ColNotZero( Matrix::t(m) )
 	OK_genes = which(rsum >= minCell4gene)
 	mOK = m[OK_genes,]
 	
@@ -257,6 +292,16 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	}else {
 		warning( "Please convert the meta.cell data into the requred 0/1 table by using the make.cell.meta.from.df function before exporting theis to VR." )
 	}
+
+	if ( ! all.equal(colnames(cellexalvrR@data), rownames(cellexalvrR@meta.cell)) == TRUE ){
+		if ( all.equal(make.names(colnames(cellexalvrR@data)), rownames(cellexalvrR@meta.cell)) == TRUE ){
+			rownames(cellexalvrR@meta.cell) = colnames(cellexalvrR@data)
+		}
+	}
+	if ( ! all(rownames(cellexalvrR@data) == rownames(cellexalvrR@meta.gene))){
+		rownames(cellexalvrR@meta.gene) = rownames(cellexalvrR@data)
+	}
+
 	cellexalvrR
 } )
 
