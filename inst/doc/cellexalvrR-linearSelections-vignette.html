@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stefan Lang" />
 
-<meta name="date" content="2021-06-22" />
+<meta name="date" content="2021-06-23" />
 
 <title>Linear selections in VR and beyond</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Linear selections in VR and beyond</h1>
 <h4 class="author">Stefan Lang</h4>
-<h4 class="date">2021-06-22</h4>
+<h4 class="date">2021-06-23</h4>
 
 
 
@@ -220,8 +220,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>You see the ‘lastEntry’ linear selection will aloways be in the first place in this list and the ‘lastEntry’ is always a copy of one linear selction in the list.</p>
 <div id="comparegeneclusters" class="section level3">
 <h3>compareGeneClusters</h3>
-<p>CompareGeneClusters is a function to compare gene expression profiles between two linearSelections. It requires to have clustered the same genes in two different linear selections.</p>
-<p>How to do this?</p>
+<p>CompareGeneClusters is a function to compare gene expression profiles between two linearSelections. This functionality is not available in VR. It requires to have clustered the same genes in two different linear selections.</p>
+<p><strong>How to do this?</strong></p>
 <p>For a real live example the cells in the selection could be separated by treatment, age, desease state or any other research interest. For this example I can only create an even split between the samples:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>linearSelection <span class="ot">=</span> <span class="fu">getLinearSelection</span>(cellexalObj, bossLinearSelection)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -260,7 +260,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="the-portable-log-file" class="section level2">
 <h2>The portable log file</h2>
-<p>This portable log report file can be accessed in R like this:</p>
+<p>The report is available as PortableLog zip file in the <a href="mailto:cellexalObj@outpath" class="email">cellexalObj@outpath</a> folder. The portable log report created by this vignette is provided with cellexalvrR and can be accessed in R like this:</p>
 <pre><code>system.file(&quot;extdata&quot;, &quot;PortableLog_linearExample.zip&quot;,package= &quot;cellexalvrR&quot;)</code></pre>
 <p>The file can be unizipped on any computer. The root html file gives access to all information.</p>
 </div>

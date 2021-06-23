@@ -1,5 +1,5 @@
-#' Hack to build the vignettes and make them available in devtools::install_github()
-#' Found on https://community.rstudio.com/t/browsevignettes-mypackage-saying-no-vignettes-found/68656/6
+#' Hack to build the vignettes and make them available to devtools::install_github()
+#' Found this fix on https://community.rstudio.com/t/browsevignettes-mypackage-saying-no-vignettes-found/68656/6
 #' @name buildVignette
 #' @docType methods
 #' @description Build Vignettes and make them available
@@ -23,8 +23,13 @@ buildVignette <- function(dir =".") {
 	tryCatch( {
 		source( file.path(dir, 'vignettes','cellexalvrR-linearSelections-vignette.R') )
 		## now we should have a tmpDir/PortableLog_linearExample.zip that we need to copy to the inst/extdata folder
-		if ( file.exists( file.path( tmpDir, 'PortableLog_linearExample.zip'))){
-			file.copy( file.path( tmpDir, 'PortableLog_linearExample.zip'), file.path( dir, 'inst', 'extdata') )
+		new= file.path( tmpDir, 'PortableLog_linearExample.zip')
+		save = file.path( dir, 'inst', 'extdata','PortableLog_linearExample.zip')
+		if ( file.exists( new )){
+			if ( file.exists( save )){
+				unlink(save)
+			}
+			file.copy( new, save )
 		}else {
 			warning( "The expected portable log file could not be copied!")
 			browser()
@@ -34,4 +39,6 @@ buildVignette <- function(dir =".") {
 			error(err)
 		}
 	)
+	setwd( origDir )
+	return(1)
 }

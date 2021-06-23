@@ -92,10 +92,10 @@ and the 'lastEntry' is always a copy of one linear selction in the list.
 
 ### compareGeneClusters
 
-CompareGeneClusters is a function to compare gene expression profiles between two linearSelections.
+CompareGeneClusters is a function to compare gene expression profiles between two linearSelections. This functionality is not available in VR.
 It requires to have clustered the same genes in two different linear selections.
 
-How to do this?
+**How to do this?**
 
 For a real live example the cells in the selection could be separated by treatment, age, desease state or any other research interest.
 For this example I can only create an even split between the samples:
@@ -142,7 +142,8 @@ cellexalObj = renderReport( cellexalObj)
 
 ## The portable log file
 
-This portable log report file can be accessed in R like this:
+The report is available as PortableLog zip file in the cellexalObj@outpath folder.
+The portable log report created by this vignette is provided with cellexalvrR and can be accessed in R like this:
 
 ```
 system.file("extdata", "PortableLog_linearExample.zip",package= "cellexalvrR")
