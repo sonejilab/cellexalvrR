@@ -167,63 +167,70 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3>Exporting files from a Seurat object</h3>
 <p>We have a simple function to convert a Seurat object to a cellexalvrR object prior to export. To demonstrate this we will use the their pbmc_small example data.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We are using the seurat example pbmc_small</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We will now calculate a UMAP in 3 dimensions whereas the TSNE will be using in 2D </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Registered S3 method overwritten by &#39;spatstat.geom&#39;:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   method     from</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   print.boxx cli</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching SeuratObject</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>pbmc_small <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(pbmc_small, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">n.components =</span> <span class="dv">3</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:11 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:11 Read 80 rows and found 10 numeric columns</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:11 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:11 Building Annoy index with metric = cosine, n_trees = 50</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; **************************************************|</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:11 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\RtmpAZ6A3e\file39bc7ecf4d4a</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:12 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:12 Annoy recall = 100%</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:12 Commencing smooth kNN distance calibration using 1 thread</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:12 7 smooth knn distance failures</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:13 Initializing from normalized Laplacian + noise</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:13 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:08:14 Optimization finished</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(pbmc_small,<span class="st">&quot;umap&quot;</span>)[<span class="dv">1</span>,]</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    UMAP_1    UMAP_2    UMAP_3 </span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -1.912597 -1.099849  1.826431</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we convert the object to a cellexalvr object using </span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># the cell identity and cluster as metadata for the cells (and any others you wish):</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>cvr <span class="ot">&lt;-</span> <span class="fu">as_cellexalvrR</span>(pbmc_small,<span class="fu">c</span>(<span class="st">&quot;orig.ident&quot;</span>,<span class="st">&quot;groups&quot;</span>), <span class="at">specie=</span><span class="st">&quot;human&quot;</span> )</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>cvr</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 230 genes and 80  cells. </span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (230,1): &#39;Gene Symbol&#39;   </span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (80,3): &#39;orig.ident@SeuratProject&#39;, &#39;groups@g2&#39;, &#39;groups@g1&#39;   </span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 3 drc object(s)</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># We&#39;re ready to export. Fist we create a folder cleaning out an exiting one:</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;PBMC&quot;</span>)</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># We are using the seurat example pbmc_small</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># We will now calculate a UMAP in 3 dimensions whereas the TSNE will be using in 2D </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>pbmc_small <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(pbmc_small, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">n.components =</span> <span class="dv">3</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; To use Python UMAP via reticulate, set umap.method to &#39;umap-learn&#39; and metric to &#39;correlation&#39;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; This message will be shown once per session</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Read 80 rows and found 10 numeric columns</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; **************************************************|</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\Rtmp6PRwl3\file53f436733c02</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Annoy recall = 100%</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 Commencing smooth kNN distance calibration using 1 thread</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:26 7 smooth knn distance failures</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:28 Initializing from normalized Laplacian + noise</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:28 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10:27:29 Optimization finished</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(pbmc_small,<span class="st">&quot;umap&quot;</span>)[<span class="dv">1</span>,]</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    UMAP_1    UMAP_2    UMAP_3 </span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -1.912597 -1.099849  1.826431</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we convert the object to a cellexalvr object using </span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># the cell identity and cluster as metadata for the cells (and any others you wish):</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>cvr <span class="ot">&lt;-</span> <span class="fu">as_cellexalvrR</span>(pbmc_small,<span class="fu">c</span>(<span class="st">&quot;orig.ident&quot;</span>,<span class="st">&quot;groups&quot;</span>), <span class="at">specie=</span><span class="st">&quot;human&quot;</span> )</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>cvr</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 230 genes and 80  cells. </span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (230,1): &#39;Gene Symbol&#39;   </span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (80,3): &#39;orig.ident@SeuratProject&#39;, &#39;groups@g2&#39;, &#39;groups@g1&#39;   </span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 3 drc object(s)</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to NA</span></span>
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co"># And here we export all data</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check(x): meta.gene rownames set to data rownames</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;tsne.mds&quot;         </span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [7] &quot;umap.mds&quot;</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co"># We&#39;re ready to export. Fist we create a folder cleaning out an exiting one:</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;PBMC&quot;</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="co"># And here we export all data</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check(x): meta.gene rownames set to data rownames</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;tsne.mds&quot;         </span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [7] &quot;umap.mds&quot;</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
 <p>Copy the PBMC folder and contents to the “Data”&quot; folder where you downloaded and unpacked CellexalVR. It will then be available for loading when you step into CellexalVR. This applies to all other data sets described here, too.</p>
 </div>
 <div id="using-anndata-objects" class="section level3">
@@ -239,30 +246,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">meta.cell.groups =</span> <span class="fu">c</span>( <span class="st">&quot;leiden&quot;</span>) , <span class="at">embeddingDims =</span> <span class="dv">3</span>, </span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">specie =</span> <span class="st">&quot;human&quot;</span>, <span class="at">velocity =</span> <span class="cn">NULL</span> )</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; reading expression data</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in value[[3L]](cond): using method 2 to read the data</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>cvr</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 1838 genes and 2638  cells. </span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1838,14): &#39;_index&#39;, &#39;dispersions&#39;, &#39;dispersions_norm&#39;, &#39;gene_ids&#39;, &#39;highly_variable&#39;, &#39;mean&#39;, &#39;mean_counts&#39;, &#39;means&#39;, &#39;mt&#39;, &#39;n_cells&#39;, &#39;n_cells_by_counts&#39;, &#39;pct_dropout_by_counts&#39;, &#39;std&#39;, &#39;total_counts&#39;   </span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (2638,8): &#39;leiden@0&#39;, &#39;leiden@2&#39;, &#39;leiden@1&#39;, &#39;leiden@4&#39;, &#39;leiden@3&#39;, &#39;leiden@5&#39;, &#39;leiden@6&#39;, &#39;leiden@7&#39;   </span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to human</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;PBMC3K&quot;</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;umap.mds&quot;</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>cvr</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class cellexalvrR </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; with 1838 genes and 2638  cells. </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Annotation datasets (1838,14): &#39;_index&#39;, &#39;dispersions&#39;, &#39;dispersions_norm&#39;, &#39;gene_ids&#39;, &#39;highly_variable&#39;, &#39;mean&#39;, &#39;mean_counts&#39;, &#39;means&#39;, &#39;mt&#39;, &#39;n_cells&#39;, &#39;n_cells_by_counts&#39;, &#39;pct_dropout_by_counts&#39;, &#39;std&#39;, &#39;total_counts&#39;   </span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample annotation (2638,8): &#39;leiden@0&#39;, &#39;leiden@2&#39;, &#39;leiden@1&#39;, &#39;leiden@4&#39;, &#39;leiden@3&#39;, &#39;leiden@5&#39;, &#39;leiden@6&#39;, &#39;leiden@7&#39;   </span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; There are 0 user group(s) stored :</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and 2 drc object(s)</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Specie is set to human</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(),<span class="st">&quot;PBMC3K&quot;</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">file.exists</span>(opath)){</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlink</span>(opath, <span class="at">recursive=</span><span class="cn">TRUE</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>( opath )</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;pca.mds&quot;           &quot;umap.mds&quot;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
 </div>
 <div id="using-anndata-objects-from-an-scvelo-run" class="section level3">
 <h3>Using AnnData objects from an scvelo run</h3>
