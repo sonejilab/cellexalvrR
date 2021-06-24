@@ -195,7 +195,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	m = tryCatch( { toSparse( x )},
 		error = function(err) {
 			if ( ! is.na(match('read', names(x[['X']])))) {
-				warning( "using method 2 to read the data")
+				#warning( "using method 2 to read the data")
 				m = x[['X']][['read']]()
 				m = Matrix( m, sparse=TRUE)
 				meta.data = H5Anno2df( x, 'obs')
