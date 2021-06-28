@@ -45,3 +45,68 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 		)
 } )
 
+#' @name plotGroup
+#' @docType methods
+#' @description plotGroup the cellexalGrouping
+#' @param y the cellexalvrR object
+#' @param x the cellexalGrouping
+#' @param gname the gene name to plot expression for (default NULL)
+#' @param showIDs show the group IDs in the plot ( default = TRUE)
+#' @title show for a cellexalGrouping object
+#' @export
+setGeneric('plotGroup', ## Name
+function ( y, x, gname=NULL, showIDs = TRUE   ) { 
+	standardGeneric('plotGroup')
+}
+)
+
+#' @rdname plotGroup
+setMethod('plotGroup', signature = c ( 'cellexalvrR', 'cellexalGrouping'),
+	definition = function ( y, x, gname=NULL, showIDs = TRUE ) {
+
+	if ( is.null(gname)){
+		x@grouping[ which(is.na(x@grouping))] = 0
+
+		#x@grouping = as.numeric(as.factor(x@grouping))
+		if ( ! x@drc %in% names(y@drc) ){
+			stop( paste("group info does not match to cellexalvrR object data content: drc named", 
+				x@drc, "not in list", paste( collapse=", ", names(y@drc))))
+		}
+
+		#x@usedObj$samples[,group] = factor( x@usedObj$samples[,group] )
+
+	    #options(repr.plot.width=24, repr.plot.height=24)
+	    gr = factor(x@grouping+1)
+
+    	if ( length(y@drc[[x@drc]][,1]) != length(gr) ){
+	    	OK = match( rownames(y@drc[[x@drc]]), colnames(y@data))
+    		gr = gr[OK]
+    	}
+    }else {
+    	data = NULL
+		OK = match( tolower(gname), tolower(rownames(y@data)))
+		OK = OK[which(!is.na(OK))]
+		if ( length(OK) == 1 ){ ## one gene
+			data = y@data[OK,]
+		}else if ( length(gname) > 1 ){ ## mean expression
+			data = as.vector(t(FastWilcoxTest::collapse( Matrix::t( y@data[OK,] ), 
+				as.integer( rep(1, length(OK))), 1 )))
+			gname = paste(gname[1], 'and', length(OK)-1, sep="_" )
+		}else {
+			stop("I need at least one gene to plot!")
+		}
+		brks=10
+		brks <- unique(as.vector(c(0, stats::quantile(data,seq(0,1,by=1/brks)),max(data))))
+		if ( brks[1] ==0 ){ 
+			brks =c(-0.0001, 0.0001, brks[-1])
+		}
+		heapmapCols = function(x){ c("black", gplots::bluered(length(x)))}
+		gr = cut(data, brks)
+		gr = as.numeric(factor( gr ))
+		showIDs = FALSE
+    }
+
+	toPlot = data.frame(x=y@drc[[x@drc]][,1], y=y@drc[[x@drc]][,2], id=gr )
+    p= prettyPlot2D( toPlot, x@col, showIDs = showIDs )
+    p
+} )

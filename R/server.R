@@ -89,7 +89,6 @@ setMethod('server', signature = c ('character'),
 	oldFilters = newFilters( c(), path= cellexalObj@outpath)
 
   	while(TRUE){
-  		#print('In the server while loop')
   		newFiles = newScreenshots(oldFiles, path=path)
   		if ( length(newFiles) > 0 ){
 
@@ -117,28 +116,27 @@ setMethod('server', signature = c ('character'),
 		if ( ! file.exists(pidfile ) ) {
 			break
 		}
-     		if ( file.exists( scriptfile ) ) {
-                	while ( file.exists( lockfile ) ) {
-                       	 Sys.sleep( sleepT )
-               		}
+     	if ( file.exists( scriptfile ) ) {
+            while ( file.exists( lockfile ) ) {
+                Sys.sleep( sleepT )
+        	}
 			file.create(lockfile)
 		
 			cmd = readLines( scriptfile)
 			cmd = stringr::str_replace_all( paste( collapse=" " ,cmd), '\\s+', ' ')
-               		cat ( c("", cmd,""), file= outFile, sep="\n\r", append=TRUE )
-               		message( paste("VR cmd:", cmd) ) ## will go into the R_log.txt
-                	try ( {source( scriptfile, local=FALSE ) } )
-                	file.remove(scriptfile)
-                	file.remove(lockfile)
+       		cat ( c("", cmd,""), file= outFile, sep="\n\r", append=TRUE )
+        	message( paste("VR cmd:", cmd) ) ## will go into the R_log.txt
+        	try ( {source( scriptfile, local=FALSE ) } )
+        	file.remove(scriptfile)
+        	file.remove(lockfile)
+       	}
+        if ( ! is.null( masterPID ) ){
+        	if ( ! ps::ps_is_running( masterPID )) {
+	        	message( paste("is the master",masterPID, "became inactive!") )
+        		unlink( pidfile ) ## shutdown in the next cycle.
         	}
-        	if ( ! is.null( masterPID ) ){
-        		#
-        		if ( ! ps::ps_is_running( masterPID )) {
-	        		message( paste("is the master",masterPID, "became inactive!") )
-        			unlink( pidfile ) ## shutdown in the next cycle.
-        		}
-        	}
-        	Sys.sleep( sleepT )   
+        }
+        Sys.sleep( sleepT )   
 	}
 	message( "Server pid file lost - closing down" );
 	if ( exists('cellexalObj') ) {
