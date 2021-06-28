@@ -41,77 +41,114 @@ The VR log system will in addition need [pandoc](https://pandoc.org/installing.h
 
 ## Quick start
 
+For this quick start we are relying mostly on published example data from other packages.
+Several of these example data sets have only 2D dimension reduction data and therfore we provide slightly changed files (+3D drcs) on our own web page.
+
+
+For the sake of this vignette we set the OutPath to the CellexalVR Data path so that these example dataset become available in your VR session and the InPath to the folder we downloaded the example data to (if necessary).
+
+```{r}
+## Tell R where your CellexalVR "Data"" folder is.
+## The folder should be in the path where you unpacked CellexalVR.
+## This one is mine: 
+OutPath = "i:/CellexalVR/CellexalVR_0.14.0_build/Data/"
+## I have downloaded the data files into the R tempPath
+InPath = tempdir()
+```
+
+```{r, include=FALSE, eval=T}
+downloadFile <- function( remote, file ) {
+  file = file.path( InPath, file )
+
+  if ( file.exists( file)){
+    return (file)
+  }
+  local = file.path(InPath, basename(remote) )
+  download.file(remote, destfile = local)
+  utils::unzip( local, exdir = InPath )
+  
+  if ( file.exists( file) ){
+    return ( file )
+  }else {
+    stop( paste("expected file",file,"does not exist") )
+  }
+}
+
+
+## get rid of old out paths
+for ( p in c("PBMC", "PBMC3K", "Pancreas_scvelo", "scATAC", "CellexalOut") ){
+  p = file.path(OutPath, p)
+  if ( file.exists( p )){
+    unlink( p, recursive=TRUE)
+  }
+}
+```
+
 ### Exporting files from a Seurat object
 
-We have a simple function to convert a Seurat object to a cellexalvrR object prior to export. To demonstrate this we will use the their pbmc_small example data. 
+We have a simple function to convert a Seurat object to a cellexalvrR object prior to export. To demonstrate this we will use the the Seurat pbmc_small example data. 
+
 
 ```{r, fig.show='hold' }
 library(Seurat)
 library(cellexalvrR)
 
-# We are using the seurat example pbmc_small
-
-# We will now calculate a UMAP in 3 dimensions whereas the TSNE will be using in 2D 
+## We will now calculate a UMAP in 3 dimensions whereas the TSNE will be using in 2D 
 
 pbmc_small <- RunUMAP(pbmc_small, dims = 1:10,n.components = 3)
 Embeddings(pbmc_small,"umap")[1,]
 
-# Now we convert the object to a cellexalvr object using 
-# the cell identity and cluster as metadata for the cells (and any others you wish):
+## Now we convert the object to a cellexalvr object using 
+## the cell identity and cluster as metadata for the cells (and any others you wish):
 
 cvr <- as_cellexalvrR(pbmc_small,c("orig.ident","groups"), specie="human" )
 cvr
 
-# We're ready to export. Fist we create a folder cleaning out an exiting one:
-opath = file.path(tempdir(),"PBMC")
-if ( file.exists(opath)){
-  unlink(opath, recursive=TRUE)
-}
-dir.create( opath )
-
-# And here we export all data
+## And here we export all data
+opath = file.path(OutPath, "PBMC")
 export2cellexalvr(cvr, opath)
 
 list.files(opath)
 
-#Done!
+## Done!
 ```
 
-Copy the PBMC folder and contents to the "Data"" folder where you downloaded and unpacked CellexalVR. It will then be available for loading when you step into CellexalVR.
+If you point the OutPath to your CellexalVR Data path you will now have the Seurat pbmc_small data set in your VR environment.
+
+It will then be available for loading when you step into CellexalVR.
 This applies to all other data sets described here, too.
 
 ### Using AnnData objects
 
- We will get the 3k PBMC h5ad file from [here](http://cellexalvr.med.lu.se/downloadable/pbmc3k.zip) and unzip. It was made using [this Scanpy tutorial](https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html) where the only change we made was to embed the UMAP into 3 dims using `sc.tl.umap(adata,n_components=3)` :
+ We will get the 3k PBMC h5ad file from [here](http://cellexalvr.med.lu.se/downloadable/pbmc3k.zip) and unzip. It was created using [this Scanpy tutorial](https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html) where the only change we made was to embed the UMAP into 3 dims using `sc.tl.umap(adata,n_components=3)` :
+
+
+```{r, include=FALSE, eval=T}
+## download the file
+downloadFile('http://cellexalvr.med.lu.se/downloadable/pbmc3k.zip', "pbmc3k.h5ad")
+```
+
 
 ```{r, fig.show='hold' }
+library(cellexalvrR)
 
-remote = 'http://cellexalvr.med.lu.se/downloadable/pbmc3k.zip'
-local = file.path(tempdir(), 'pbmc3k.zip')
-download.file(remote, destfile = local)
-utils::unzip( local, exdir = tempdir() )
-
-cvr <- as_cellexalvrR( file.path( tempdir(), "pbmc3k.h5ad"), 
+cvr <- as_cellexalvrR( file.path( InPath, "pbmc3k.h5ad"), 
   meta.cell.groups = c( "leiden") , embeddingDims = 3, 
   specie = "human", velocity = NULL )
 
 cvr
 
-opath = file.path(tempdir(),"PBMC3K")
-if ( file.exists(opath)){
-  unlink(opath, recursive=TRUE)
-}
-dir.create( opath )
+opath = file.path(OutPath,"PBMC3K")
 export2cellexalvr(cvr, opath)
 
 list.files(opath)
 
-#Done!
+## Done!
 ```
 
 ### Using AnnData objects from an scvelo run
 
-If you have used scvelo to caculate cell velocities then only a couple more options need to be added to the export. In this example we ran the [demo](https://scvelo.readthedocs.io/VelocityBasics.html) with two extra lines:
+If you have used scvelo to caculate cell velocities then only a couple more options need to be added to the export. In this example we ran [this scvelo demo](https://scvelo.readthedocs.io/VelocityBasics.html) with two extra lines:
 
 ```{r, fig.show='hold',eval=F}
 sc.tl.umap(adata,n_components=3) # embed to 3 dims
@@ -120,67 +157,56 @@ sc.tl.leiden(adata) #get clusters
 
 We can get a zip of the resulting h5ad file from [here](http://cellexalvr.med.lu.se/downloadable/pancreas_scvelo.zip). The rest is almost the same as above (in R):
 
+
+```{r, include=FALSE, eval=T}
+## download the file
+downloadFile('http://cellexalvr.med.lu.se/downloadable/pancreas_scvelo.zip', "pancreas_scvelo.h5ad")
+```
+
 ```{r, fig.show='hold',eval=TRUE}
 library(cellexalvrR)
 
-#Convert("pancreas_scvelo.h5ad", dest = "h5seurat", overwrite = TRUE)
-#pancreas <- LoadH5Seurat("pancreas_scvelo.h5seurat")
-
-remote = 'http://cellexalvr.med.lu.se/downloadable/pancreas_scvelo.zip'
-local = file.path(tempdir(), 'pancreas_scvelo.zip')
-download.file(remote, destfile = local)
-utils::unzip( local, exdir = tempdir() )
-
-cvr <- as_cellexalvrR(file.path( tempdir(),"pancreas_scvelo.h5ad"),
+cvr <- as_cellexalvrR(file.path( InPath,"pancreas_scvelo.h5ad"),
   c("clusters","leiden"), specie="human",velocity="scvelo", 
   scaleArrowTravel=30)
 
-# The deltas can be quite small, so in the line above we have 'scaleArrowTravel' 
-# which multiples delta by factor specified to increase the path of travel for 
-# each cell to make them more visible.
+## The deltas can be quite small, so in the line above we have 'scaleArrowTravel' 
+## which multiples delta by factor specified to increase the path of travel for 
+## each cell to make them more visible.
 
-# Now we create the folder and export the CellexalVR files
-opath = file.path(tempdir(),"Pancreas_scvelo")
-if ( file.exists(opath)){
-  unlink(opath, recursive=TRUE)
-}
-dir.create( opath )
+## Now we create the folder and export the CellexalVR files
+opath = file.path( OutPath,"Pancreas_scvelo")
 export2cellexalvr(cvr, opath)
 
 list.files(opath)
 
-#Done!
+## Done!
 ```
 **In general, to enable velocity visualisation in CellexalVR one supplies 6-column .mds files, where the last three columns denote the destination x/y/z coordinate for each cell**
 
 
 ### Exporting scATAC data from a Seurat object
 
-We followed the example [here](https://satijalab.org/seurat/v3.0/atacseq_integration_vignette.html), again embedding to 3 dimensions as shown above. A zip of the RDS file can be obtained [here](http://cellexalvr.med.lu.se/downloadable/pbmc.atac.zip) which is a seurat object. Exporting the data:
+We followed [this Seurat example](https://satijalab.org/seurat/v3.0/atacseq_integration_vignette.html), again embedding to 3 dimensions as shown above. A zip of the RDS file can be obtained [here](http://cellexalvr.med.lu.se/downloadable/pbmc.atac.zip) which is a seurat object. Exporting the data:
+
+
+```{r, include=FALSE, eval=T}
+## download the file
+downloadFile('http://cellexalvr.med.lu.se/downloadable/pbmc.atac.zip', "pbmc.atac.rds")
+```
 
 ```{r, fig.show='hold',eval=TRUE}
-
 library(Seurat)
 library(cellexalvrR)
 
-remote = 'http://cellexalvr.med.lu.se/downloadable/pbmc.atac.zip'
-local = file.path(tempdir(), 'pbmc.atac.zip')
-download.file(remote, destfile = local)
-utils::unzip( local, exdir = tempdir() )
+pbmc.atac <- readRDS(file.path( InPath,"pbmc.atac.rds"))
 
-pbmc.atac <- readRDS(file.path(tempdir(),"pbmc.atac.rds"))
-
-# convert the object using the gene activity assay
+## convert the object using the gene activity assay
 cvr <- as_cellexalvrR(pbmc.atac,c("seurat_clusters"),specie="human",assay="ACTIVITY")
 cvr
 
-#We're ready to export. Fist make a folder if you haven't already:
-
-opath = file.path(tempdir(),"scATAC")
-if ( file.exists(opath)){
-  unlink(opath, recursive=TRUE)
-}
-dir.create( opath )
+## We're ready to export.
+opath = file.path(OutPath,"scATAC")
 export2cellexalvr(cvr, opath)
 
 list.files(opath)
@@ -191,7 +217,7 @@ list.files(opath)
 
 ### Making and exporting a cellexalVR object from it's elements.
 
-If you aren't using Seurat the following guide will show you how to make a cellexalVR oject from scratch using our in-built functions. The requirments are very simple and examples are shown below.
+If you aren't using Seurat, Scanpy or Scvelo the following guide will show you how to make a cellexalVR oject from scratch using our in-built functions. The requirments are very simple and examples are shown below.
 
 The data from [Nestorowa *et al*](http://www.bloodjournal.org/content/128/8/e20.long?sso-checked=true) can be downloaded from [here](http://cellexalvr.med.lu.se/downloadable/cvrQuickStartData.zip). Unpack them and set your working directory to where they are.
 
@@ -281,16 +307,12 @@ The last step is to call `export2cellexalvr` which will write the neccessary fil
 to a specified directory:
 
 ```{r, fig.show='hold',eval=T}
-opath = file.path(tempdir(),"CellexalOut")
-if ( file.exists(opath)){
-  unlink(opath, recursive=TRUE)
-}
-dir.create( opath )
+opath = file.path(OutPath,"CellexalOut")
 export2cellexalvr(cvr, opath)
 
 list.files( opath )
 
-#Done!
+## Done!
 ```
 
 All the files needed by CellexalVR are created at this point. The entire "CellexalOut/" folder should then be 
