@@ -1,9 +1,5 @@
 ![alt text](logo_small.png)
 
-<!-- badges: start -->
-  [![R-CMD-check](https://github.com/sonejilab/cellexalvrR/workflows/R-CMD-check/badge.svg)](https://github.com/sonejilab/cellexalvrR/actions)
-  <!-- badges: end -->
-
 # cellexalvrR
 cellexalvrR is an R package to prep single-cell expression data for exploration/use in the [cellexalVR](https://cellexalvr.med.lu.se/) ([on github](https://github.com/sonejilab/cellexalvr)) environment, and also provides back-end functions that perform in-session calculations.
 
