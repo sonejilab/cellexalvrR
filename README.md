@@ -18,11 +18,14 @@ cellexalvrR is productively used under R 4.0.2 and 4.1.0.
 
 # Preparing data using cellexalvrR
 
-The vignette detailing how to use the package to prepare data for CellexalVR can be found [here](https://cellexalvr.med.lu.se/cellexalvrr-vignette). It shows how to create a cellexalvr object ready for export, and also describes a couple of functions to make converting formats and making metadata easier.
+The vignette detailing how to use the package to prepare data for CellexalVR can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrRQuickStart.html). It shows how to create a cellexalvr object ready for export, and also describes a couple of functions to make converting formats and making metadata easier.
 
-<!---
-In short Seurat objects or scanpy/scvelo h5ad files can be converted into a cellexalvrR object using ```as_cellexalvrR()``` and this object can then be exported using ```export2cellexalvr()```.
--->
+
+# Vignettes
+
+The most up to date vignette about data im and export can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrRQuickStart.html).
+
+Linear selections and post VR reporting for linear selections can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrR-linearSelections-vignette.html).
 
 # Currently used R packages:
 
