@@ -1,10 +1,12 @@
 ![alt text](logo_small.png)
 
 # cellexalvrR
-cellexalvrR is an R package to prep single-cell expression data for exploration/use in the [cellexalVR](https://cellexalvr.med.lu.se/) ([on github](https://github.com/sonejilab/cellexalvr)) environment, and also provides back-end functions that perform in-session calculations.
+
+cellexalvrR is an R package to prep single-cell expression data for exploration/use in our virtual realitiy data analysis platform [CellexalVR](https://cellexalvr.med.lu.se/) ([on github](https://github.com/sonejilab/cellexalvr)), and also to provide back-end functions that perform in-session calculations.
 
 
 # Install using:
+
 ```
 install.packages("devtools")
 
@@ -15,8 +17,12 @@ library(cellexalvrR)
 cellexalvrR is productively used under R 4.0.2 and 4.1.0.
 
 # Preparing data using cellexalvrR
+
 The vignette detailing how to use the package to prepare data for CellexalVR can be found [here](https://cellexalvr.med.lu.se/cellexalvrr-vignette). It shows how to create a cellexalvr object ready for export, and also describes a couple of functions to make converting formats and making metadata easier.
 
+<!---
+In short Seurat objects or scanpy/scvelo h5ad files can be converted into a cellexalvrR object using ```as_cellexalvrR()``` and this object can then be exported using ```export2cellexalvr()```.
+-->
 
 # Currently used R packages:
 

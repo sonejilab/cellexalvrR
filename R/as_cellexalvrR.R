@@ -1,10 +1,10 @@
-#' This function is the default conversion function from any other object.
+#' This function is the default conversion function.
 #' Depending on which object is to be imported the paramteters differ.
 #'
 #' @name as_cellexalvrR
 #' @docType methods
 #' @description convert a supported data set into a cellexalvrR obejct
-#' @param x the object or file to be converted
+#' @param x a Seurat object or scanpy/scvelo h5ad file
 #' @param meta.cell.groups which cell annotation columns to convert to meta.cell
 #' @param meta.genes.groups which annotation columns to keep (default NULL)
 #' @param userGroups which cell annotation columns to add to the userGroups slot

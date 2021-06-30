@@ -67,7 +67,7 @@ as_cellexalvrR(
 )
 }
 \arguments{
-\item{x}{the object or file to be converted}
+\item{x}{a Seurat object or scanpy/scvelo h5ad file}
 
 \item{meta.cell.groups}{which cell annotation columns to convert to meta.cell}
 
@@ -97,6 +97,6 @@ as_cellexalvrR(
 convert a supported data set into a cellexalvrR obejct
 }
 \details{
-This function is the default conversion function from any other object.
+This function is the default conversion function.
 Depending on which object is to be imported the paramteters differ.
 }
