@@ -381,7 +381,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 						as.vector(obs[, namecol]) )
 			}else {
 				## now I need to check for strings...
-				
+
 				OK = unlist(lapply( colnames(obs) , function(id) {
 					suppressWarnings({a= which( is.na(as.numeric(as.vector(obs[,id])))==T) })
 					## Strings only
@@ -391,10 +391,22 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 						0
 					}
 				}))
+
 				names(OK) = colnames(obs)
-				# if ( slotName == 'row_attrs'){
-				# 	browser()
-				# }
+
+				## now lets double check the factors
+				## x[[slotName]][['__categories']][[id]][]
+
+				for (catName in names(x[[slotName]][['__categories']]) ) {
+					## if we have strings in the category info
+					levelNames = x[[slotName]][['__categories']][[catName]][]
+					if ( ! all(!  is.na(suppressWarnings({as.numeric( levelNames )})))){
+						## replace the data with an R Factor
+						obs[,catName] = factor( levelNames[obs[,catName]+1], labels=levelNames )
+					}
+				}
+				
+				
 				rownames(obs) =  make.names ( #function definition in file 'as_cellexalvrR.R'
 						as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
 			}

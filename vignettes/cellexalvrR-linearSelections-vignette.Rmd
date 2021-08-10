@@ -24,19 +24,18 @@ Linear selections in CellexalVR are simple one group selections.
 The algorithm will only work if the selection has a linear shape.
 
 Internally CellexalvrR clusters the drc data from the selection using kmeans.
-These kmean clusters are subsequently provided to Slingshot which in turn calculates the
+These kmean clusters are subsequently provided to slingshot which in turn calculates the
 pseudotime 'ranging' from the cluster with the first selected cell to the cluster with the last selected cell. 
-Gene expression is afterwards correlated to the calculated pseudotime and 125 top and 125 bottom top correlated 
-genes are retrurned to the VR process and displayed as VR heatmap.
+Gene expression is afterwards correlated to the calculated pseudotime and the 125 best positively and negatively correlated genes are retrurned to the VR process and displayed as VR heatmap.
 
 ## And Beyond
 
-The linear selections turned out to a very poverful tool in analyzing single cell data as
+The linear selections turned out to be a very poverful tool in analyzing single cell data as
 the structure of the 3D models is best explained with the gradual change in gene expression
-in one subarea of the plot. And this kind of analysis is greatliy simplyfied using CellexalVR.
+in the different areas of the plot. And this linear (pseudotime) analysis is greatliy simplyfied using CellexalVR in comparison to using standalone R.
 
 
-A linear selection is implemented as cellexalLinear class in cellexalvrR. Every time the user creates a single selection heatmap in VR a cellexalLinear object is created. This object can be accessed from the cellexalObj.RData file in the project output folder.
+A linear selection is implemented as cellexalLinear class in cellexalvrR. Every time the user creates a single selection heatmap in VR a cellexalLinear object is created. This object can be accessed from the cellexalObj.RData file in the project output folder after a CellexalVR session has ended.
 
 For this vignett I will use the inbuilt dataset and a saved one group (VR) selection.
 
@@ -75,7 +74,7 @@ bossLinearSelection = cellexalObj@usedObj$linearSelections[["lastEntry"]]
 cellexalObj = createReport(bossLinearSelection, cellexalObj, info = bossLinearSelection)$cellexalObj
 
 
-# the statistics table
+## the statistics table
 print ( head( cellexalObj@usedObj$sigGeneLists$lin[[ cellexalObj@usedObj$lastGroup ]] ))
 
 length( cellexalObj@usedObj$deg.genes)
@@ -88,7 +87,7 @@ cellexalObj@usedObj$linearSelections
 ```
 
 You see the 'lastEntry' linear selection will aloways be in the first place in this list
-and the 'lastEntry' is always a copy of one linear selction in the list.
+and the 'lastEntry' is always a copy of one linear selection in the list.
 
 ### compareGeneClusters
 
@@ -103,9 +102,11 @@ For this example I can only create an even split between the samples:
 ```{r, message=FALSE}
 linearSelection = getLinearSelection(cellexalObj, bossLinearSelection)
 
+## split the cells in two
 subset1 = rownames(linearSelection@dat)[seq(1,nrow(linearSelection@dat),2)]
 subset2 = rownames(linearSelection@dat)[seq(2,nrow(linearSelection@dat),2)]
 
+## and split the linear selection in two, too.
 linearSubset1 = subset( linearSelection, subset1)
 linearSubset2 = subset( linearSelection, subset2)
 
@@ -115,7 +116,8 @@ linearSubset1 = cellexalObj@usedObj$linearSelections[[1]]
 cellexalObj = addSelection( linearSubset2, cellexalObj )
 linearSubset2 = cellexalObj@usedObj$linearSelections[[1]]
 
-cellexalObj = createStats( linearSubset1, cellexalObj,  num.sig= 250 )
+## run the analysis for the two partial linear selections
+cellexalObj = createStats( linearSelection, cellexalObj,  num.sig= 250 )
 deg.genes = cellexalObj@usedObj$deg.genes
 
 cellexalObj = createReport( linearSubset1, cellexalObj, 
@@ -125,6 +127,7 @@ cellexalObj = createStats( linearSubset2, cellexalObj,  num.sig= 250 )
 cellexalObj = createReport(linearSubset2, cellexalObj, 
      linearSubset2, deg.genes = deg.genes )$cellexalObj
 
+## and finally compare them
 cellexalObj = compareGeneClusters ( 
    getLinearSelection(cellexalObj,linearSubset1@gname), 
    getLinearSelection(cellexalObj,linearSubset2@gname), 
@@ -143,12 +146,12 @@ cellexalObj = renderReport( cellexalObj)
 ## The portable log file
 
 The report is available as PortableLog zip file in the cellexalObj@outpath folder.
-The portable log report created by this vignette is provided with cellexalvrR and can be accessed in R like this:
+[The portable log report created by this vignette](https://github.com/sonejilab/cellexalvrR/blob/master/inst/extdata/PortableLog_linearExample.zip) is also provided with cellexalvrR and can be accessed in R like this:
 
 ```
 system.file("extdata", "PortableLog_linearExample.zip",package= "cellexalvrR")
 ```
 
-The file can be unizipped on any computer. The root html file gives access to all information.
+The file can be unizipped on any computer. Only in the unizipped folder the root html file gives access to all information. All figures and data files are also provided in this folder.
 
 

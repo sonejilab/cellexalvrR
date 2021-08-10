@@ -23,9 +23,9 @@ The vignette detailing how to use the package to prepare data for CellexalVR can
 
 # Vignettes
 
-The most up to date vignette about data im and export can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrRQuickStart.html).
+The most up to date vignette about data import and export can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrRQuickStart.html).
 
-Linear selections and post VR reporting for linear selections can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrR-linearSelections-vignette.html).
+Linear selections and post VR reporting for linear selections can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrR-linearSelections-vignette.html). The portable log zip file created in this vignette can be downloaded [from here](https://github.com/sonejilab/cellexalvrR/blob/master/inst/extdata/PortableLog_linearExample.zip).
 
 # Currently used R packages:
 

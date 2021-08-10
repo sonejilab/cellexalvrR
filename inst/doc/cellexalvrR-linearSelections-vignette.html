@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stefan Lang" />
 
-<meta name="date" content="2021-06-28" />
+<meta name="date" content="2021-06-30" />
 
 <title>Linear selections in VR and beyond</title>
 
@@ -141,19 +141,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Linear selections in VR and beyond</h1>
 <h4 class="author">Stefan Lang</h4>
-<h4 class="date">2021-06-28</h4>
+<h4 class="date">2021-06-30</h4>
 
 
 
 <div id="linear-selections" class="section level2">
 <h2>Linear selections</h2>
 <p>Linear selections in CellexalVR are simple one group selections. The algorithm will only work if the selection has a linear shape.</p>
-<p>Internally CellexalvrR clusters the drc data from the selection using kmeans. These kmean clusters are subsequently provided to Slingshot which in turn calculates the pseudotime ‘ranging’ from the cluster with the first selected cell to the cluster with the last selected cell. Gene expression is afterwards correlated to the calculated pseudotime and 125 top and 125 bottom top correlated genes are retrurned to the VR process and displayed as VR heatmap.</p>
+<p>Internally CellexalvrR clusters the drc data from the selection using kmeans. These kmean clusters are subsequently provided to slingshot which in turn calculates the pseudotime ‘ranging’ from the cluster with the first selected cell to the cluster with the last selected cell. Gene expression is afterwards correlated to the calculated pseudotime and the 125 best positively and negatively correlated genes are retrurned to the VR process and displayed as VR heatmap.</p>
 </div>
 <div id="and-beyond" class="section level2">
 <h2>And Beyond</h2>
-<p>The linear selections turned out to a very poverful tool in analyzing single cell data as the structure of the 3D models is best explained with the gradual change in gene expression in one subarea of the plot. And this kind of analysis is greatliy simplyfied using CellexalVR.</p>
-<p>A linear selection is implemented as cellexalLinear class in cellexalvrR. Every time the user creates a single selection heatmap in VR a cellexalLinear object is created. This object can be accessed from the cellexalObj.RData file in the project output folder.</p>
+<p>The linear selections turned out to be a very poverful tool in analyzing single cell data as the structure of the 3D models is best explained with the gradual change in gene expression in the different areas of the plot. And this linear (pseudotime) analysis is greatliy simplyfied using CellexalVR in comparison to using standalone R.</p>
+<p>A linear selection is implemented as cellexalLinear class in cellexalvrR. Every time the user creates a single selection heatmap in VR a cellexalLinear object is created. This object can be accessed from the cellexalObj.RData file in the project output folder after a CellexalVR session has ended.</p>
 <p>For this vignett I will use the inbuilt dataset and a saved one group (VR) selection.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cellexalvrR)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -189,7 +189,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># the statistics table</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">## the statistics table</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> ( <span class="fu">head</span>( cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>sigGeneLists<span class="sc">$</span>lin[[ cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>lastGroup ]] ))</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               cor   n         t      p.value</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Ybx1   -0.6707616 159 -11.33197 3.951966e-22</span></span>
@@ -217,7 +217,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; and is based on the selection User.group.1 </span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  It contains information about 1 Gene list(s): </span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ,Time.group.2</span></span></code></pre></div>
-<p>You see the ‘lastEntry’ linear selection will aloways be in the first place in this list and the ‘lastEntry’ is always a copy of one linear selction in the list.</p>
+<p>You see the ‘lastEntry’ linear selection will aloways be in the first place in this list and the ‘lastEntry’ is always a copy of one linear selection in the list.</p>
 <div id="comparegeneclusters" class="section level3">
 <h3>compareGeneClusters</h3>
 <p>CompareGeneClusters is a function to compare gene expression profiles between two linearSelections. This functionality is not available in VR. It requires to have clustered the same genes in two different linear selections.</p>
@@ -225,35 +225,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>For a real live example the cells in the selection could be separated by treatment, age, desease state or any other research interest. For this example I can only create an even split between the samples:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>linearSelection <span class="ot">=</span> <span class="fu">getLinearSelection</span>(cellexalObj, bossLinearSelection)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>subset1 <span class="ot">=</span> <span class="fu">rownames</span>(linearSelection<span class="sc">@</span>dat)[<span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(linearSelection<span class="sc">@</span>dat),<span class="dv">2</span>)]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>subset2 <span class="ot">=</span> <span class="fu">rownames</span>(linearSelection<span class="sc">@</span>dat)[<span class="fu">seq</span>(<span class="dv">2</span>,<span class="fu">nrow</span>(linearSelection<span class="sc">@</span>dat),<span class="dv">2</span>)]</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>linearSubset1 <span class="ot">=</span> <span class="fu">subset</span>( linearSelection, subset1)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>linearSubset2 <span class="ot">=</span> <span class="fu">subset</span>( linearSelection, subset2)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">addSelection</span>( linearSubset1, cellexalObj )</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>linearSubset1 <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections[[<span class="dv">1</span>]]</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">addSelection</span>( linearSubset2, cellexalObj )</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>linearSubset2 <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections[[<span class="dv">1</span>]]</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSubset1, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>deg.genes <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>deg.genes</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>( linearSubset1, cellexalObj, </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>     linearSubset1, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSubset2, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>(linearSubset2, cellexalObj, </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>     linearSubset2, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">compareGeneClusters</span> ( </span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>   <span class="fu">getLinearSelection</span>(cellexalObj,linearSubset1<span class="sc">@</span>gname), </span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>   <span class="fu">getLinearSelection</span>(cellexalObj,linearSubset2<span class="sc">@</span>gname), </span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>     cellexalObj, <span class="at">altGroupNames=</span><span class="fu">c</span>(<span class="st">&quot;subset A&quot;</span>, <span class="st">&quot;subset B&quot;</span> ) </span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">## split the cells in two</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>subset1 <span class="ot">=</span> <span class="fu">rownames</span>(linearSelection<span class="sc">@</span>dat)[<span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(linearSelection<span class="sc">@</span>dat),<span class="dv">2</span>)]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>subset2 <span class="ot">=</span> <span class="fu">rownames</span>(linearSelection<span class="sc">@</span>dat)[<span class="fu">seq</span>(<span class="dv">2</span>,<span class="fu">nrow</span>(linearSelection<span class="sc">@</span>dat),<span class="dv">2</span>)]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">## and split the linear selection in two, too.</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>linearSubset1 <span class="ot">=</span> <span class="fu">subset</span>( linearSelection, subset1)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>linearSubset2 <span class="ot">=</span> <span class="fu">subset</span>( linearSelection, subset2)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">addSelection</span>( linearSubset1, cellexalObj )</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>linearSubset1 <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections[[<span class="dv">1</span>]]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">addSelection</span>( linearSubset2, cellexalObj )</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>linearSubset2 <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections[[<span class="dv">1</span>]]</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="do">## run the analysis for the two partial linear selections</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSelection, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>deg.genes <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>deg.genes</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>( linearSubset1, cellexalObj, </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>     linearSubset1, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSubset2, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>(linearSubset2, cellexalObj, </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>     linearSubset2, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="do">## and finally compare them</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">compareGeneClusters</span> ( </span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>   <span class="fu">getLinearSelection</span>(cellexalObj,linearSubset1<span class="sc">@</span>gname), </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>   <span class="fu">getLinearSelection</span>(cellexalObj,linearSubset2<span class="sc">@</span>gname), </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>     cellexalObj, <span class="at">altGroupNames=</span><span class="fu">c</span>(<span class="st">&quot;subset A&quot;</span>, <span class="st">&quot;subset B&quot;</span> ) </span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>In the end the report has to be finalized:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">renderReport</span>( cellexalObj)</span></code></pre></div>
 </div>
@@ -262,7 +266,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>The portable log file</h2>
 <p>The report is available as PortableLog zip file in the <a href="mailto:cellexalObj@outpath" class="email">cellexalObj@outpath</a> folder. The portable log report created by this vignette is provided with cellexalvrR and can be accessed in R like this:</p>
 <pre><code>system.file(&quot;extdata&quot;, &quot;PortableLog_linearExample.zip&quot;,package= &quot;cellexalvrR&quot;)</code></pre>
-<p>The file can be unizipped on any computer. The root html file gives access to all information.</p>
+<p>The file can be unizipped on any computer. Only in the unizipped folder the root html file gives access to all information. All figures and data files are also provided in this folder.</p>
 </div>
 
 

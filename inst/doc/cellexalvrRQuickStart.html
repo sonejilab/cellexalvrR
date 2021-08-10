@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stefan Lang &amp; Shamit Soneji" />
 
-<meta name="date" content="2021-06-28" />
+<meta name="date" content="2021-06-30" />
 
 <title>A guide to using cellexalvrR - Quick Start</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">A guide to using cellexalvrR - Quick Start</h1>
 <h4 class="author">Stefan Lang &amp; Shamit Soneji</h4>
-<h4 class="date">2021-06-28</h4>
+<h4 class="date">2021-06-30</h4>
 
 
 
@@ -180,21 +180,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="do">## We will now calculate a UMAP in 3 dimensions whereas the TSNE will be using in 2D </span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>pbmc_small <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(pbmc_small, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">n.components =</span> <span class="dv">3</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 Read 80 rows and found 10 numeric columns</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 Read 80 rows and found 10 numeric columns</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; **************************************************|</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\RtmpQXLt8D\file2d247d2b651a</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:44 Annoy recall = 100%</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:45 Commencing smooth kNN distance calibration using 1 thread</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:45 7 smooth knn distance failures</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:46 Initializing from normalized Laplacian + noise</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:46 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 13:04:47 Optimization finished</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\RtmpwX7HbE\file54a89406c7a</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:09 Annoy recall = 100%</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:10 Commencing smooth kNN distance calibration using 1 thread</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:10 7 smooth knn distance failures</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:11 Initializing from normalized Laplacian + noise</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:11 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12:55:12 Optimization finished</span></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(pbmc_small,<span class="st">&quot;umap&quot;</span>)[<span class="dv">1</span>,]</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    UMAP_1    UMAP_2    UMAP_3 </span></span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -1.912597 -1.099849  1.826431</span></span>

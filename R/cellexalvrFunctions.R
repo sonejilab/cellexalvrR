@@ -134,16 +134,16 @@ setMethod('get.genes.cor.to', signature = c ('cellexalvrR'),
 			"## Genes correlated to", gname,"\n\n",
 			"Max correlation value is",round(cor.values[2],3),"and min correlation value is", round(rev(cor.values)[1],3),".",
 			"All Correlation data can be downloaded from [here](", file.path( cellexalObj@usedObj$sessionName,'tables', basename(opath ) ),")","\n\n",
-			"\n### Genes positively correlated to", gname,"\n\n"
+			"\n### Top 10 Genes positively correlated to", gname,"\n\n"
 		)
 		Top_Figs = paste( collapse=" ",drcFiles2HTMLexpression(cellexalObj, drc, pos ))
 		Top_genes =	paste( collapse=" ", sep=" ",md_gene_links ( pos ))
 		Bottom_Figs = paste( collapse=" ", sep=" ",drcFiles2HTMLexpression(cellexalObj, drc, neg ))
 		Bottom_genes = paste( collapse=" ", sep=" ",md_gene_links ( neg ))
 		Text = paste( sep="\n", collapse="\n",
-			Text, Top_Figs, Top_genes,
-			paste("\n### Genes negatively correlated to", gname,"\n\n"),
-			Bottom_Figs, Bottom_genes, "\n"
+			Text, Top_genes, Top_Figs, 
+			paste("\n### Top 10 Genes negatively correlated to", gname,"\n\n"),
+			Bottom_genes, Bottom_Figs, "\n"
 		)
 		
 		cellexalObj = storeLogContents( cellexalObj, Text, type="GeneGeneCor")
