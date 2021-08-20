@@ -25,7 +25,6 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'character'),
 })
 
 
-
 #' @rdname drcPlots2D
 setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	definition = function ( cellexalObj, gInfo,  showIDs = TRUE ) {
@@ -41,9 +40,9 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		# 	browser()
 		# }
 
-	DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ) )) #function definition in file 'filename.R'
+	DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 	if ( ! showIDs ) {
-		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2",'NoIDs', 'png' ) ))
+		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
 	}
 
 	gInfo@grouping = as.numeric( gInfo@grouping )
@@ -83,9 +82,9 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	DRC2 = DRC3= NULL
 
 	if (  var( cellexalObj@drc[[gInfo@drc]][,3]) != 0 ) {
-		DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "2_3", 'png' ) )) #function definition in file 'filename.R'
+		DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 		if ( ! showIDs ) {
-			DRC2 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "2_3",'NoIDs', 'png' ) ))
+			DRC2 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "2_3",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
 		}
 
 		grDevices::png( file= DRC2, width=1000, height=1000)
@@ -95,9 +94,9 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
     	print(p) ## write the plot
 		grDevices::dev.off()
 
-		DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "1_3", 'png' ) )) #function definition in file 'filename.R'
+		DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 		if ( ! showIDs ) {
-			DRC3 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_3",'NoIDs', 'png' ) ))
+			DRC3 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_3",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
 		}
 
 		grDevices::png( file= DRC3, width=1000, height=1000)

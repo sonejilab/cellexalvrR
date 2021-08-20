@@ -6,9 +6,9 @@
 \alias{logStatResult,cellexalvrR-method}
 \title{make the stats table available in the log system}
 \usage{
-logStatResult(x, method, data, col = NULL)
+logStatResult(x, method, data, col = NULL, text = NULL)
 
-\S4method{logStatResult}{cellexalvrR}(x, method, data, col = NULL)
+\S4method{logStatResult}{cellexalvrR}(x, method, data, col = NULL, text = NULL)
 }
 \arguments{
 \item{x}{the cellexalvrR object}
@@ -18,6 +18,8 @@ logStatResult(x, method, data, col = NULL)
 \item{data}{the results table}
 
 \item{col}{the p value column to plot the -log10 histogram}
+
+\item{text}{an optional additional text shown after the heading}
 }
 \description{
 Create a log file part including a stats data download link (coma separted table file)

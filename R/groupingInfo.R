@@ -45,18 +45,26 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		message(paste( "More than one drc object - I assume you selected from",names(cellexalObj@drc)[1]," ;-)" ) )
 	}
 	
-	if ( is.na( match(gname, colnames(cellexalObj@userGroups)) ) ){
+	grouping = NULL
+
+	if ( ! is.na( match(gname, colnames(cellexalObj@userGroups)) ) ){
+		grouping = cellexalObj@userGroups[,gname]
+		order = as.integer(cellexalObj@userGroups[,paste(gname, 'order')])
 		message(paste("the grouping", gname, "is not part of the cellexalvrR object" ) )
-		return (NULL)
+
+	}
+
+	if ( is.null(grouping) ) {
+		stop( paste("the grouping", gname, "is not found in this cellexalvrR object"))
 	}
 
 	ginfo = new( 'cellexalGrouping',
 		gname = gname,
 		selectionFile= '',
-		grouping = cellexalObj@userGroups[,gname] ,
-		order = as.integer(cellexalObj@userGroups[,paste(gname, 'order')]),
+		grouping = grouping ,
+		order = order,
 		drc = names(cellexalObj@drc)[1],
-		col = rainbow( length(table(cellexalObj@userGroups[,gname])) )
+		col = rainbow( length(table(grouping)) )
 	)
 
 	cellexalObj@groupSelectedFrom[[gname]] = ginfo

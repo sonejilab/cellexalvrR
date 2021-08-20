@@ -29,6 +29,8 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	gOrderName = paste( gname, 'order', sep=" ")
 
 	n = vector( 'numeric', ncol(cellexalObj@data))
+	possibleNames = unique(unlist(lapply( colnames(cellexalObj@meta.cell), 
+			function(x) { str_split(x, "@")} )))
 
 	if ( file.exists(cellidfile)){ ## file from the VR env
 		## add this group into the object
@@ -125,7 +127,43 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	else if ( is.na(match(cellidfile, colnames(cellexalObj@userGroups))) ==F ) {
 		## the grouping is known
 		gname = cellidfile
-	}else {
+	}
+	else if ( !is.na( match(cellidfile, c( colnames(cellexalObj@meta.cell),possibleNames) ) ) ){
+		## merge the shitty split of info back into a usable format!
+		toMerge = grep( cellidfile, colnames(cellexalObj@meta.cell) )
+		grouping = NULL
+		order = NULL
+		if (length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) == 1){
+			grouping = cellexalObj@meta.cell[, cellidfile]
+			order = 1:ncol(cellexalObj@data)
+		}
+		else if ( length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) > 1){
+			entries = unique(unlist(lapply( colnames(cellexalObj@meta.cell)[toMerge], 
+			function(x) { str_split(x, "@")[[1]][2]} )))
+			grouping = rep( NA, ncol(cellexalObj@data))
+			order = 1:ncol(cellexalObj@data)
+			for ( id in 1:length(toMerge) ){
+				entryname = paste( sep="@",cellidfile,toMerge[id])
+				if ( is.na(match ( entryname, colnames(cellexalObj@meta.cell) )) ){
+					entryname = paste( sep="@",toMerge[id],cellidfile)
+				}
+				grouping[ which(cellexalObj@meta.cell[,toMerge[id]] == 1)] = entries[id]
+			}
+		}else {
+			stop(paste( "sorry, but you can not merge these groups:", paste(collapse=", ",colnames(cellexalObj@meta.cell)[toMerge] )) )
+		}
+		tmp = data.frame( A = factor(grouping), B= order  )
+		colnames( tmp ) = c(cellidfile,  paste(cellidfile, 'order', sep=" ") )
+		rownames(tmp) = colnames(cellexalObj@data)
+		if ( ncol(cellexalObj@userGroups) == 0){
+			cellexalObj@userGroups = tmp
+		}else {
+			cellexalObj@userGroups = cbind( cellexalObj@userGroups, tmp )
+		}
+		cellexalObj@groupSelectedFrom[[cellidfile]] = groupingInfo(cellexalObj, cellidfile )
+		cellexalObj@usedObj$SelectionFiles[[cellidfile]] = ""
+	}
+	else {
 		stop( paste("Cannot process the request for grouping",cellidfile,"\nIt is neither a file nor a known user grouping name\n" ) )
 	}
 	## store the grouing name

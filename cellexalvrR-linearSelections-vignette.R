@@ -33,7 +33,7 @@ bossLinearSelection = cellexalObj@usedObj$linearSelections[["lastEntry"]]
 cellexalObj = createReport(bossLinearSelection, cellexalObj, info = bossLinearSelection)$cellexalObj
 
 
-# the statistics table
+## the statistics table
 print ( head( cellexalObj@usedObj$sigGeneLists$lin[[ cellexalObj@usedObj$lastGroup ]] ))
 
 length( cellexalObj@usedObj$deg.genes)
@@ -46,9 +46,11 @@ cellexalObj@usedObj$linearSelections
 ## ---- message=FALSE-----------------------------------------------------------
 linearSelection = getLinearSelection(cellexalObj, bossLinearSelection)
 
+## split the cells in two
 subset1 = rownames(linearSelection@dat)[seq(1,nrow(linearSelection@dat),2)]
 subset2 = rownames(linearSelection@dat)[seq(2,nrow(linearSelection@dat),2)]
 
+## and split the linear selection in two, too.
 linearSubset1 = subset( linearSelection, subset1)
 linearSubset2 = subset( linearSelection, subset2)
 
@@ -58,7 +60,8 @@ linearSubset1 = cellexalObj@usedObj$linearSelections[[1]]
 cellexalObj = addSelection( linearSubset2, cellexalObj )
 linearSubset2 = cellexalObj@usedObj$linearSelections[[1]]
 
-cellexalObj = createStats( linearSubset1, cellexalObj,  num.sig= 250 )
+## run the analysis for the two partial linear selections
+cellexalObj = createStats( linearSelection, cellexalObj,  num.sig= 250 )
 deg.genes = cellexalObj@usedObj$deg.genes
 
 cellexalObj = createReport( linearSubset1, cellexalObj, 
@@ -68,6 +71,7 @@ cellexalObj = createStats( linearSubset2, cellexalObj,  num.sig= 250 )
 cellexalObj = createReport(linearSubset2, cellexalObj, 
      linearSubset2, deg.genes = deg.genes )$cellexalObj
 
+## and finally compare them
 cellexalObj = compareGeneClusters ( 
    getLinearSelection(cellexalObj,linearSubset1@gname), 
    getLinearSelection(cellexalObj,linearSubset2@gname), 

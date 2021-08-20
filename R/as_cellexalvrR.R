@@ -402,7 +402,14 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 					levelNames = x[[slotName]][['__categories']][[catName]][]
 					if ( ! all(!  is.na(suppressWarnings({as.numeric( levelNames )})))){
 						## replace the data with an R Factor
-						obs[,catName] = factor( levelNames[obs[,catName]+1], labels=levelNames )
+						if ( min(obs[,catName]) == -1 ){ ## them would be the NA in R
+							# Just add one more category - not perfect, but better than breaking
+							levelNames = c( 'NA', levelNames)
+							obs[,catName] = factor( levelNames[obs[,catName]+2], labels= levelNames )
+						}
+						else {
+							obs[,catName] = factor( levelNames[obs[,catName]+1], labels=levelNames )
+						}
 					}
 				}
 				

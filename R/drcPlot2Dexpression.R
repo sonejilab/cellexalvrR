@@ -53,7 +53,7 @@ setMethod('drcPlot2Dexpression', signature = c ('cellexalvrR', 'character', 'cha
 	
 		## now this data needs to be z.scored
 
-	DRC1 = file.path( sessionPath , 'png', filename( c( GOI ,drc , "1_2", 'png' ) )) #function definition in file 'filename.R'
+	DRC1 = file.path( sessionPath , 'png', filename( c( GOI ,drc , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 
     if ( length(cellexalObj@drc[[drc]][,1]) != length(gr) ){
     	OK = match( rownames(cellexalObj@drc[[drc]]), colnames(cellexalObj@data))
@@ -70,7 +70,7 @@ setMethod('drcPlot2Dexpression', signature = c ('cellexalvrR', 'character', 'cha
 	DRC2 = DRC3= NULL
 
 	if (  var( cellexalObj@drc[[drc]][,3]) != 0 ) {
-		DRC2 = file.path( sessionPath , 'png', filename(c( GOI ,drc, "2_3", 'png' ) )) #function definition in file 'filename.R'
+		DRC2 = file.path( sessionPath , 'png', filename(c( GOI ,drc, "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 
 
 		grDevices::png( file= DRC2, width=1000, height=1000)
@@ -80,7 +80,7 @@ setMethod('drcPlot2Dexpression', signature = c ('cellexalvrR', 'character', 'cha
     	print(p) ## write the plot
 		grDevices::dev.off()
 
-		DRC3 = file.path( sessionPath , 'png', filename(c( GOI ,drc, "1_3", 'png' ) )) #function definition in file 'filename.R'
+		DRC3 = file.path( sessionPath , 'png', filename(c( GOI ,drc, "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 
 
 		grDevices::png( file= DRC3, width=1000, height=1000)

@@ -7,10 +7,11 @@
 #' @param method the stats method used (no spaces please)
 #' @param data the results table
 #' @param col the p value column to plot the -log10 histogram
+#' @param text an optional additional text shown after the heading
 #' @title make the stats table available in the log system
 #' @export
 setGeneric('logStatResult', ## Name
-	function ( x, method, data, col=NULL ) { ## Argumente der generischen Funktion
+	function ( x, method, data, col=NULL, text=NULL ) { ## Argumente der generischen Funktion
 		standardGeneric('logStatResult') ## der Aufruf von standardGeneric sorgt für das Dispatching
 	}
 )
@@ -19,7 +20,7 @@ setGeneric('logStatResult', ## Name
 
 #' @rdname logStatResult
 setMethod('logStatResult', signature = c ('cellexalvrR'),
-	definition = function ( x, method, data, col=NULL ) {
+	definition = function ( x, method, data, col=NULL, text=NULL ) {
 	if (! is.null( x@usedObj$sessionName)) {
 
 		## export the data into a file and add a small download link into the report
@@ -53,9 +54,12 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		}else {
 			sesionFile = x@usedObj$SelectionFiles[[x@usedObj$lastGroup]]
 		}
+		if ( is.null(text)){
+			text = ""
+		}
 		content=paste( sep="\n", collapse = "\n",
 				paste( "##", x@usedObj$lastGroup,"Statistical Result" ),
-				"",
+				"",text,"",
 				tableHTML,
 				"",
 				"### Data",

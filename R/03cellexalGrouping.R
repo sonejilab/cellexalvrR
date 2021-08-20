@@ -110,3 +110,69 @@ setMethod('plotGroup', signature = c ( 'cellexalvrR', 'cellexalGrouping'),
     p= prettyPlot2D( toPlot, x@col, showIDs = showIDs )
     p
 } )
+
+
+#' Analyze each group in the selection by splitting it up into groups based on the other selection.
+#' The samples will then be analzed using wilcox test as in the multi group comparisons.
+#' @rdname compareGeneClusters
+setMethod('compareGeneClusters', signature = c ('cellexalGrouping', 'cellexalGrouping', 'cellexalvrR' ),
+definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
+
+
+	if ( is.null(color) ) {
+		color= grDevices::rainbow(2)
+	}
+	figTab = NULL
+	if (  is.null(altGroupNames) ) {
+		altGroupNames = c( x@gname,  other@gname)
+	}
+	cellexalObj@groupSelectedFrom[[other@gname]]@drc = x@drc
+
+
+	text = paste( "## Detailed Cell cluster analysis\n\n",
+		"Here all groups from the main clustering ",altGroupNames[1], " are subset based on the clustering ", altGroupNames[2] ,".",
+		"Each comparison will add another Statistics section after this section.",
+		"The following figure(s) show the distribution of the grouping", x@gname,":",
+		paste(collapse = "\n", sep="\n",drcFiles2HTML(cellexalObj, x, showIDs = TRUE ))
+		)
+
+	cellexalObj = storeLogContents(cellexalObj, text,  type="GeneClusterComparison" )
+  	id = length(cellexalObj@usedObj$sessionRmdFiles)
+   	cellexalObj = renderFile(cellexalObj, id, type = "GeneClusterComparison")
+
+   	genes = NULL
+
+   	for (id in names(table(x@grouping)) ){
+   		tmp = reduceTo( cellexalObj, what='col', to=colnames(cellexalObj@data)[which(x@grouping == id)] )
+   		tmp = getDifferentials( tmp, other@gname, 
+   			text=paste( "Group",x@gname,"cluster",id,"analyzed for differential expression of grouping",other@gname ) )
+   		genes = c( genes, tmp@usedObj$deg.genes)
+   	}
+
+   	text = paste( "## Detailed Cell cluster analysis - summary\n\n",
+   		paste( "Each group in the grouping", x@gname, "was split according to the grouping", other@gname,"." ),
+   		paste( "And during", id, "statistical analyses the top 250 genes have been collected."),
+
+   		paste("As the", id, "groups in grouping",x@gname,"are all split based on the second information,",
+   			"genes that occure more often in this tests might indicate a general difference",
+   			"between the groups in the second grouping (",other@gname,")." )
+   		)
+
+   	tab = table(genes)
+   	tab2 = table(tab)
+
+   	for (nRep in rev(names(tab2))){
+   		genes = names(which(tab == nRep))
+   		nGenes = length(genes)
+   		text=paste(text, "\n\n",nGenes, "genes have been detected in", nRep, "statistical comparisons:\n\n",
+   			md_gene_links( sort(genes) ) )
+   	}
+
+	cellexalObj = storeLogContents(cellexalObj, text,  type="GeneClusterComparison" )
+  	id = length(cellexalObj@usedObj$sessionRmdFiles)
+   	cellexalObj = renderFile(cellexalObj, id, type = "GeneClusterComparison")
+
+   	cellexalObj
+}
+
+)

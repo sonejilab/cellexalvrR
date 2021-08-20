@@ -16,6 +16,7 @@
 #' @param minPct the minium percent expressing cells in a group (default 0.1)
 #' @param onlyPos select only genes showing an higher expression in the group (default =T)
 #' @param report4genes a list of genes you want to get a report on.
+#' @param text an optional additional text to show in the log
 #' @keywords DEGs
 #' @title main Statistics function for cellexalvrR
 #' @examples 
@@ -29,7 +30,7 @@
 setGeneric('getDifferentials', ## Name
 			function (x,cellidfile,
 					deg.method='wilcox',
-					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL ) { 
+					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL ) { 
 				standardGeneric('getDifferentials') 
 			}
 	) 
@@ -37,22 +38,24 @@ setGeneric('getDifferentials', ## Name
 
 
 #' @rdname getDifferentials
-setMethod('getDifferentials', signature = c ('cellexalvrR'),
+setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 		definition = function (x,cellidfile,
 				deg.method='wilcox',
-				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL ) {
+				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
+
+			
+			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'
+			cellidfile = x@usedObj$lastGroup
+
 			num.sig <- as.numeric( num.sig )
 			
 			accepted = c('wilcox','Seurat_wilcox',  'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova')
 			if ( sum(unlist(lapply( accepted, function(ok) { return ( ok == deg.method )} ))) != 1 ) {
 				stop( paste('The deg.method',deg.method, 'is not supported' ) )
 			}
-			
-			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'
-			cellidfile = x@usedObj$lastGroup
 
 			ok <- which(!is.na(x@userGroups[,cellidfile]))
 
@@ -157,7 +160,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 				try ( {
-					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value' )
+					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
 					## And get additional info about the genes
 
 
@@ -265,7 +268,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR'),
 setMethod('getDifferentials', signature = c ('character'),
 		definition = function (x,cellidfile,
 				deg.method='wilcox',
-				num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1) {
+				num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, text = NULL) {
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			getDifferentials( x,cellidfile,deg.method,num.sig, Log=Log) #function definition in file 'getDifferentials.R'
 		}

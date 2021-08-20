@@ -49,7 +49,7 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		if ( min(as.vector(gInfo@order)) == 0) {
 			gInfo@order = as.integer(as.vector(gInfo@order) +1)
 		}
-		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ) )) #function definition in file 'filename.R'
+		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 		grDevices::png( file= DRC1, width=1000, height=1000)
 		#browser()
 		linearSelection = cellexalObj@usedObj$linearSelections[[paste(gInfo@gname, 'linearSelection' )]]
@@ -85,12 +85,12 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		#rgl::plot3d( linearSelection$a[linearSelection$time], linearSelection$b[linearSelection$time], linearSelection$c[linearSelection$time], col=gplots::bluered( length( linearSelection$x)) )
 		DRC2 = DRC3 = NULL
 		if ( ! var(cellexalObj@drc[[gInfo@drc]][,3]) == 0 ) {
-			DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "2_3", 'png' ) )) #function definition in file 'filename.R'
+			DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 			grDevices::png( file= DRC2, width=1000, height=1000)
 			p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,2], y=	drc[,3],col= col) ) #function definition in file drcPlot2D.R
     		print(p) #write the plot
 			grDevices::dev.off()
-			DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "1_3", 'png' ) )) #function definition in file 'filename.R'
+			DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 			grDevices::png( file= DRC3, width=1000, height=1000)
 			p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,1], y=	drc[,3],col= col) ) #function definition in file drcPlot2D.R
     		print(p) #write the plot

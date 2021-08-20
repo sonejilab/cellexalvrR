@@ -3,15 +3,20 @@
 \docType{methods}
 \name{filename}
 \alias{filename}
-\alias{filename,character-method}
+\alias{filename,character,missing-method}
+\alias{filename,character,character-method}
 \title{create a filename without spaces from a list of strings}
 \usage{
-filename(str)
+filename(str, path)
 
-\S4method{filename}{character}(str)
+\S4method{filename}{character,missing}(str, path = NULL)
+
+\S4method{filename}{character,character}(str, path)
 }
 \arguments{
 \item{str}{a string vector}
+
+\item{path}{an optional path - if given the function returns a not existing file name}
 }
 \description{
 simple function to join by '.' and remove whitespace.

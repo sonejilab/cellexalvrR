@@ -3,8 +3,8 @@
 \docType{methods}
 \name{getDifferentials}
 \alias{getDifferentials}
-\alias{getDifferentials,cellexalvrR-method}
-\alias{getDifferentials,character-method}
+\alias{getDifferentials,cellexalvrR,character-method}
+\alias{getDifferentials,character,ANY-method}
 \title{main Statistics function for cellexalvrR}
 \usage{
 getDifferentials(
@@ -16,10 +16,11 @@ getDifferentials(
   logfc.threshold = 1,
   minPct = 0.1,
   onlyPos = TRUE,
-  report4genes = NULL
+  report4genes = NULL,
+  text = NULL
 )
 
-\S4method{getDifferentials}{cellexalvrR}(
+\S4method{getDifferentials}{cellexalvrR,character}(
   x,
   cellidfile,
   deg.method = "wilcox",
@@ -28,17 +29,19 @@ getDifferentials(
   logfc.threshold = 0.1,
   minPct = 0.1,
   onlyPos = TRUE,
-  report4genes = NULL
+  report4genes = NULL,
+  text = NULL
 )
 
-\S4method{getDifferentials}{character}(
+\S4method{getDifferentials}{character,ANY}(
   x,
   cellidfile,
   deg.method = "wilcox",
   num.sig = 250,
   Log = TRUE,
   logfc.threshold = 1,
-  minPct = 0.1
+  minPct = 0.1,
+  text = NULL
 )
 }
 \arguments{
@@ -59,6 +62,8 @@ getDifferentials(
 \item{onlyPos}{select only genes showing an higher expression in the group (default =T)}
 
 \item{report4genes}{a list of genes you want to get a report on.}
+
+\item{text}{an optional additional text to show in the log}
 }
 \value{
 the cellexalvrr object with the stats table stored in x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]]
