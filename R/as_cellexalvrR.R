@@ -232,9 +232,13 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			message("A CellexalVR session without 3D embeddings is not making sense! STOP?!")
 	}
 
-	drcs = lapply(embeddings, function(n) {  
-				ret = t(x[['obsm']][[paste(sep="_",'X',n)]][1:embeddingDims,])
-				if ( embeddingDims == 2 ){
+	drcs = lapply(embeddings, function(n) {
+				locEmbDim = x[['obsm']][[paste(sep="_",'X',n)]][['dims']][1]
+				if ( locEmbDim > embeddingDims ){
+					locEmbDim = embeddingDims
+				}
+				ret = t(x[['obsm']][[paste(sep="_",'X',n)]][1:locEmbDim,])
+				if ( locEmbDim == 2 ){
 					ret = cbind(ret, rep(0, nrow(ret)) )
 				}
 				rownames(ret) = meta.data[,'_index']
@@ -396,7 +400,6 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 
 				## now lets double check the factors
 				## x[[slotName]][['__categories']][[id]][]
-
 				for (catName in names(x[[slotName]][['__categories']]) ) {
 					## if we have strings in the category info
 					levelNames = x[[slotName]][['__categories']][[catName]][]
@@ -405,10 +408,10 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 						if ( min(obs[,catName]) == -1 ){ ## them would be the NA in R
 							# Just add one more category - not perfect, but better than breaking
 							levelNames = c( 'NA', levelNames)
-							obs[,catName] = factor( levelNames[obs[,catName]+2], labels= levelNames )
+							obs[,catName] = factor( levelNames[obs[,catName]+2] )
 						}
 						else {
-							obs[,catName] = factor( levelNames[obs[,catName]+1], labels=levelNames )
+							obs[,catName] = factor( levelNames[obs[,catName]+1] )
 						}
 					}
 				}
