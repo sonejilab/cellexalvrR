@@ -1148,7 +1148,13 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 		toPlot[m,n] =dat[[n]]
 		## now the first smoothing run
 		span = span= 40 / length(m)
-		pred1 = stats::loess(  toPlot[m,n] ~ toPlot[m,'time'], span=span )
+		if ( span == Inf){
+			span = 0.02
+		}
+		pred1 = tryCatch({
+		 stats::loess(  toPlot[m,n] ~ toPlot[m,'time'], span=span )},
+		 error=function(err){ stop(paste("loess failed with span", span, " - no values selected (n=",length(m),")?!")) })	
+
 		toPlot[m,n] = stats::predict(pred1)
 		## if you want to take a closer look:
 		#plot( toPlot[m,'time'],dat[[n]])

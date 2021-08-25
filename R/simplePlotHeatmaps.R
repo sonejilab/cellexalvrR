@@ -250,9 +250,9 @@ setMethod('clusterGenes', signature = c ('matrix'),
 					message("loess failed with span .005")
 					} )
 				
-				if ( length(which(is.na(geneTrajectories[[groupname]]))) == 0 ){
-					tryCatch({
-						geneTrajectories[[groupname]] = stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[m,'time'], span=.2) )
+				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
+					geneTrajectories[[groupname]] = tryCatch({
+						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[m,'time'], span=.2) )
 						}, error=function(err){message("loess failed with span .2") })	
 				}
 
