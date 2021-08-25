@@ -100,7 +100,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		colR =  cellid[match( colorIDs-1, as.numeric(cellid[,4])),2]
 		colVR = c()
 		for ( i in 1:length(colR)) {
-			colVR[colorIDs[i]] = colR[i]
+			colVR[colorIDs[i]] = as.character(colR[i])
 		}
 		ginfo = new( 'cellexalGrouping',
 			gname = gname,

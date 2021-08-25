@@ -126,20 +126,20 @@ expect_true( file.exists( file.path(cellexalObj@outpath, 'initialTest', 'selecti
 cellexalObj = userGrouping(cellexalObj, file.path(ipath, 'selection0.txt') )
 expect_equal( length(cellexalObj@userGroups) ,old_length +  2 ) # same grouing no adding of the data
 
-context( "heatmap is produced" )
-ofile = file.path(opath, 'heatmaps','testHeatmap.txt') 
+# context( "heatmap is produced" )
+# ofile = file.path(opath, 'heatmaps','testHeatmap.txt') 
 
-if ( ! file.exists( file.path(opath, 'heatmaps')) ){
-	dir.create( file.path(opath, 'heatmaps') )
-}
-if(  file.exists(ofile ) ){
-	unlink( ofile)
-}
-if(  file.exists(paste( ofile , '.sqlite3', sep="")) ){
-	unlink( paste( ofile , '.sqlite3', sep="") )
-}
+# if ( ! file.exists( file.path(opath, 'heatmaps')) ){
+# 	dir.create( file.path(opath, 'heatmaps') )
+# }
+# if(  file.exists(ofile ) ){
+# 	unlink( ofile)
+# }
+# if(  file.exists(paste( ofile , '.sqlite3', sep="")) ){
+# 	unlink( paste( ofile , '.sqlite3', sep="") )
+# }
 
-file.copy( file.path( opath,'cellexalObj.RData'), file.path( prefix, 'data', 'output'))
+# file.copy( file.path( opath,'cellexalObj.RData'), file.path( prefix, 'data', 'output'))
 #load(system.file( 'data/cellexalObj.rda', package='cellexalvrR'))
 #cellexalObj@outpath = opath
 #lockedSave( cellexalObj )
