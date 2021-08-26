@@ -33,7 +33,7 @@ linearSelection = x@usedObj$linearSelections[[1]]
 expect_equal( linearSelection@gname, 'Time.group.2', "time gname is correct" )
 expect_equal( linearSelection@parentSelection, 'User.group.1', "time parentSelection is correct" )
 expect_equal( linearSelection@geneClusters, list(), label="geneClusters are not populated" )
-expect_equal( linearSelection@id, "04a67710768848dba40b09e9499d4205", label="id correct" )
+expect_equal( linearSelection@id, "7e508e3670c18c3438feeddc8e793ebe", label="id correct" )
 expect_equal( linearSelection@drc, "DDRtree", label="drc correct" )
 expect_equal( length(linearSelection@error), 0 , label="no error" )
 
