@@ -88,7 +88,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 			figureF = correctPath( png[1], cellexalObj )
 
 			content = paste( collapse="\n", sep=" ", content,"",
-				paste( "### Linear selection plot showing mean expression of a set of genes (from R)"),
+				paste( "\n\n### Linear selection plot showing mean expression of a set of genes (from R)\n\n"),
 				"",paste("![](",figureF,")") ,"",
 				"<p>In short: the genes are grouped by there expression pattern; 
 				the mean expression values of all genes in a group per cell are collected; 
@@ -99,11 +99,11 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		## genes should be a list
 		
 		content = paste( collapse="\n", 
-			content, "", "### Detailed Gene Expression as heatmaps","","",
-			"The scaling of the x axis is different from the previouse Linear selection plots.",
+			content, "", "\n\n### Detailed Gene Expression as heatmaps",
+			"\n\nThe scaling of the x axis is different from the previouse Linear selection plots.",
 			"They are scaled to the (arbitrary) pseudo time whereas here the heatmaps are showing each cell after the other.",
-			"Hence in these plots each time 'slot' has the same size.","",
-			"",paste("![](",timeInfo@geneClusters[[1]]$groupColors,")") ,""
+			"Hence in these plots each time 'slot' has the same size if the grouping has not been modified later:","",
+			"",paste("![](",correctPath(timeInfo@geneClusters[[1]]$groupColors, cellexalObj ),")") ,""
 			) 
 		for ( i in 1:length(genes) ) {
 

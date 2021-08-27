@@ -19,6 +19,30 @@ setMethod('show', signature = c ('cellexalGrouping'),
 )
 
 
+#' @name exportSelection
+#' @docType methods
+#' @description Export this linear selection as CellexalVR selection file
+#' @param x the object
+#' @param fname the file to write the info to
+#' @title export a cellexalLinear object for CellexalVR
+#' @export 
+
+#' @rdname exportSelection
+setMethod('exportSelection', signature = c ('cellexalGrouping'),
+	definition = function (x, fname) {
+
+	dat = x@dat[order(x@dat$time),]
+	d = cbind( rownames(dat), as.vector(dat$col), rep( x@drc , nrow(dat) ), as.numeric( dat$col )  )
+	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
+
+	f2 = paste( sep=".",fname,'points')
+
+	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
+	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
+
+	invisible(x)
+} )
+
 
 #' @rdname HTMLtable
 setMethod('HTMLtable', signature = c ('cellexalGrouping'),

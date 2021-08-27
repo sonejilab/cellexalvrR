@@ -101,6 +101,10 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 
 	for( i in 1:(length(gr)-2)  ) {
 		genes = names(gr$geneClusters)[which( gr$geneClusters == i)]
+		if ( length(which(is.na( match( genes, colnames(toPlot)) ))) > 0){
+			bad=which(is.na( match( genes, colnames(toPlot)) ))
+			stop( paste( "The grouping", info@gname, "has not been correctly created - missing values for the genes",paste( )))
+		}
 		gn = paste('gene.group',i, sep=".")	
 		
 		of = paste(fname, i, sep=".")

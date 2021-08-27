@@ -50,15 +50,16 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 			gInfo@order = as.integer(as.vector(gInfo@order) +1)
 		}
 		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+		
 		grDevices::png( file= DRC1, width=1000, height=1000)
 		#browser()
 		linearSelection = cellexalObj@usedObj$linearSelections[[paste(gInfo@gname, 'linearSelection' )]]
 		if ( is.null( linearSelection) ) {
-			## if it is already a Time.group we look at we are fine!
+			## if it is already a Time.group we look at, we are fine!
 			linearSelection = cellexalObj@usedObj$linearSelections[[gInfo@gname]]
 		}
 		if ( is.null( linearSelection) ) {
-			## if it is already a Time.group we look at we are fine!
+			## if it is already a Time.group we look at, we are fine!
 			linearSelection = gInfo@linarObj
 		}
 		if ( is.null( linearSelection) ) {
@@ -74,8 +75,10 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		}
 		id = as.numeric(factor(color(linearSelection,rownames(drc))))
 		col = color(linearSelection, rownames(drc))
-
-   		p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,1], y=	drc[,2], col = col) ) #function definition in file drcPlot2D.R
+		toPlot = data.frame(id = id, x=	drc[,1], y=	drc[,2], col = col)
+		order = factor(toPlot$id, levels= order(table(toPlot$id)))
+		toPlot = toPlot[rev(order(order)),]
+   		p= prettyPlot2Dtime( toPlot ) #function definition in file drcPlot2D.R
     	print(p) #write the plot
 		grDevices::dev.off()
 

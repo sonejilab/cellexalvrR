@@ -49,14 +49,28 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## this need to become a relative path - relative to the final outfile
 
 		if (length(grep('Time.group', x@usedObj$lastGroup)) > 0 ) {
-			gname = x@usedObj$linearSelection[[x@usedObj$lastGroup]]@parentSelection
-			sesionFile = x@usedObj$SelectionFiles[[gname]]
+			selF = filename(paste(sep=".", "TimeSelection", gInfo@gname, 'txt'))
+			sesionFile = file.path(x@usedObj$sessionPath, selF )
+			if ( ! file.exists( sesionFile )){
+				exportSelection( gInfo@linarObj, sesionFile )
+			}
 		}else {
-			sesionFile = x@usedObj$SelectionFiles[[x@usedObj$lastGroup]]
+			sesionFile = file.path( x@usedObj$sessionPath, basename( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] ) )
+			if ( ! file.exists( sesionFile )){
+				file.copy( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]], sesionFile)
+			}
 		}
+
 		if ( is.null(text)){
 			text = ""
 		}
+
+		if ( length(grep('Time.group', x@usedObj$lastGroup)) > 0 ){
+			figures = drcFiles2HTMLlinear(x, gInfo, showIDs = FALSE )
+		}else {
+			figures = drcFiles2HTML(x, gInfo, showIDs = TRUE )
+		}
+
 		content=paste( sep="\n", collapse = "\n",
 				paste( "##", x@usedObj$lastGroup,"Statistical Result" ),
 				"",text,"",
@@ -66,14 +80,18 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				paste(sep="",  "<a href='",file.path( ".", x@usedObj$sessionName, 'tables',ofile),"' download>","This tab separated table </a>",
 					" contains the statistical results for ",
 				    "<a href='",file.path( ".", x@usedObj$sessionName, basename(sesionFile)),"' download>"," this selection file</a>", ".","\n"),
-				paste(collapse = "\n", sep="\n",drcFiles2HTML(x, gInfo, showIDs = TRUE ))
+				paste(collapse = "\n", sep="\n",figures)
 		)
 		## the 1-log10 p value histogram
+		## actually make this a volcano plot instead ...
 		if ( ! is.null(col) ){
 
 			ofile = file.path(x@usedObj$sessionName, 'png',paste( 'hist',x@usedObj$lastGroup,method,"png", sep="."   ) )
 			grDevices::png( file= file.path( x@outpath, ofile ), width=800, height=800)
+			#browser()
 			dat = -log10(data[,col])
+			# should not be used here as we lack the < 1 fraction of the plot due to the VR requirements
+			#graphics::plot( data[,'logFC'], -log10(data[,'p.value']), main = paste( x@usedObj$sessionName, gname ), ylab='-log10(p.value)', xlab="logFC" )
 			graphics::hist( dat[which(!is.na(dat))], main = paste( x@usedObj$sessionName, gname )  )
 			grDevices::dev.off()
 

@@ -63,34 +63,34 @@ for( f in selectionFiles){
 
 cellexalObj = renderReport( cellexalObj )
 
-files = c( "cellexalObj.RData", "Heatmaps", "libs", 'png', "PortableLog_test.zip", 
+files = c( "cellexalObj.RData", "Heatmaps", "libs",  "PortableLog_test.zip", 
 	"reference-keys.txt", "search_index.json","selection10.txt", "selection11.txt", "selection11.txt.time" , 
 	"selection11.txt.time.points", "session-log-for-session-test.html", "test")
 
 expect_equal(sort(list.files(path)), sort(files), label="All expected outfiles #2" )
 
-expect_true( file.exists( file.path( path,'png')), label="cellexalLinear::renderReport() output exixts")
+#expect_true( file.exists( file.path( path,'png')), label="cellexalLinear::renderReport() output exixts")
 
 
 source( 'function.R' )
 
 collect = list(
 
-	"a href='./test/selection11.txt' download" = 0,
+	"a href='./test/selection10.txt' download" = 0,
 	"a href='./test/tables/Time.group.2.Linear.csv' download" = 0,
 	"a href='./test/tables/User.group.3.Cpp.csv' download" = 0,
-	"a href='./test/selection10.txt' download" = 0,
+	"a href='./test/TimeSelection.Time.group.2.txt' download" = 0,
 	'Time.group.2' = 0,
 	'User.group.3' = 0
 )
 
 expect = list(
 
-	"a href='./test/selection11.txt' download" = 1,
+	"a href='./test/selection10.txt' download" = 1,
 	"a href='./test/tables/Time.group.2.Linear.csv' download" = 1,
 	"a href='./test/tables/User.group.3.Cpp.csv' download" = 1,
-	"a href='./test/selection10.txt' download" = 1,
-	'Time.group.2' = 26,
+	"a href='./test/TimeSelection.Time.group.2.txt' download" = 1,
+	'Time.group.2' = 30,
 	'User.group.3' = 13
 )
 

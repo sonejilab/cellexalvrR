@@ -59,22 +59,30 @@ linearSubset1 = subset( x@usedObj$linearSelections[["lastEntry"]], subset1)
 subset2 = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(2,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
 linearSubset2 = subset( x@usedObj$linearSelections[["lastEntry"]], subset2)
 
+deg.genes = x@usedObj$deg.genes
+
 x= addSelection( linearSubset1, x )
 linearSubset1 =  x@usedObj$linearSelections[[1]]
 x= createStats( linearSubset1, x)
-ret = createReport(linearSubset1, x, groupingInfo( x,linearSubset1@gname ))
-x = ret$cellexalObj
-linearSubset1 = ret$linearSelection
+deg.genes = c( deg.genes, x@usedObj$deg.genes)
 
 x= addSelection( linearSubset2, x )
 linearSubset2 =  x@usedObj$linearSelections[[1]]
 x= createStats( linearSubset2, x)
-ret = createReport(linearSubset2, x, groupingInfo( x,linearSubset2@gname ))
+deg.genes = c( deg.genes, x@usedObj$deg.genes)
+
+deg.genes=unique(deg.genes)
+
+ret = createReport(linearSubset1, x, groupingInfo( x,linearSubset1@gname ), deg.genes=deg.genes )
+x = ret$cellexalObj
+linearSubset1 = ret$linearSelection
+
+ret = createReport(linearSubset2, x, groupingInfo( x,linearSubset2@gname ), deg.genes=deg.genes )
 x = ret$cellexalObj
 linearSubset2 = ret$linearSelection
 
 
-x = compareGeneClusters ( linearSubset1, linearSubset2, x, altGroupNames=c("A", "B" ) )
+x = compareGeneClusters ( linearSubset1@gname, linearSubset2@gname, x, altGroupNames=c("A", "B" ) )
 
 
 ofile = file.path( x@outpath, 'session-log-for-session-timesession-comparegenelists.html')
@@ -103,7 +111,8 @@ collect= list(
   '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 0,
   '2D DRC DDRtree dim 1,3 . Time.group.3 .'  =0,
   '2D DRC DDRtree dim 2,3 . Time.group.3 .' = 0,
-  'Comparison between the gene clusters of linearSelection Time.group.3 or A and linearSelection Time.group.4 or B' = 0,
+  'Expression in A .Time.group.3. and trajectory 1' = 0,
+  'Expression in B .Time.group.4. and trajectory 1' = 0,
   'Click to expand gene list' = 0
 )
 
@@ -126,7 +135,8 @@ expect= list(
   '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 4,
   '2D DRC DDRtree dim 1,3 . Time.group.3 .'  =4,
   '2D DRC DDRtree dim 2,3 . Time.group.3 .' = 4,
-  'Comparison between the gene clusters of linearSelection Time.group.3 or A and linearSelection Time.group.4 or B' = 2,
+  'Expression in A .Time.group.3. and trajectory 1' = 3,
+  'Expression in B .Time.group.4. and trajectory 1' = 4,
   'Click to expand gene list' = 18
 )
 

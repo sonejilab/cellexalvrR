@@ -362,7 +362,7 @@ definition = function ( x, deg.genes, cellexalObj ) {
 #' @docType methods
 #' @description return the color in exactly the right format to color the names
 #' @param x the cellexalLinear object
-#' @param other the other linearSelection (the parentSelection has to match)
+#' @param other the other linearSelection(s) (the parentSelection has to match)
 #' @param cellexalObj the cellexalObj to add the report to.
 #' @param altGroupNames you can give alternative group names here
 #' @param color a vector of colors - one for each group
@@ -381,146 +381,176 @@ function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL) {
 #' @rdname compareGeneClusters
 setMethod('compareGeneClusters', signature = c ('character', 'character', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
-	compareGeneClusters( x=getLinearSelection( cellexalObj, x), other=getLinearSelection(cellexalObj, other),
+	compareGeneClusters( x=x, other=c(getLinearSelection(cellexalObj, other)),
 		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
 })
-
 
 #' @rdname compareGeneClusters
 setMethod('compareGeneClusters', signature = c ('cellexalLinear', 'cellexalLinear', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
+	compareGeneClusters( x=getLinearSelection( cellexalObj, x), other=c(getLinearSelection(cellexalObj, other@gname)),
+		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
+})
 
-	if ( x@parentSelection != other@parentSelection) {
-		stop("the other object is not from the same parent selection - stop")
+setMethod('compareGeneClusters', signature = c ('cellexalLinear', 'list', 'cellexalvrR' ),
+definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
+	compareGeneClusters( x=x@gname, other=c(getLinearSelection(cellexalObj, other)),
+		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
+})
+	
+
+setMethod('compareGeneClusters', signature = c ('character', 'list', 'cellexalvrR' ),
+definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
+	
+	if ( is.character( x) ){
+		x= getLinearSelection(cellexalObj, x)
 	}
-	if ( length(x@geneClusters) == 0 || length(other@geneClusters) == 0){
-		stop( paste( sep="\n",
-			"Either the one or the other object's geneClusters == 0",
-		 	"For both linearSelections the function 'createReport' has to be run first.") )
+	parent = x@parentSelection
+
+	times = list()
+	for ( time in c(x, other)){
+		if ( is.character(time) ){
+			time = getLinearSelection(cellexalObj, time)
+		}
+		if ( parent != time@parentSelection){
+			stop("the other object is not from the same parent selection - stop")
+		}
+		if ( length(time@geneClusters) == 0 ){
+			stop( paste( sep="\n",
+			"Either the one or the other objects' geneClusters == 0",
+		 	"For all linearSelections the function 'createReport' has to be run first.") )
+		}
+		times = c(times, time)
 	}
-	#if ( is.null(x@geneClusters[[x@gname]]) || is.null(other@geneClusters[[other@gname]]) ) {
-	#	stop("For both linearSelections the createReport has to be run for the own selection.")
-	#}
+
 
 	if ( is.null(color) ) {
-		color= grDevices::rainbow(2)
+		color= grDevices::rainbow(length(times))
 	}
 	figTab = NULL
 	if ( is.null(altGroupNames) ) {
-		altGroupNames = c( x@gname, other@gname )
+		altGroupNames = unlist( lapply( times, function(time) { time@gname}) )
 	}
 	else {
-		altGroupNames = c( 
-			paste(x@gname,'or', altGroupNames[1]),
-			paste(other@gname, 'or', altGroupNames[2]) 
-		)
+		## missusing the error now.
+		tmp = x@error
+		for ( i in 1:length(times)) {
+			times[[i]]@error = altGroupNames[i]
+		}
+		altGroupNames =  unlist( lapply( times, function(time) { 
+			paste(sep="", time@error, " [", time@gname ,"]" ) }) )
+		for ( i in 1:length(times)) {
+			times[[i]]@error = tmp
+		}
 	}
 
+	header= ""
+	body= ""
+	text = "## Comparison between the gene clusters of linearSelection"
 
-	figTab = paste('<table style="width:100%"><tr><th>',altGroupNames[1],
-		'</th><th>',altGroupNames[2],
-		'</th></tr><tr><td>![](',
-		R.utils::getRelativePath( x@geneClusters[[x@gname]]$figure, cellexalObj@outpath),
-		')</td><td>![](',
-		R.utils::getRelativePath( other@geneClusters[[other@gname]]$figure, cellexalObj@outpath),
-		')</td><tr></table>',"\n\n")
-	text = paste(
-   	"## Comparison between the gene clusters of linearSelection", 
-   	altGroupNames[1],"and linearSelection", altGroupNames[2], "\n\n"
-   )
+	for ( i in 1:length(times)){
+	 	header = paste(sep="", header, "<th>",altGroupNames[i],"</th>")
+	 	body   = paste(sep="", body  , "<td>![](",
+	 		R.utils::getRelativePath( times[[i]]@geneClusters[[times[[i]]@gname]]$figure, cellexalObj@outpath),
+	 		")</td>"
+	 		)
+	 	if ( i ==1 ){
+	 		text=paste(text, altGroupNames[i])
+	 	}else if(i == length(times)){
+	 		text=paste(text, "and", altGroupNames[i], "\n\n")
+	 	}else {
+	 		text=paste(sep="",text, ", ", altGroupNames[i])
+	 	}
+	}
+
+	figTab = paste('<table><tr>',header,
+	 	'</tr><tr>',body,'</tr></table>', "\n\n")
 	text = paste(text, 
-   	paste("Both linearSelections have been run based on the selection", 
+   	paste("All linearSelections have been run based on the selection", 
    		x@parentSelection,
     	"\n\n")
    )
    text = paste(text,figTab)
-   altGroupNames[1] =paste(sep="", '**',altGroupNames[1], '**' ) # textbf
-   altGroupNames[2] =paste(sep="", '**',altGroupNames[2], '**' ) # textbf
 
    
-	checkGeneList = function( mine , cmpTo) {
-   ## return the other group with highest overlap and the genes that do not overlap
- 	  dat = lapply( cmpTo,
-           function( mine, other){
-                m = match(mine, other)
-                mine[which(!is.na(m))]
-           }, mine )
-   	dat
+   # checkGeneList = function( mine , cmpTo) {
+   # ## return the other group with highest overlap and the genes that do not overlap
+ 	 #  dat = lapply( cmpTo,
+   #         function( mine, other){
+   #              m = match(mine, other)
+   #              mine[which(!is.na(m))]
+   #         }, mine )
+   # 	dat
+   # }
+
+   
+   genes = as.vector(unlist(x@geneClusters[[x@gname]]['clusters'][['clusters']]))
+   df = matrix (ncol=length(altGroupNames), nrow=length(genes))
+   rownames(df) = genes
+   colnames(df) = unlist( lapply(times, function(time){time@gname}))
+   df = data.frame(df)
+   for ( time in times ){
+   	clusters = time@geneClusters[[time@gname]]['clusters'][['clusters']]
+   	 for ( i in 1:length(clusters)) {
+   	 	for( gn in clusters[[i]] ){
+   	 		df[gn, time@gname ] = i
+   	 	}
+   	 }
    }
+   
+   if ( length(which(is.na(df[]))) > 0 ){
+   	stop( "Please analyze the timelines using the same list of genes all the time")
+   }
+   df$tag = apply(df,1, paste, collapse="-")
+   #df= df[order(df$tag),]
 
-   for ( i in 1:length(x@geneClusters[[x@gname]]['clusters'][['clusters']])) {
-   	message( paste('compare cluster A', i, "to B"))
-   	cmp = checkGeneList ( x@geneClusters[[x@gname]]['clusters'][['clusters']][i][[1]], 
-   		other@geneClusters[[other@gname]]['clusters'][['clusters']] )
-   	#str = paste( "Own cluster", i,"we get overlap with")
-   	#for ( id in names(cmp) ){
-   	#	if ( length( cmp[[id]] ) > 0 ){
-   	#		str = paste( str, "C", id, "with", length(cmp[[id]]),"genes")
-   	#	}
-   	#}
-   	#message( str )
-   	if ( length(cmp) == 0){
-   		stop( paste( sep="\n",
-   			"Check your timline objects - the comparison did not return genes",
-   			"Possibly the geneClusters with the gname is missing in one object."
-   			))
-   	}
-   	for ( a in 1:length(cmp) ) {
-   		if ( length(cmp[[a]]) > 0 ) {
-   			circleA = R.utils::getRelativePath( 
-   				paste( sep=".",x@geneClusters[[x@gname]]$figure,i,'svg'), 
-   				cellexalObj@outpath)
-   			circleA = paste(sep="","<img src='",circleA, "' height='15'/>")
-   			circleB = R.utils::getRelativePath( 
-   				paste( sep=".",other@geneClusters[[other@gname]]$figure,a,'svg'), 
-   				cellexalObj@outpath)
-   			circleB = paste(sep="","<img src='",circleB, "' height='15'/>")
-   			text = paste( text, paste( 
-   				"The following genes from linearSelection",altGroupNames[1], "cluster",i,
-   				circleA,
-   				"have ended up in the linearSelection",altGroupNames[2],"cluster",a,":",
-   				circleB,
-   				"\n\n"
-   				) 
-				)
-   			
+   ## now each different combo of rowInfo needs to be described.
+   
+   section = paste( collapse="\n\n", sep="\n\n", unlist(lapply( unique(df$tag) , function(tag){
+   		text = paste(sep="","\n\n### Genes in the timeline comparison group ", tag,".")
+   		## here we create one section of one tag like 1-4-6 meanung time[1] group 1 time[2] group4 and time[3] group 6
+   		genes = rownames( df)[which(df$tag == tag)]
+   		## each of these genes has the same info
+   		## hence the group color circles for all genes are the same and can be stated now:
+   		header=""
+   		body=""
+   		circles = NULL
 
-				## And now I need the two heatmaps in the two different linearSelections:
-				
-				of = paste(sep="_", "directComp",  x@gname, i, other@gname, a,"heatmap" )
-				of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
+   		for (i in 1:length(times) ){
+   			groupID = df[genes[1], i]
+   			circles = c( circles, R.utils::getRelativePath( 
+   				paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,groupID,'svg'), 
+   				cellexalObj@outpath) )
+   			#text = paste( sep="",text, altGroupNames[i]," ", "<img src='",circles[i], "' height='15'/>")
 
-				text = paste( text, "### Genes expression in", 
-					altGroupNames[1],circleA, " \n",
-					plotHeatmap_rmd( 
-						x=t(x@geneClusters[[x@gname]]$matrix[,cmp[[a]]]), 
-						color=color[1] ,
-						ofile = of2,
-						cellexalObj = cellexalObj
-					), "\n\n"
-				)
-
-				of = paste(sep="_", "directComp_invers", x@gname, i, other@gname, a,"heatmap" )
-				of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
-
-				text = paste( text, "### Genes expression in", 
-					altGroupNames[2],circleB, "\n",
-					plotHeatmap_rmd( 
-						x=t(other@geneClusters[[other@gname]]$matrix[,cmp[[a]]]), 
-						color=color[2] ,
-						ofile = of2,
-						cellexalObj = cellexalObj
-					), "\n\n"
-				)
-
-				text = paste( text, 
-					md_gene_links ( sort(cmp[[a]]), label="Click to expand lexically sorted" ) )
-   			text = paste( text,  
-   				md_gene_links ( rev(cmp[[a]]), label="Click to expand in heatmap order" ) )
    		}
-   	}
-   }
-   cellexalObj = storeLogContents(cellexalObj, text,  type="GeneClusterComparison" )
+
+ 		## the (hidden) gene names
+ 		text = paste( text, sep="\n", collapse="\n",
+			md_gene_links ( sort(genes), label="Click to expand lexically sorted" ) )
+   			text = paste( text,  
+   			md_gene_links ( rev(genes), label="Click to expand in heatmap order" ), "\n\n" )
+   		
+ 		## and now the heatmaps for this set of genes.
+ 		for (i in 1:length(times) ){
+ 			groupID = df[genes[1], i]
+ 			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
+			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
+
+ 			text = paste( text, sep=" ", "\n\n#### Expression in", 
+					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
+					plotHeatmap_rmd( 
+						x=t(times[[i]]@geneClusters[[times[[i]]@gname]]$matrix[,genes]), 
+						color=color[i] ,
+						ofile = of2,
+						cellexalObj = cellexalObj
+					), "\n\n")
+ 		}
+   		return (text);
+   	})))
+
+
+   cellexalObj = storeLogContents(cellexalObj, paste( text,section),  type="GeneClusterComparison" )
    id = length(cellexalObj@usedObj$sessionRmdFiles)
 	cellexalObj = renderFile(cellexalObj, id, type = "GeneClusterComparison")
 	cellexalObj
@@ -721,6 +751,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
 	# focus on our data only
+	cellexalObj@usedObj$lastGroup = x@gname
 
 	if (  is.null(cellexalObj@usedObj$sigGeneLists$lin[[x@gname]])) {
 			## otherwise the stats have already been calculated and do not need to be re-run.
@@ -789,10 +820,9 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		}
 		cellexalObj = addSelection( x, cellexalObj)
 		cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = ps
-	}else {
-		## the stats have already been run and all is OK.
-		cellexalObj@usedObj$lastGroup = x@gname
 	}
+	## the stats have already been run and all is OK.
+	
 	cellexalObj= logStatResult ( cellexalObj, method ='Linear', data=cellexalObj@usedObj$sigGeneLists$lin[[x@gname]], col='p.value'	 )
 
 	invisible( cellexalObj )
