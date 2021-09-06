@@ -98,7 +98,7 @@ setMethod('logHeatmap', signature = c ('cellexalvrR'),
 		"",
 		paste( "### Genes"),
 		md_gene_links( sort(genes) ), #function definition in file 'rmdLink.R'
-		md_gene_links( rev(genes), label="expand genes in heatmap order" ),
+		md_gene_links( genes , label="expand genes in heatmap order" ),
 		'',
 		paste( "### Heatmap (from CellexalVR)"),
 		paste("![](",figureF,")"),

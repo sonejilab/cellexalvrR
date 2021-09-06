@@ -45,21 +45,43 @@ setMethod("logNetworkStats", signature = c("cellexalvrR"),
         length( list.files( cellexalObj@usedObj$sessionPath, pattern="*Networks.nwk") ) +1
     ]
     file.copy( 
-         file.path( cellexalObj@outpath,"Networks.nwk"), 
+         file.path( cellexalObj@outpath,"Resources", "Networks", "Networks.nwk"), 
            file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"Networks.nwk"))
     )
     file.copy( 
-         file.path( cellexalObj@outpath,"NwkCentroids.cnt"), 
+         file.path( cellexalObj@outpath,"Resources", "Networks", "NwkCentroids.cnt"), 
          file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"NwkCentroids.cnt"))
     )
     #info = groupingInfo( cellexalObj, cellexalObj@usedObj$lastGroup)
 
     figures = paste( collapse="\n", drcFiles2HTML(cellexalObj, gInfo ))
 
+
+    ## to make this data usable I need to plot the tables into single clusters.
+    ## Otherwise it is quite complictaed t use this data in e.g. cytoscape.
+
+    ## the networks file should be here:
+    if ( ! file.exists(file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"Networks.nwk"))) ){
+        message("The Networks.nwk file is missing!")
+    }
+    ## I need a file per cluster
+    dat = read.delim( file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"Networks.nwk")) )
+    res = lapply ( unique(dat[,7]), function(id) { dat[which(dat[,7] == id),] })
+    names(res) = unique(dat[,7])
+    for ( i in 1:length(res)) {
+        fname = file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"_",i,"_", "Networks.nwk"))
+        write.table( res[[i]], file= fname, sep="\t", quote=F)
+        res[[i]] = paste(sep="", "<a href='./", file.path( cellexalObj@usedObj$sessionName, basename( fname) ),
+            "' download>Network File</a>")
+    }
+
+
+
     content = paste(sep="",
 
         "\n## ",gInfo@gname," Network calculation\n",
     
+
         paste(sep="",
         "\nA new transcription factor network has been calculated for",
         " CellexalVR based on the grouping ", gInfo@gname,
@@ -70,6 +92,8 @@ setMethod("logNetworkStats", signature = c("cellexalvrR"),
         "You can download the network table <a href='./",
         file.path(cellexalObj@usedObj$sessionName, paste(sep="", Add,"Networks.nwk")),
         "' download>here</a>.\n\n",
+
+        HTMLtable( gInfo, res ),"\n\n",
 
         paste( "## The 2D representation(s) of grouping",gInfo@gname,
         ":\n\nThe grouping originates from the grouping file",

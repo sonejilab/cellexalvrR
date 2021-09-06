@@ -37,16 +37,16 @@ collect = list(
 
 	"Here all groups from the main clustering VRselection are subset based on the clustering LTHSC_broad" = 0,
 	"3 genes have been detected in 3 statistical comparisons" = 0,
-	"80 genes have been detected in 2 statistical comparisons" = 0,
-	"581 genes have been detected in 1 statistical comparisons" = 0
+	"72 genes have been detected in 2 statistical comparisons" = 0,
+	"597 genes have been detected in 1 statistical comparisons" = 0
 )
 
 expect = list(
 
 	"Here all groups from the main clustering VRselection are subset based on the clustering LTHSC_broad" = 1,
 	"3 genes have been detected in 3 statistical comparisons" = 1,
-	"80 genes have been detected in 2 statistical comparisons" = 1,
-	"581 genes have been detected in 1 statistical comparisons" = 1
+	"72 genes have been detected in 2 statistical comparisons" = 1,
+	"597 genes have been detected in 1 statistical comparisons" = 1
 
 )
 

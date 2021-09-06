@@ -46,7 +46,11 @@ setMethod('exportSelection', signature = c ('cellexalGrouping'),
 
 #' @rdname HTMLtable
 setMethod('HTMLtable', signature = c ('cellexalGrouping'),
-	definition = function ( x ) {
+	definition = function ( x, addCol=NULL ) {
+
+		if ( length( x@VRgrouping) == 0){
+			x@VRgrouping = x@grouping -1
+		}
 
 		tableLine = function(id ) {
 			OK = which( x@grouping == id)
@@ -59,14 +63,34 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 				id,"</td></tr>"
 			)
 		}
-		if ( length( x@VRgrouping) == 0){
-			x@VRgrouping = x@grouping -1
-		}
-		paste( sep="", collapse="",
+
+		ret = paste( sep="", collapse="",
 			"\n### group information table\n\n",
 			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th></tr>',
 			paste(sep="\n",collapse="\n",sapply( 1:length(x@col), tableLine) ),"</table>"
 		)
+
+
+		if ( ! is.null(addCol) ){
+			tableLine = function(id ) {
+			OK = which( x@grouping == id)
+			paste(sep="",
+				'<tr><td style="background-color:',
+				x@col[id],'"></td><td>',
+				x@col[id],"</td><td>",
+				length(OK),"</td><td>",
+				x@VRgrouping[OK[1]], "</td><td>",
+				id,"</td>", "<td>", addCol[[x@col[id]]], "</td></tr>"
+			)
+			}
+			ret = paste( sep="", collapse="",
+			"\n### group information table\n\n",
+			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th><th></th></tr>',
+			paste(sep="\n",collapse="\n",sapply( 1:length(x@col), tableLine) ),"</table>"
+			)
+		}
+		
+		return (ret)
 } )
 
 #' @name plotGroup

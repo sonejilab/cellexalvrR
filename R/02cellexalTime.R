@@ -988,11 +988,12 @@ setMethod('exportSelection', signature = c ('cellexalLinear'),
 #' @docType methods
 #' @description Create a html table that descibes a grouping (multi group or pseudo time)
 #' @param x the cellexalLinear object
+#' @param addCol a list with colors as names that describes one additional column of data (default NULL)
 #' @title log specififc - create an HTML summary table for this selection
 #' @export 
 #if ( ! isGeneric('HTMLtable') ){
 	setGeneric('HTMLtable', ## Name
-	function (x) { 
+	function (x, addCol=NULL) { 
 		standardGeneric('HTMLtable')
 	}
 	)
@@ -1001,7 +1002,7 @@ setMethod('exportSelection', signature = c ('cellexalLinear'),
 
 #' @rdname HTMLtable
 setMethod('HTMLtable', signature = c ('cellexalLinear'),
-definition = function (x) {
+definition = function (x, addCol=NULL) {
 
 	cellCount = table(x@dat[,'col'])
 	tableHTML = paste( sep="\n",
@@ -1020,9 +1021,33 @@ definition = function (x) {
 				cellCount[match(color, dimnames(cellCount)[[1]])], "</td><td></tr>"
 					)
 				}))
-			, '</table> ',
-			"<p> Linear statistics were applied to the whole set of genes vs. the pseudo time described in the table.</p>"
+			, '</table> '
 	)
+
+	if ( ! is.null(addCol) ){
+		tableHTML = paste( sep="\n",
+			"### group information table",'',
+			"<p> This is information on a linearSelection - VR and R ids are not set at the moment<p>",
+		'<table>',
+		'  <tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th></th></tr>',
+
+		paste(collapse="\n",
+			sapply( dimnames(cellCount)[[1]], function(color){
+			paste(sep="",
+				'<tr><td style="background-color:', 
+				color,'"',
+				"></td><td>",
+				color,"</td><td>",
+				cellCount[match(color, dimnames(cellCount)[[1]])], "</td><td>",addCol[[x@col[id]]],"</td></tr>"
+					)
+				}))
+			, '</table> '
+	)
+
+
+	}
+
+
 
 	tableHTML
 } )

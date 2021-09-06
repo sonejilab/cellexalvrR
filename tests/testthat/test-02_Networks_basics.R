@@ -28,13 +28,14 @@ expect_true( file.exists( file.path(opath, 'cellexalObj.RData')), label="expecte
 cellexalObj = reset( cellexalObj )
 cellexalObj = sessionPath( cellexalObj, 'logNetworkTest')
 
-make.cellexalvr.network ( cellexalObj , file.path(ipath, 'selection0.txt'), opath )
+make.cellexalvr.network ( cellexalObj , file.path(ipath, 'selection0.txt'), file.path(cellexalObj@outpath, 'Resources', 'Networks') )
 
 #cellexalObj = renderReport(cellexalObj)
 #skip("First things first")
 
+opath2 = file.path(cellexalObj@outpath, 'Resources', 'Networks')
 for ( f in ofiles ) {
-	ofile = file.path(opath, f )
+	ofile = file.path(opath2, f )
 
 	#print( ofile )
 	expect_true( file.exists( ofile ), paste("outfile exists", ofile) )
@@ -65,13 +66,20 @@ cellexalObj = logNetwork(cellexalObj, genes, heatmap_png, file.path(ipath, 'sele
 
 expect_true( file.exists( ofile ), label= paste("outfile exists", ofile) )
 
+sesionP = cellexalObj@usedObj$sessionPath
+
 cellexalObj = renderReport(cellexalObj)
 
-ofiles = c(  "cellexalObj.RData", "libs", "logNetworkTest", "Networks.nwk", "NwkCentroids.cnt", 
+ofiles = c(  "cellexalObj.RData", "libs", "logNetworkTest", 
 	"PortableLog_logNetworkTest.zip", "reference-keys.txt", "search_index.json"
 	, "session-log-for-session-lognetworktest.html", "tmp")
 
 
-for ( f in ofiles){
-	expect_true( file.exists( file.path(cellexalObj@outpath, f)), label =paste("file", f))
+for ( f in ofiles ){
+	expect_true( file.exists( file.path( cellexalObj@outpath, f)), label =paste("file", f))
+}
+
+
+for ( f in c( "AA_1_Networks.nwk", "AA_2_Networks.nwk", "AA_3_Networks.nwk") ){
+	expect_true( file.exists( file.path( opath,'logNetworkTest', f) ), label =paste("file", f))
 }
