@@ -70,7 +70,7 @@ setMethod("logNetworkStats", signature = c("cellexalvrR"),
     names(res) = unique(dat[,7])
     for ( i in 1:length(res)) {
         fname = file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"_",i,"_", "Networks.nwk"))
-        write.table( res[[i]], file= fname, sep="\t", quote=F)
+        write.table( res[[i]], file= fname, sep="\t", quote=F, row.names=F)
         res[[i]] = paste(sep="", "<a href='./", file.path( cellexalObj@usedObj$sessionName, basename( fname) ),
             "' download>Network File</a>")
     }
