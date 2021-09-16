@@ -128,9 +128,7 @@ cellexalObj = createReport(linearSubset2, cellexalObj,
      linearSubset2, deg.genes = deg.genes )$cellexalObj
 
 ## and finally compare them
-cellexalObj = compareGeneClusters ( 
-   getLinearSelection(cellexalObj,linearSubset1@gname), 
-   getLinearSelection(cellexalObj,linearSubset2@gname), 
+cellexalObj = compareGeneClusters ( linearSubset1@gname, linearSubset2@gname, 
 	 cellexalObj, altGroupNames=c("subset A", "subset B" ) 
 )
 

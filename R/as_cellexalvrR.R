@@ -83,6 +83,7 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 	 userGroups=NULL, outpath=getwd(), specie, assay=NULL ) {
 
 		ret = methods::new('cellexalvrR')
+		ret@specie = specie
 		getEmb = function (n) {
 			emb = Seurat::Embeddings(object = x, reduction = n)
 			 if ( ncol(emb) ==2){
@@ -400,6 +401,8 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 
 				## now lets double check the factors
 				## x[[slotName]][['__categories']][[id]][]
+				if ( ! is.na( match ('__categories', names(x[[slotName]] )) ) ){
+
 				for (catName in names(x[[slotName]][['__categories']]) ) {
 					## if we have strings in the category info
 					levelNames = x[[slotName]][['__categories']][[catName]][]
@@ -415,7 +418,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 						}
 					}
 				}
-				
+				}
 				
 				rownames(obs) =  make.names ( #function definition in file 'as_cellexalvrR.R'
 						as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )

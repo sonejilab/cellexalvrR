@@ -18,14 +18,14 @@ cellexalvrR is productively used under R 4.0.2 and 4.1.0.
 
 # Preparing data using cellexalvrR
 
-The vignette detailing how to use the package to prepare data for CellexalVR can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrRQuickStart.html). It shows how to create a cellexalvr object ready for export, and also describes a couple of functions to make converting formats and making metadata easier.
+The vignette detailing how to use the package to prepare data for CellexalVR can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/helperScripts/vignettes/cellexalvrRQuickStart.html). It shows how to create a cellexalvr object ready for export, and also describes a couple of functions to make converting formats and making metadata easier.
 
 
 # Vignettes
 
-The most up to date vignette about data import and export can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrRQuickStart.html).
+The most up to date vignette about data import and export can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/helperScripts/vignettes/cellexalvrRQuickStart.html).
 
-Linear selections and post VR reporting for linear selections can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/inst/doc/cellexalvrR-linearSelections-vignette.html). The portable log zip file created in this vignette can be downloaded [from here](https://github.com/sonejilab/cellexalvrR/blob/master/inst/extdata/PortableLog_linearExample.zip).
+Linear selections and post VR reporting for linear selections can be found [here](https://htmlpreview.github.io/?https://github.com/sonejilab/cellexalvrR/blob/master/helperScripts/vignettes/cellexalvrR-linearSelections-vignette.html). The portable log zip file created in this vignette can be downloaded [from here](https://github.com/sonejilab/cellexalvrR/blob/master/inst/extdata/PortableLog_linearExample.zip).
 
 # Currently used R packages:
 

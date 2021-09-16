@@ -14,7 +14,15 @@ buildVignette <- function(dir =".") {
 		unlink( file.path(dir,"inst","doc"), recursive = TRUE)
 	}
 	dir.create(file.path(dir,"inst","doc"))
-	file.copy(list.files( file.path(dir,"vignettes"), full.names=TRUE, pattern='html$'), file.path(dir,"inst","doc"), overwrite=TRUE)
+	file.copy(list.files( file.path(dir,"vignettes"), full.names=TRUE, pattern='html$'),
+	 file.path(dir,"inst","doc"), overwrite=TRUE)
+
+	savePath = file.path(dir,"helperScripts","vignettes")
+	if ( ! file.exists( savePath )){
+		dir.create(savePath)
+	}
+	file.copy(list.files( file.path(dir,"vignettes"), full.names=TRUE, pattern='html$'),
+	 savePath, overwrite=TRUE)
 
 
 	## now let's update the portable log, too
