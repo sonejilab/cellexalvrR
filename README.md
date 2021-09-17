@@ -2,6 +2,8 @@
 
 # cellexalvrR
 
+[![DOI](https://zenodo.org/badge/133559720.svg)](https://zenodo.org/badge/latestdoi/133559720)
+
 cellexalvrR is an R package to prep single-cell expression data for exploration/use in our virtual realitiy data analysis platform [CellexalVR](https://cellexalvr.med.lu.se/) ([on github](https://github.com/sonejilab/cellexalvr)), and also to provide back-end functions that perform in-session calculations.
 
 
