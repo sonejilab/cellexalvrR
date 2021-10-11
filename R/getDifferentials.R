@@ -17,6 +17,7 @@
 #' @param onlyPos select only genes showing an higher expression in the group (default =T)
 #' @param report4genes a list of genes you want to get a report on.
 #' @param text an optional additional text to show in the log
+#' @param bulkStats apply stats to pseudo bulk samples instead of cells? (default TRUE)
 #' @keywords DEGs
 #' @title main Statistics function for cellexalvrR
 #' @examples 
@@ -30,7 +31,7 @@
 setGeneric('getDifferentials', ## Name
 			function (x,cellidfile,
 					deg.method='wilcox',
-					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL ) { 
+					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) { 
 				standardGeneric('getDifferentials') 
 			}
 	) 
@@ -41,7 +42,7 @@ setGeneric('getDifferentials', ## Name
 setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 		definition = function (x,cellidfile,
 				deg.method='wilcox',
-				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL ) {
+				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
@@ -159,14 +160,17 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					r
 				}
 				all_markers = NULL;
-				tmp = loc
-				loc = pseudoBulk ( info,  loc )
-				grp.vec = groupingInfo( loc, info@gname )@grouping
+				#tmp = loc
+				if ( bulkStats ){
+					loc = pseudoBulk ( info,  loc )
+					grp.vec = groupingInfo( loc, info@gname )@grouping
+				}
+				
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
-				
+
 				try ( {
 					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
 					## And get additional info about the genes
