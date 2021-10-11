@@ -142,8 +142,14 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					r = NULL
 					if ( length(OK) > 0 & length(BAD) >0){
 						#try({
+
+						## here is where we need the pseudo bulk approach.
+						## sumething similar is implemented in the compactTime function
+
 						r = as.data.frame(
-								FastWilcoxTest::StatTest( Matrix::t( loc@data), OK, BAD, 
+								FastWilcoxTest::StatTest(
+									Matrix::t( loc@data),
+										as.vector(OK), as.vector(BAD),
 										logfc.threshold, minPct, onlyPos=onlyPos )
 						)
 						r= r[order( r[,'p.value']),]
@@ -153,11 +159,14 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					r
 				}
 				all_markers = NULL;
+				tmp = loc
+				loc = pseudoBulk ( info,  loc )
+				grp.vec = groupingInfo( loc, info@gname )@grouping
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
-
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
+				
 				try ( {
 					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
 					## And get additional info about the genes

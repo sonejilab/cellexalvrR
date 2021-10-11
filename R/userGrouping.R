@@ -110,6 +110,8 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 			'drc' = unique(as.vector(cellid[,3])),
 			col = colVR
 		)
+		names(ginfo@grouping) = rownames(cellexalObj@userGroups)
+		
 		if ( ! is.na(match(paste(cellexalObj@usedObj$lastGroup, 'order', sep=" "), colnames(cellexalObj@data))) ){
 			ginfo@order = cellexalObj@userGroups[,paste(gname, 'order', sep=" ")]
 		}

@@ -88,8 +88,9 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								next
 							}
 							if ( length( x@groupSelectedFrom[[na]]@order) == n){
-								x@groupSelectedFrom[[na]]@order = x@groupSelectedFrom[[na]]@order[useOnly]
-								x@groupSelectedFrom[[na]]@grouping = x@groupSelectedFrom[[na]]@grouping[useOnly]
+								OK = match( colnames(x@data), names(x@groupSelectedFrom[[na]]@grouping))
+								x@groupSelectedFrom[[na]]@order = x@groupSelectedFrom[[na]]@order[OK]
+								x@groupSelectedFrom[[na]]@grouping = x@groupSelectedFrom[[na]]@grouping[OK]
 							}
 							
 						}

@@ -65,6 +65,12 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			text = ""
 		}
 
+		text = join("\n", text, paste(
+			"The statistical test is based on psedo bulk samples,",
+			"not single cells as it has been shown that merging single",
+			"cells into pseudo bulk samples improves the gene expression varianze",
+			"which in turn increases the reliability of the statistical tests (<a href='https://www.nature.com/articles/s41467-021-25960-2#Sec10'>paper</a>).")
+
 		if ( length(grep('Time.group', x@usedObj$lastGroup)) > 0 ){
 			figures = drcFiles2HTMLlinear(x, gInfo, showIDs = FALSE )
 		}else {

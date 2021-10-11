@@ -19,6 +19,70 @@ setMethod('show', signature = c ('cellexalGrouping'),
 )
 
 
+#' @name pseudoBulk
+#' @docType methods
+#' @description mean collapses the data to contain an even amount of single cells per pseudo bulk sample
+#' @param object the cellexalGrouping
+#' @param cellexalObj the corresponding cellexal Object
+#' @param minSize the minimum size of a group (default 10 (cells))
+#' @param minBulks the minimal number of pseudo bulk samples (default 10)
+#' @param maxBulks the maximum number of pseudo bulk samples (default 500)
+#' @title show for a cellexalGrouping object
+#' @returns a cellexalvrR object where each cell represents a pseudo sample.
+#' @export
+
+
+setGeneric('pseudoBulk', ## Name
+	function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) { 
+		standardGeneric('pseudoBulk')
+	}
+)
+
+setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
+	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {
+
+		tab = table( object@grouping)
+		min_cells = min(tab)
+		toCells = 0
+		if ( floor(min_cells/minSize) < minBulks ){
+			warning( "one group has very view cells - created less pseudo samples that wanted")
+			toCells = minSize
+		}else if ( floor(max(tab)/minSize) > maxBulks ){
+			toCells = ceiling(max(tab)/maxBulks)
+			if ( floor(min_cells/toCells) < minBulks ){
+				toCells = floor(max(tab)/minBulks)
+				warning( paste("using more than",maxBulks,"max pseudo samples in a group"  ) )
+			}
+		}
+
+		toIDs = function(n) {
+			toGroups = floor(n / toCells)
+			ids = rep( 1:toGroups, floor(n/toGroups))
+			ids = c( ids, sample( 1:toGroups, n%%toGroups))
+			ids = sort(ids)
+			ids
+		}
+
+		cellexalObj = reorderSamples ( cellexalObj, object@gname )
+		object = groupingInfo(cellexalObj, object@gname)
+
+		ids =  toIDs(tab[1])
+		for (n in tab[-1]) {
+			ids = c( ids, toIDs(n) + max(ids))
+		}
+
+		# now I need to construct the pseudoBulk object...
+		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(object@grouping)[match(unique(ids), ids)])
+
+		PseudoBulk@data = Matrix(FastWilcoxTest::collapse( cellexalObj@data, ids, type=2 ), sparse=TRUE) ## mean expression
+
+		rownames(PseudoBulk@data) = rownames(cellexalObj@data)
+		colnames(PseudoBulk@data) = names(object@grouping)[match(unique(ids), ids)]
+		invisible ( PseudoBulk )
+		
+	}
+)
+
 #' @name exportSelection
 #' @docType methods
 #' @description Export this linear selection as CellexalVR selection file

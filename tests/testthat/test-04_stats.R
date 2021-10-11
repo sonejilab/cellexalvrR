@@ -8,6 +8,10 @@ if ( file.exists( file.path(prefix, 'function.R'))){
 
 }
 
+if ( file.exists( file.path(prefix,'data','output','statTest' ) )){
+	unlink(  file.path(prefix,'data','output','statTest' ), recursive=TRUE )
+}
+
 x = reset(cellexalObj)
 x@outpath = file.path(prefix,'data','output','statTest' )
 x = sessionPath( x, 'StatTest' )
