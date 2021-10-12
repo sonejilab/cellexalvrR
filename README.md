@@ -12,7 +12,7 @@ cellexalvrR is an R package to prep single-cell expression data for exploration/
 ```
 install.packages("devtools")
 
-devtools::install_github("sonejilab/cellexalvrR")
+devtools::install_github("sonejilab/cellexalvrR", ref='PseudoBulkTest')
 library(cellexalvrR)
 ```
 

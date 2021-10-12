@@ -1029,7 +1029,7 @@ definition = function (x, addCol=NULL) {
 			"### group information table",'',
 			"<p> This is information on a linearSelection - VR and R ids are not set at the moment<p>",
 		'<table>',
-		'  <tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th></th></tr>',
+		paste( sep="",'  <tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>',names(addCol)[1],'</th></tr>'),
 
 		paste(collapse="\n",
 			sapply( dimnames(cellCount)[[1]], function(color){
@@ -1038,7 +1038,7 @@ definition = function (x, addCol=NULL) {
 				color,'"',
 				"></td><td>",
 				color,"</td><td>",
-				cellCount[match(color, dimnames(cellCount)[[1]])], "</td><td>",addCol[[x@col[id]]],"</td></tr>"
+				cellCount[match(color, dimnames(cellCount)[[1]])], "</td><td>",addCol[[1]][id],"</td></tr>"
 					)
 				}))
 			, '</table> '

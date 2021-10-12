@@ -136,13 +136,15 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		grouping = NULL
 		order = NULL
 		if (length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) == 1){
-			grouping = cellexalObj@meta.cell[, cellidfile]
+			grouping = cellexalObj@meta.cell[, cellidfile] +1 
+			names(grouping) = colnames(cellexalObj@data)
 			order = 1:ncol(cellexalObj@data)
 		}
 		else if ( length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) > 1){
 			entries = unique(unlist(lapply( colnames(cellexalObj@meta.cell)[toMerge], 
 			function(x) { str_split(x, "@")[[1]][2]} )))
 			grouping = rep( NA, ncol(cellexalObj@data))
+			names(grouping) = colnames(cellexalObj@data)
 			order = 1:ncol(cellexalObj@data)
 			for ( id in 1:length(toMerge) ){
 				entryname = paste( sep="@",cellidfile,toMerge[id])
@@ -162,8 +164,22 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		}else {
 			cellexalObj@userGroups = cbind( cellexalObj@userGroups, tmp )
 		}
-		cellexalObj@groupSelectedFrom[[cellidfile]] = groupingInfo(cellexalObj, cellidfile )
+		 
+		ginfo = new( 'cellexalGrouping',
+			gname = cellidfile,
+			selectionFile= "InternalGrouping",
+			grouping = cellexalObj@userGroups[,cellidfile] ,
+			order = cellexalObj@userGroups[,paste(cellidfile, 'order', sep=" ")],
+			'drc' = names(cellexalObj@drc)[1],
+			col = grDevices::rainbow( length(unique( cellexalObj@userGroups[,cellidfile])) )
+		)
+		names(ginfo@grouping) = rownames(cellexalObj@userGroups)
+
+		cellexalObj@groupSelectedFrom[[cellidfile]] = ginfo
+
 		cellexalObj@usedObj$SelectionFiles[[cellidfile]] = ""
+		gname = cellidfile
+		names(ginfo@grouping) = rownames(cellexalObj@userGroups)
 	}
 	else {
 		stop( paste("Cannot process the request for grouping",cellidfile,"\nIt is neither a file nor a known user grouping name\n" ) )

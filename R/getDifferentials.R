@@ -164,6 +164,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				if ( bulkStats ){
 					loc = pseudoBulk ( info,  loc )
 					grp.vec = groupingInfo( loc, info@gname )@grouping
+					x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] = groupingInfo( loc, info@gname )
 				}
 				
 				for ( n in  unique( sort(grp.vec)) ) {

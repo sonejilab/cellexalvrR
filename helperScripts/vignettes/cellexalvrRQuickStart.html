@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stefan Lang &amp; Shamit Soneji" />
 
-<meta name="date" content="2021-09-16" />
+<meta name="date" content="2021-10-12" />
 
 <title>A guide to using cellexalvrR - Quick Start</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">A guide to using cellexalvrR - Quick Start</h1>
 <h4 class="author">Stefan Lang &amp; Shamit Soneji</h4>
-<h4 class="date">2021-09-16</h4>
+<h4 class="date">2021-10-12</h4>
 
 
 
@@ -180,21 +180,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="do">## We will now calculate a UMAP in 3 dimensions whereas the TSNE will be using in 2D </span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>pbmc_small <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(pbmc_small, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,<span class="at">n.components =</span> <span class="dv">3</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Read 80 rows and found 10 numeric columns</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Using Annoy for neighbor search, n_neighbors = 30</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Building Annoy index with metric = cosine, n_trees = 50</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 UMAP embedding parameters a = 0.9922 b = 1.112</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 Read 80 rows and found 10 numeric columns</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 Using Annoy for neighbor search, n_neighbors = 30</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 Building Annoy index with metric = cosine, n_trees = 50</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0%   10   20   30   40   50   60   70   80   90   100%</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [----|----|----|----|----|----|----|----|----|----|</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; **************************************************|</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\Rtmpor4kxZ\file164c1a31793f</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Searching Annoy index using 1 thread, search_k = 3000</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Annoy recall = 100%</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 Commencing smooth kNN distance calibration using 1 thread</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:13 7 smooth knn distance failures</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:15 Initializing from normalized Laplacian + noise</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:15 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 08:57:15 Optimization finished</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 Writing NN index file to temp file C:\Users\Stefan\AppData\Local\Temp\RtmpCYHGbt\file42ec6c0d51f0</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 Searching Annoy index using 1 thread, search_k = 3000</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:56 Annoy recall = 100%</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:57 Commencing smooth kNN distance calibration using 1 thread</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:57 7 smooth knn distance failures</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:59 Initializing from normalized Laplacian + noise</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:36:59 Commencing optimization for 500 epochs, with 2410 positive edges</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11:37:00 Optimization finished</span></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">Embeddings</span>(pbmc_small,<span class="st">&quot;umap&quot;</span>)[<span class="dv">1</span>,]</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    UMAP_1    UMAP_2    UMAP_3 </span></span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -1.912597 -1.099849  1.826431</span></span>
@@ -311,14 +311,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="do">## We&#39;re ready to export.</span></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>opath <span class="ot">=</span> <span class="fu">file.path</span>(OutPath,<span class="st">&quot;scATAC&quot;</span>)</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="fu">export2cellexalvr</span>(cvr, opath)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check(x): meta.gene rownames set to data rownames</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;lsi.mds&quot;           &quot;umap.mds&quot;</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in export2cellexalvr(cvr, opath): path does not exists - creating it now</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in check(x): meta.gene rownames set to data rownames</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; object passes checks</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="fu">list.files</span>(opath)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;a.meta.cell&quot;       &quot;c.meta.gene&quot;       &quot;cellexalObj.RData&quot;</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4] &quot;database.sqlite&quot;   &quot;lsi.mds&quot;           &quot;umap.mds&quot;</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co">#Done!</span></span></code></pre></div>
 </div>
 <div id="making-and-exporting-a-cellexalvr-object-from-its-elements." class="section level3">
 <h3>Making and exporting a cellexalVR object from it’s elements.</h3>
@@ -460,22 +461,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Treatment=</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;WT&quot;</span>,<span class="st">&quot;Dox&quot;</span>),<span class="dv">10</span>,<span class="at">replace=</span>T))</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(meta.df)</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType Phase Treatment</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    Type3   G2M        WT</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    Type1     S        WT</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    Type2   G2M        WT</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    Type1    G1       Dox</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    Type3     S        WT</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    Type1    G1       Dox</span></span></code></pre></div>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    Type1   G2M        WT</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    Type3     S       Dox</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    Type2   G2M       Dox</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    Type1   G2M       Dox</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    Type3    G1        WT</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    Type1   G2M       Dox</span></span></code></pre></div>
 <p>We can now make a correctly formatted cell metadata matrix by applying the function <code>make.cell.meta.from.df</code> using only the fields we need, in this case the “CellType” and “Treatment” columns:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>required.cell.metad <span class="ot">&lt;-</span> <span class="fu">make.cell.meta.from.df</span>(meta.df,<span class="fu">c</span>(<span class="st">&quot;CellType&quot;</span>,<span class="st">&quot;Treatment&quot;</span>))</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(required.cell.metad)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType@Type3 CellType@Type1 CellType@Type2 Treatment@WT Treatment@Dox</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CellType@Type1 CellType@Type3 CellType@Type2 Treatment@WT Treatment@Dox</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1              1              0              0            1             0</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2              0              1              0            1             0</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3              0              0              1            1             0</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4              0              1              0            0             1</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5              1              0              0            1             0</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6              0              1              0            0             1</span></span></code></pre></div>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2              0              1              0            0             1</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3              0              0              1            0             1</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4              1              0              0            0             1</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5              0              1              0            1             0</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6              1              0              0            0             1</span></span></code></pre></div>
 <p>It can be seen the field name is placed in the column heading preceeding a “@”, and this is used by CellexalVR to form catagories on the menu system, so “CellType” and “Treatment” will be on separate tabs. This metadata matrix can now be added to a <code>cellexalvrR</code> object as decribed above using the <code>addCellMeta2cellexalvr</code> function.</p>
 </div>
 
