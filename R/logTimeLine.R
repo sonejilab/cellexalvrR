@@ -81,6 +81,9 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		if ( ! is.null(text) ){
 			content = paste( content, "<p>", text, "</p>", collapse="\n", sep="\n")
 		}
+		if ( ! is.null(cellexalObj@usedObj$pseudoBulk) ){
+			content = paste( content, "<p>The data has been analyzed using pseudo bulk samples (max 1000).</p>", collapse="\n", sep="\n")
+		}
 
 		
 		if ( file.exists( png[1] ) ) {
@@ -90,8 +93,8 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 			content = paste( collapse="\n", sep=" ", content,"",
 				paste( "\n\n### Linear selection plot showing mean expression of a set of genes (from R)\n\n"),
 				"",paste("![](",figureF,")") ,"",
-				"<p>In short: the genes are grouped by there expression pattern; 
-				the mean expression values of all genes in a group per cell are collected; 
+				"<p>In short: the genes are grouped by their expression pattern; 
+				the mean expression values of all genes in a group per cell are collected and 
 				the main expression trend is extrapolated using the loess R function and these smoothened values are plotted.</p>",
 				""
 				)

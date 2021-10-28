@@ -90,6 +90,15 @@ setMethod('renderReport', signature = c ('cellexalvrR'),
 			full.names = TRUE, pattern='*.html')
 	OK = length( grep ( expected_outfile, expected_outfiles) > 0)
 
+	if ( ! OK ) { ## probably a problem with the session name
+		tmp = unlist( lapply( expected_outfiles, stringr::str_replace_all, '_' ,'-'))
+		id = grep ( expected_outfile, tmp)
+		OK = length( id )
+		if ( OK ) {
+			expected_outfile = basename( expected_outfiles[id] )
+		}
+	}
+
 	if ( OK ){
 
 		## get rid of all section html files

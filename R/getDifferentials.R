@@ -144,9 +144,6 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					if ( length(OK) > 0 & length(BAD) >0){
 						#try({
 
-						## here is where we need the pseudo bulk approach.
-						## sumething similar is implemented in the compactTime function
-
 						r = as.data.frame(
 								FastWilcoxTest::StatTest(
 									Matrix::t( loc@data),
@@ -162,6 +159,9 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				all_markers = NULL;
 				#tmp = loc
 				if ( bulkStats ){
+					## here is where we need the pseudo bulk approach.
+					## sumething similar is implemented in the compactTime function
+					cellexalObj@usedObj$pseudoBulk = TRUE
 					loc = pseudoBulk ( info,  loc )
 					grp.vec = groupingInfo( loc, info@gname )@grouping
 					x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] = groupingInfo( loc, info@gname )
@@ -170,6 +170,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
+
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
 				try ( {

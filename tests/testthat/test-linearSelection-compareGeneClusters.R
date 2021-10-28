@@ -85,14 +85,23 @@ linearSubset2 = ret$linearSelection
 x = compareGeneClusters ( linearSubset1@gname, linearSubset2@gname, x, altGroupNames=c("A", "B" ) )
 
 
-ofile = file.path( x@outpath, 'session-log-for-session-timesession-comparegenelists.html')
+## depending if on linux or windows I get different outfiles ?!
 
-if ( file.exists( ofile)) {
-	unlink(ofile)
+ofile = c( 
+  file.path( x@outpath, 'session-log-for-session-timesession-comparegenelists.html'),
+  file.path( x@outpath, 'session-log-for-session-timesession_comparegenelists.html')
+)
+
+if ( file.exists( ofile[1])) {
+	unlink(ofile[1])
 }
+if ( file.exists( ofile[2])) {
+  unlink(ofile[2])
+}
+
 x = renderReport( x) 
 
-expect_true( file.exists(ofile) , label="Main outfile produced")
+expect_true( any ( c(file.exists(ofile[1]), file.exists(ofile[2]))) , label="Main outfile produced")
 
 collect= list(
   '2D DRC DDRtree dim 1,2 . Time.group.2 .' = 0,
@@ -116,7 +125,12 @@ collect= list(
   'Click to expand gene list' = 0
 )
 
-collect = checkFile( collect, ofile)
+if ( file.exists( ofile[1])) {
+  collect = checkFile( collect, ofile[1])
+}else{
+  collect = checkFile( collect, ofile[2])
+}
+
 #browser()
 expect= list(
   '2D DRC DDRtree dim 1,2 . Time.group.2 .' = 4,
@@ -132,10 +146,10 @@ expect= list(
   'Gene group 6' = 3,
   'Time.group.3 Statistical Result' = 2,
   'Time.group.3 TimeLine control' = 2,
-  '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 4,
+  '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 3,
   '2D DRC DDRtree dim 1,3 . Time.group.3 .'  =4,
   '2D DRC DDRtree dim 2,3 . Time.group.3 .' = 4,
-  'Expression in A .Time.group.3. and trajectory 1' = 3,
+  'Expression in A .Time.group.3. and trajectory 1' = 2,
   'Expression in B .Time.group.4. and trajectory 1' = 4,
   'Click to expand gene list' = 18
 )

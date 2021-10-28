@@ -761,10 +761,38 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		OK = which( nCells / ncol(loc@data)  > .01 )
 		loc = reduceTo(loc, what='row', to = rownames(loc@data)[OK]  )
 		
+
+		## I want 1000 pseudo bulk samples here!
+		if ( ncol(loc@data) > 1000 ){
+			cellexalObj@usedObj$pseudoBulk = TRUE
+
+			toGroups = 1000
+			n = ncol(loc@data)
+			ids = rep( 1:toGroups, floor(n/toGroups))
+			ids = c( ids, sample( 1:toGroups, n%%toGroups))
+			ids = sort(ids)
+
+			bulk = reduceTo( loc, what='col', to= colnames(loc@data)[match(unique(ids), ids)])
+			cn = colnames( bulk@data )
+			rn = rownames( bulk@data )
+			bulk@data = Matrix(FastWilcoxTest::collapse( loc@data, ids, type=2 ), sparse=TRUE) ## mean expression
+		
+			colnames( bulk@data ) = cn
+			rownames( bulk@data ) = rn
+		}
+		else {
+			warning( "Too little data to run pseudo bulk analysis")
+			bulk = loc
+		}
 		## run stats (pearson linear correlation directly on sparse matrix)
+		m = match( colnames(bulk@data), rownames(x@dat))
+
 		ps = FastWilcoxTest::CorMatrix_N(  
-			loc@data[, rownames(x@dat) ], 
-			x@dat$time 
+		#	loc@data[, rownames(x@dat) ], 
+		#	x@dat$time 
+			bulk@data,
+			x@dat$time[m]
+			#1:ncol(loc@data)
 		) 
 		rownames(ps) = rownames(loc@data)
 		addPval = function(dat){ 
@@ -790,7 +818,9 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		## could I do something useful here using the convolute?
 		m = match( rownames(x@dat), colnames(cellexalObj@data))
 		filter = rev(rep(1, 10) / 10)
-		conv = apply(cellexalObj@data[cellexalObj@usedObj$deg.genes,m], 1, function(da){
+		bulk = reduceTo( bulk, what='row', to = cellexalObj@usedObj$deg.genes )
+
+		conv = apply(bulk@data, 1, function(da){
 				conv = stats::convolve( da, filter, type='filter' )
 			 (conv -mean(conv)) / stats::sd(conv)
 			} )
