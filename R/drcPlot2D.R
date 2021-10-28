@@ -79,6 +79,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	print(p)
 	
 	grDevices::dev.off()
+	browser()
 	DRC2 = DRC3= NULL
 
 	if (  var( cellexalObj@drc[[gInfo@drc]][,3]) != 0 ) {

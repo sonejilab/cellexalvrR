@@ -146,11 +146,11 @@ expect= list(
   'Gene group 6' = 3,
   'Time.group.3 Statistical Result' = 2,
   'Time.group.3 TimeLine control' = 2,
-  '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 3,
+  '2D DRC DDRtree dim 1,2 . Time.group.3 .' = 4,
   '2D DRC DDRtree dim 1,3 . Time.group.3 .'  =4,
   '2D DRC DDRtree dim 2,3 . Time.group.3 .' = 4,
-  'Expression in A .Time.group.3. and trajectory 1' = 2,
-  'Expression in B .Time.group.4. and trajectory 1' = 4,
+  'Expression in A .Time.group.3. and trajectory 1' = 4,
+  'Expression in B .Time.group.4. and trajectory 1' = 3,
   'Click to expand gene list' = 18
 )
 

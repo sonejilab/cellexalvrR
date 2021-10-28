@@ -42,14 +42,14 @@ x = reset(x)
 x@outpath = file.path(prefix,'data','output','timeLineTest' )
 
 
-x = sessionPath( x, 'timeSession_subsets')
-expect_true( x@usedObj$sessionName == 'timeSession_subsets',  label='session path not set correctly')
+x = sessionPath( x, 'timeSessionsubsets')
+expect_true( x@usedObj$sessionName == 'timeSessionsubsets',  label='session path not set correctly')
 
-ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSession_subsets', 'AA_Start_paritalLog.Rmd' )
+ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSessionsubsets', 'AA_Start_paritalLog.Rmd' )
 expect_true( file.exists( ofile), label="start session optupt is missing")
 
 
-ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSession_subsets', 'AB_OneGroupTime_paritalLog.Rmd' )
+ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSessionsubsets', 'AB_OneGroupTime_paritalLog.Rmd' )
 if ( file.exists( ofile) ) {
 	unlink( ofile )
 }
@@ -87,7 +87,7 @@ expect_equal(names(x@usedObj$linearSelections[["Time.group.3"]]@geneClusters[["T
 x= renderReport( x )
 
 ofile = file.path( prefix, 'data','output', 'timeLineTest', 
-	'session-log-for-session-timesession-subsets.html' )
+	'session-log-for-session-timesessionsubsets.html' )
 expect_true( file.exists( ofile), label= ofile )
 
 ## check the html file for duplicated entries (sections).
@@ -96,7 +96,7 @@ collect = list(
 	'Time.group.2 TimeLine control' = 0,
 	'as group Time.group.2' = 0,
 	'Time.group.2.Linear.csv' = 0,
-	'Session Log for Session timeSession_subsets' = 0,
+	'Session Log for Session timeSessionsubsets' = 0,
 	'2D DRC DDRtree dim 2,3' = 0,
 	'href="https://www.genecards.org/cgi-bin/' = 0
 )
@@ -104,7 +104,7 @@ expt = list(
 	'Time.group.2 TimeLine control' = 4, # one in the text and one in the TOC
 	'as group Time.group.2' = 2,
 	'Time.group.2.Linear.csv' = 2,
-	'Session Log for Session timeSession_subsets' = 2, # one in the text and one in the TOC
+	'Session Log for Session timeSessionsubsets' = 2, # one in the text and one in the TOC
 	'2D DRC DDRtree dim 2,3' = 8, # this figure is shown twice..
 	'href="https://www.genecards.org/cgi-bin/' = 1000 # two 250 gene lists times two (heatmap and lexical order)
 )

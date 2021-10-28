@@ -95,6 +95,7 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		smoothedClusters[[ gn ]] = smoothedClusters[[ gn ]][which(! is.na(smoothedClusters[[ gn ]]))]
 	}
 	## could I use this here to create a heatmap with the cluster info
+	print ( paste( "creating this filename for gourping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
 	grDevices::png(  paste(fname, "groupColors", 'png',sep="."), width=1000, height=300)
 	graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
 	grDevices::dev.off()

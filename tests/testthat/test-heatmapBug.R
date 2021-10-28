@@ -63,9 +63,11 @@ for( f in selectionFiles){
 
 cellexalObj = renderReport( cellexalObj )
 
-files = c( "cellexalObj.RData", "Heatmaps", "libs",  "PortableLog_test.zip", 
+files = c( "404.html", "cellexalObj.RData", "Heatmaps", "libs",  "PortableLog_test.zip", 
 	"reference-keys.txt", "search_index.json","selection10.txt", "selection11.txt", "selection11.txt.time" , 
 	"selection11.txt.time.points", "session-log-for-session-test.html", "test")
+
+#browser()
 
 expect_equal(sort(list.files(path)), sort(files), label="All expected outfiles #2" )
 

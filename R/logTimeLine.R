@@ -100,13 +100,15 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 				)
 		}
 		## genes should be a list
+		groupCol = paste( timeInfo@gname, 'groupColors','png', sep=".")
+		groupCol = file.path( cellexalObj@usedObj$sessionPath, 'png', groupCol )
 		
 		content = paste( collapse="\n", 
 			content, "", "\n\n### Detailed Gene Expression as heatmaps",
 			"\n\nThe scaling of the x axis is different from the previouse Linear selection plots.",
 			"They are scaled to the (arbitrary) pseudo time whereas here the heatmaps are showing each cell after the other.",
 			"Hence in these plots each time 'slot' has the same size if the grouping has not been modified later:","",
-			"",paste("![](",correctPath(timeInfo@geneClusters[[1]]$groupColors, cellexalObj ),")") ,""
+			"",paste("![](",correctPath(groupCol, cellexalObj ),")") ,""
 			) 
 		for ( i in 1:length(genes) ) {
 

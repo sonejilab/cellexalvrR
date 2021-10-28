@@ -75,7 +75,7 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		}
 		id = as.numeric(factor(color(linearSelection,rownames(drc))))
 		col = color(linearSelection, rownames(drc))
-		toPlot = data.frame(id = id, x=	drc[,1], y=	drc[,2], col = col)
+		toPlot = data.frame(id = id, x=	as.numeric(drc[,1]), y=	as.numeric(drc[,2]), col = col)
 		order = factor(toPlot$id, levels= order(table(toPlot$id)))
 		toPlot = toPlot[rev(order(order)),]
    		p= prettyPlot2Dtime( toPlot ) #function definition in file drcPlot2D.R

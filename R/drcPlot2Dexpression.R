@@ -75,7 +75,7 @@ setMethod('drcPlot2Dexpression', signature = c ('cellexalvrR', 'character', 'cha
 
 		grDevices::png( file= DRC2, width=1000, height=1000)
 	
-    	toPlot = data.frame(x=cellexalObj@drc[[drc]][,2], y=cellexalObj@drc[[drc]][,3], id=gr )
+    	toPlot = data.frame(x=as.numeric(cellexalObj@drc[[drc]][,2]), y=as.numeric(cellexalObj@drc[[drc]][,3]), id=gr )
     	p= prettyPlot2D( toPlot,col , FALSE ) #function definition in file drcPlot2D.R
     	print(p) ## write the plot
 		grDevices::dev.off()

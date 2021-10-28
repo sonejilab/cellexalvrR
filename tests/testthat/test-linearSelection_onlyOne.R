@@ -43,7 +43,7 @@ dir.create( x@outpath )
 x = reset(x)
 x@outpath = file.path(prefix,'data','output','timeLineTest2' )
 
-x = sessionPath( x, 'timeSession_only_one')
+x = sessionPath( x, 'timeSessiononlyone')
 
 ofile = file.path( prefix, 'data','output','timeLineTest2', 'timeSession', 'AB_OneGroupTime_paritalLog.Rmd' )
 if ( file.exists( ofile) ) {
@@ -51,7 +51,7 @@ if ( file.exists( ofile) ) {
 }
 
 
-expect_true( x@usedObj$sessionName == 'timeSession_only_one',  label='session path not set correctly')
+expect_true( x@usedObj$sessionName == 'timeSessiononlyone',  label='session path not set correctly')
 gFile= 'SelectionHSPC_time.txt'
 grouping <- file.path(prefix, 'data', gFile )
 
@@ -67,7 +67,7 @@ expect_equal( old, new, label="cell or genes lost during getDifferentials")
 
 x= renderReport( x )
 
-ofile = file.path( prefix, 'data','output', 'timeLineTest2', 'session-log-for-session-timesession-only-one.html' )
+ofile = file.path( prefix, 'data','output', 'timeLineTest2', 'session-log-for-session-timesessiononlyone.html' )
 expect_true( file.exists( ofile), label= ofile )
 
 ## check the html file for duplicated entries (sections).
@@ -76,7 +76,7 @@ collect = list(
 	'Time.group.2 TimeLine control' = 0,
 	'as group Time.group.2' = 0,
 	'Time.group.2.Linear.csv' = 0,
-	'Session Log for Session timeSession_only_one' = 0,
+	'Session Log for Session timeSessiononlyone' = 0,
 	'2D DRC DDRtree dim 2,3' = 0
 )
 
@@ -84,7 +84,7 @@ expt = list(
 	'Time.group.2 TimeLine control' = 2, # one in the text and one in the TOC
 	'as group Time.group.2' = 1,
 	'Time.group.2.Linear.csv' = 1,
-	'Session Log for Session timeSession_only_one' = 2, # one in the text and one in the TOC
+	'Session Log for Session timeSessiononlyone' = 2, # one in the text and one in the TOC
 	'2D DRC DDRtree dim 2,3' = 4 # this figure is shown twice..
 )
 expt[[x@outpath]] = 0
