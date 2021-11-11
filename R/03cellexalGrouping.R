@@ -65,13 +65,12 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 				toGroups = 2
 			}
 			if ( is.na(toGroups)){
-				warning("toGroups is not defined!")
-				browser()
+				browser(text="toGroups is not defined!")
 			}
 			tryCatch( {
 				ids = rep( 1:toGroups, floor(n/toGroups))
 				},
-				error = function(err){ print(err); browser()})
+				error = function(err){ print(err); browser( text="in the try catch construct an error has occured")})
 			ids = rep( 1:toGroups, floor(n/toGroups))
 			ids = c( ids, sample( 1:toGroups, n%%toGroups))
 			ids = sort(ids)
@@ -110,14 +109,13 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 setMethod('exportSelection', signature = c ('cellexalGrouping'),
 	definition = function (x, fname) {
 
-	dat = x@dat[order(x@dat$time),]
-	d = cbind( rownames(dat), as.vector(dat$col), rep( x@drc , nrow(dat) ), as.numeric( dat$col )  )
+	d = cbind( names(x@grouping), x@col[as.vector(x@grouping)], rep( x@drc , length(x@grouping) ), as.vector(x@grouping)-1  )
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
 
-	f2 = paste( sep=".",fname,'points')
+#	f2 = paste( sep=".",fname,'points')
 
-	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
-	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
+#	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
+#	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
 
 	invisible(x)
 } )
@@ -151,21 +149,39 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 
 
 		if ( ! is.null(addCol) ){
+			#browser(text="This table is not OK - check why!")
 			tableLine = function(id ) {
 			OK = which( x@grouping == id)
-			paste(sep="",
+			## the not selected cells!
+			ret = NULL
+			if (id == 0){
+				ret = paste(sep="",
+				'<tr><td style="background-color:',
+				grey(.6),'"></td><td>',
+				grey(.6),"</td><td>",
+				length(OK),"</td><td>",
+				x@VRgrouping[OK[1]], "</td><td>",
+				id,"</td>", "<td>", addCol[[1]][id], "</td></tr>"
+				)
+			}
+			else {
+				id = as.numeric(id)
+				ret = paste(sep="",
 				'<tr><td style="background-color:',
 				x@col[id],'"></td><td>',
 				x@col[id],"</td><td>",
 				length(OK),"</td><td>",
 				x@VRgrouping[OK[1]], "</td><td>",
-				id,"</td>", "<td>", addCol[[1]][id], "</td></tr>"
-			)
+				id,"</td>", "<td>", addCol[[1]][paste(id)], "</td></tr>"
+				)
+			}
+
+			return (ret)
 			}
 			ret = paste( sep="", collapse="",
 			"\n### group information table\n\n",
 			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th><th>',names(addCol)[1],'</th></tr>',
-			paste(sep="\n",collapse="\n",sapply( 1:length(x@col), tableLine) ),"</table>"
+			paste(sep="\n",collapse="\n",sapply( names(table(x@grouping)), tableLine) ),"</table>"
 			)
 		}
 		

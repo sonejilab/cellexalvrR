@@ -58,6 +58,18 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		stop( paste("the grouping", gname, "is not found in this cellexalvrR object"))
 	}
 
+	if ( length(grouping) == ncol(cellexalObj@data) ){
+		## the conversions and info loss is necessary to make this object work.
+		if ( is.character( grouping )) {
+			grouping = as.numeric(factor(grouping))
+		}
+		if ( is.factor(grouping) ){
+			grouping = as.numeric( grouping)
+		}
+
+		names(grouping) = colnames(cellexalObj@data)
+	}
+
 	ginfo = new( 'cellexalGrouping',
 		gname = gname,
 		selectionFile= '',

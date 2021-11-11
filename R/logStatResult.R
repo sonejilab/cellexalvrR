@@ -24,12 +24,15 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 	if (! is.null( x@usedObj$sessionName)) {
 
 		## export the data into a file and add a small download link into the report
-		ofile =   paste( x@usedObj$lastGroup,method,"csv", sep="."   )
-		if ( ! file.exists(file.path( x@usedObj$sessionPath,'tables') )) {
-			dir.create( file.path( x@usedObj$sessionPath,'tables') )
+		opath = file.path( x@usedObj$sessionPath,'tables')
+		if ( ! file.exists( opath )) {
+			dir.create( opath )
 		}
 
-		utils::write.table( data, file= file.path( x@usedObj$sessionPath,'tables',ofile) , quote=F, sep="," )
+		## get a unique file not overwriting old ones.
+		ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
+		print( paste( "Saving stats table as", file.path(opath,ofile)))
+		utils::write.table( data, file= file.path(opath, ofile) , quote=F, sep=",", row.names=FALSE )
 
 		mainOfile = x@usedObj$sessionRmdFiles[1]
 
@@ -64,6 +67,12 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				exportSelection( gInfo@linarObj, sesionFile )
 			}
 		}else {
+			if ( is.null(x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] )){
+				fname = file.path( x@outpath, x@usedObj$sessionName, paste(sep=".","selection", x@usedObj$lastGroup, "txt") )
+				fname = stringr::str_replace_all( fname, '\\s+', '_')
+				exportSelection( groupingInfo( x, x@usedObj$lastGroup), fname=fname )
+				x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] = fname
+			}
 			sesionFile = file.path( x@usedObj$sessionPath, basename( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] ) )
 			if ( ! file.exists( sesionFile )){
 				file.copy( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]], sesionFile)
@@ -102,8 +111,9 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## actually make this a volcano plot instead ...
 		if ( ! is.null(col) ){
 
-			ofile = file.path(x@usedObj$sessionName, 'png',paste( 'hist',x@usedObj$lastGroup,method,"png", sep="."   ) )
-			grDevices::png( file= file.path( x@outpath, ofile ), width=800, height=800)
+			opath = file.path( x@outpath, x@usedObj$sessionName, 'png' )
+			ofile = filename( c( 'hist',x@usedObj$lastGroup,method,"png"), opath )
+			grDevices::png( file= file.path(opath, ofile), width=800, height=800)
 			#browser()
 			dat = -log10(data[,col])
 			# should not be used here as we lack the < 1 fraction of the plot due to the VR requirements
@@ -112,7 +122,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			grDevices::dev.off()
 
 			content = c( content, paste( sep="\n",
-					paste("![](",ofile,")"),
+					paste("![](",file.path(x@usedObj$sessionName, 'png', ofile),")"),
 					"" ))
 		}
 		

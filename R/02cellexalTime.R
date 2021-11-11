@@ -165,6 +165,7 @@ function (x, cellexalObj=NULL) {
 #' @rdname checkTime
 setMethod('checkTime', signature = c ('cellexalLinear'),
 definition = function (x, cellexalObj=NULL) {
+
 	if ( nrow(x@dat) == 0 ){
 		warning("empty object")
 		return ("empty")
@@ -198,7 +199,6 @@ setMethod('checkTime', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function (x, cellexalObj=NULL) {
 
 	error = NULL
-	#browser()
 	if ( is.null(cellexalObj@drc[[x@drc]])){
 		error = c( error, paste( sep="",
 			"The basis drc for this linearSelection (", cellexalObj@drc,
@@ -209,9 +209,14 @@ definition = function (x, cellexalObj=NULL) {
 		if ( !is.null(rownames(cellexalObj@drc[[x@drc]])) ){
 			ids = match(rownames(x@dat), rownames(cellexalObj@drc[[x@drc]]) )
 		}else {
-			ids = match(rownames(x@dat), rownames(cellexalObj@data) )
+			ids = match(rownames(x@dat), colnames(cellexalObj@data) )
 		}
 		other = cellexalObj@drc[[x@drc]][ids,1:3]
+
+		if ( class(other)[1] == 'numeric'){
+			other = data.frame (matrix( other, ncol=3))
+			rownames(other) = colnames(cellexalObj@data)[ids]
+		}
 		colnames(mine) = c('x', 'y','z')
 		colnames(other) = c('x','y','z')
 		if ( !isTRUE( all.equal( as.matrix(mine), as.matrix(other))) ) {
@@ -1357,11 +1362,13 @@ function ( x, ofile, color=NULL, circleF=NULL ) {
 setMethod('plotTimeHeatmap', signature = c ('matrix'),
 definition = function ( x, ofile, color=NULL, circleF=NULL) {
 	of2 = paste( sep=".", ofile, 'png')
-	h = length( nrow(x) )
+	h =  nrow(x) * 2
 	if (h < 200 ) { h=200 }
+	print ( paste( "plotTime heatmap has set the height of the heatmap to", h) )
 	#ggplot( genes2plot, aes( x=id,y=variable, fill=value))+geom_tile() + 
 	#scale_fill_gradient(high='yellow', low='blue' ) +
 	# xlim(0, max(toPlot$id))
+
 	grDevices::png( filename=of2, width=1000, height = h )
 	try ( {
 		graphics::image( t(x), col=gplots::bluered(40) )
