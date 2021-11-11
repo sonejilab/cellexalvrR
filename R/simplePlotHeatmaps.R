@@ -186,6 +186,7 @@ setMethod('clusterGenes', signature = c ('cellexalLinear'),
 setMethod('clusterGenes', signature = c ('matrix'),
 	definition = function ( x, deg.genes=NULL, info=NULL, cellexalObj=NULL, geneclusters=NULL ) {
 
+		#geneclusters = 15 ## define it like cellexalObj@usedObj$gene_clusters = 15
 		message("Clustering genes based on pca and kmeans")
 		pca = irlba::prcomp_irlba ( x, center=T, n=3 )$x
 
@@ -257,6 +258,12 @@ setMethod('clusterGenes', signature = c ('matrix'),
 				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
 					geneTrajectories[[groupname]] = tryCatch({
 						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=.2) )
+						}, error=function(err){message("loess failed with span .2") })	
+				}
+
+				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
+					geneTrajectories[[groupname]] = tryCatch({
+						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=1) )
 						}, error=function(err){message("loess failed with span .2") })	
 				}
 
