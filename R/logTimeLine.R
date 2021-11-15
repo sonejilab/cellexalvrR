@@ -120,6 +120,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		}
 		content = paste( sep="\n",collapse="\n", content,
 			#paste(collapse = "\n", sep="\n",drcFiles2HTML(cellexalObj, info, "original selection")), #function definition in file 'drcPlot2D.R'
+			paste("![](",correctPath(groupCol, cellexalObj )),
 			paste(collapse = "\n", sep="\n",drcFiles2HTMLlinear(cellexalObj, info, "time line")) #function definition in file 'drcPlot2Dtime.R'
 
 			)

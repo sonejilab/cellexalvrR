@@ -32,6 +32,9 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## get a unique file not overwriting old ones.
 		ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
 		print( paste( "Saving stats table as", file.path(opath,ofile)))
+		if ( colnames(data)[1] == 'cor' ){
+			data = cbind( 'Gene Name' = rownames(data), data )
+		}
 		utils::write.table( data, file= file.path(opath, ofile) , quote=F, sep=",", row.names=FALSE )
 
 		mainOfile = x@usedObj$sessionRmdFiles[1]
@@ -107,18 +110,18 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				    "<a href='",file.path( ".", x@usedObj$sessionName, basename(sesionFile)),"' download>"," this selection file</a>", ".","\n"),
 				paste(collapse = "\n", sep="\n",figures)
 		)
-		## the 1-log10 p value histogram
-		## actually make this a volcano plot instead ...
+
+		## the -log10 p value histogram
 		if ( ! is.null(col) ){
 
 			opath = file.path( x@outpath, x@usedObj$sessionName, 'png' )
 			ofile = filename( c( 'hist',x@usedObj$lastGroup,method,"png"), opath )
 			grDevices::png( file= file.path(opath, ofile), width=800, height=800)
 			#browser()
-			dat = -log10(data[,col])
+			dat = -log10(as.numeric(data[,col]))
 			# should not be used here as we lack the < 1 fraction of the plot due to the VR requirements
 			#graphics::plot( data[,'logFC'], -log10(data[,'p.value']), main = paste( x@usedObj$sessionName, gname ), ylab='-log10(p.value)', xlab="logFC" )
-			graphics::hist( dat[which(!is.na(dat))], main = paste( x@usedObj$sessionName, gname )  )
+			graphics::hist( dat[which(!is.na(dat))], main = paste( x@usedObj$sessionName, gname ), xlab="-log10(pvalue)"  )
 			grDevices::dev.off()
 
 			content = c( content, paste( sep="\n",

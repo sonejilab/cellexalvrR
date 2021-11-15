@@ -163,6 +163,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					## sumething similar is implemented in the compactTime function
 					cellexalObj@usedObj$pseudoBulk = TRUE
 					loc = pseudoBulk ( info,  loc )
+					save( loc, file=file.path( x@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ) )
 					grp.vec = groupingInfo( loc, info@gname )@grouping
 					x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] = groupingInfo( loc, info@gname )
 				}

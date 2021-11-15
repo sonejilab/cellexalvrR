@@ -61,11 +61,14 @@ grouping <- file.path(prefix, 'data', gFile )
 
 ## I need the 3D vectors for the cells in e.g. group 1
 
+
 x = userGrouping( x, grouping)
 
 x = getDifferentials( x,cellidfile='User.group.1', deg.method= 'wilcox' , Log=TRUE)
 
 expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2" ), label="correct time names")
+
+browser()
 
 expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["User.group.1"]][['clusters']]),
 			c("1","2","3","4","5",'6'), label = "geneClusters are part of the linearSelections" )
@@ -73,7 +76,6 @@ expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["U
 
 subset = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(1,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
 linearSubset = subset( x@usedObj$linearSelections[["lastEntry"]], subset)
-
 
 x = linearAnalysisSubset( linearSubset, x )
 

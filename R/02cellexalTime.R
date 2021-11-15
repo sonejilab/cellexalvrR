@@ -541,9 +541,12 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
  			groupID = df[genes[1], i]
  			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
 			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
+			
+			groupCol = paste( times[i]@gname, 'groupColors','png', sep=".")
 
  			text = paste( text, sep=" ", "\n\n#### Expression in", 
 					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
+					paste("![](",correctPath(groupCol, cellexalObj )),
 					plotHeatmap_rmd( 
 						x=t(times[[i]]@geneClusters[[times[[i]]@gname]]$matrix[,genes]), 
 						color=color[i] ,
@@ -713,7 +716,7 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 			info = x, 
 			png = c( ret$ofile, ret$pngs ),
 			timeInfo = x, 
-			text= paste(text, ret$error, sep=" ", collapse=" ") 
+			text= paste(text, ret$error, sep=" ", collapse=" ")
 		) 
 		#print( "finish" )
 	} )	
@@ -1364,7 +1367,7 @@ definition = function ( x, ofile, color=NULL, circleF=NULL) {
 	of2 = paste( sep=".", ofile, 'png')
 	h =  nrow(x) * 2
 	if (h < 200 ) { h=200 }
-	print ( paste( "plotTime heatmap has set the height of the heatmap to", h) )
+	#print ( paste( "plotTime heatmap has set the height of the heatmap to", h) )
 	#ggplot( genes2plot, aes( x=id,y=variable, fill=value))+geom_tile() + 
 	#scale_fill_gradient(high='yellow', low='blue' ) +
 	# xlim(0, max(toPlot$id))
@@ -1494,6 +1497,7 @@ definition = function ( x, cellexalObj, deg.genes=NULL ) {
 	cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = loc@usedObj$sigGeneLists$lin[[x@gname]]
 	
 	loc = reduceTo(cellexalObj, what='row', to=deg.genes)
+	loc = createStats( x, loc )
 	ret = createReport(x, loc, groupingInfo( cellexalObj, x@gname ) )
 
 	x = ret$linearSelection
