@@ -101,7 +101,7 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 	grDevices::png(  paste(fname, "groupColors", 'png',sep="."), width=1000, height=100)
 	graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
 	grDevices::dev.off()
-	}, error =function (err) ={ print ( "The legend plot failed - investigate") } )
+	}, error =function (err) { print ( "The legend plot failed - investigate") } )
 	for( i in 1:(length(gr)-2)  ) {
 		genes = names(gr$geneClusters)[which( gr$geneClusters == i)]
 		if ( length(which(is.na( match( genes, colnames(toPlot)) ))) > 0){
