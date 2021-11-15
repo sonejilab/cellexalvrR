@@ -793,6 +793,9 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 			bulk = loc
 		}
 		## run stats (pearson linear correlation directly on sparse matrix)
+
+		save( bulk, file= file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ) )
+
 		m = match( colnames(bulk@data), rownames(x@dat))
 
 		ps = FastWilcoxTest::CorMatrix_N(  
