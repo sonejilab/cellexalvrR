@@ -162,6 +162,10 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					## here is where we need the pseudo bulk approach.
 					## sumething similar is implemented in the compactTime function
 					cellexalObj@usedObj$pseudoBulk = TRUE
+					toGSEA( loc, 
+						ofile=file.path( loc@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ),
+						info@gname
+					)
 					loc = pseudoBulk ( info,  loc )
 					save( loc, file=file.path( x@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ) )
 					grp.vec = groupingInfo( loc, info@gname )@grouping

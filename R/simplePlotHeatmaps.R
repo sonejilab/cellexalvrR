@@ -95,13 +95,25 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		smoothedClusters[[ gn ]] = smoothedClusters[[ gn ]][which(! is.na(smoothedClusters[[ gn ]]))]
 	}
 	## could I use this here to create a heatmap with the cluster info
+	## if this is also a timeline - change the name to the time name - otherwise the log can not find the correct files!
+	legName = file.path(path, paste(info@gname, "groupColors", 'png',sep="."))
+	if (  class(info@linarObj) == 'cellexalLinear' ) {
+		legName = file.path(path, paste(info@linarObj@gname, "groupColors", 'png',sep="."))
+	}
 	tryCatch(
 	{
-	print ( paste( "creating this filename for grouping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
-	grDevices::png(  paste(fname, "groupColors", 'png',sep="."), width=1000, height=100)
-	graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
-	grDevices::dev.off()
-	}, error =function (err) { print ( "The legend plot failed - investigate") } )
+		print ( paste( "creating this filename for grouping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
+		grDevices::png(  legName, width=1000, height=200)
+		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
+		grDevices::dev.off()
+	}, 
+	error =function (err) { 
+		grDevices::dev.off() 
+		grDevices::png(  legName, width=1000, height=200)
+		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
+		grDevices::dev.off()
+	} 
+	)
 	for( i in 1:(length(gr)-2)  ) {
 		genes = names(gr$geneClusters)[which( gr$geneClusters == i)]
 		if ( length(which(is.na( match( genes, colnames(toPlot)) ))) > 0){

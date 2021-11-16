@@ -215,6 +215,9 @@ definition = function (x, cellexalObj=NULL) {
 
 		if ( class(other)[1] == 'numeric'){
 			other = data.frame (matrix( other, ncol=3))
+			if ( any(is.na(ids)) ){
+				browser(text="na's in the ids - how could that happen?!")
+			}
 			rownames(other) = colnames(cellexalObj@data)[ids]
 		}
 		colnames(mine) = c('x', 'y','z')
@@ -542,11 +545,11 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
  			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
 			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
 			
-			groupCol = paste( times[i]@gname, 'groupColors','png', sep=".")
+			groupCol = paste( times[[i]]@gname, 'groupColors','png', sep=".")
 
  			text = paste( text, sep=" ", "\n\n#### Expression in", 
 					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
-					paste("![](",correctPath(groupCol, cellexalObj )),
+					paste("![](",correctPath(groupCol, cellexalObj ),")"),
 					plotHeatmap_rmd( 
 						x=t(times[[i]]@geneClusters[[times[[i]]@gname]]$matrix[,genes]), 
 						color=color[i] ,
@@ -795,6 +798,10 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		## run stats (pearson linear correlation directly on sparse matrix)
 
 		save( bulk, file= file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ) )
+		toGSEA( bulk, 
+			ofile=file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ),
+			x@gname
+		)
 
 		m = match( colnames(bulk@data), rownames(x@dat))
 

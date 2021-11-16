@@ -20,6 +20,9 @@ setGeneric('reorderSamples', ## Name
 #' @rdname reorderSamples
 setMethod('reorderSamples', signature = c ('cellexalvrR'),
 	definition = function ( dataObj, column ) {
+		if ( ncol( dataObj@data ) <= 1 ) {
+			invisible(dataObj)
+		}
 	if (! is.na( match ( column, colnames(dataObj@meta.cell)) ) ) {
 		ids = order( dataObj@meta.cell[,column])
 	}else {
