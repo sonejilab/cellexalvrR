@@ -3,12 +3,18 @@
 \docType{methods}
 \name{groupingInfo}
 \alias{groupingInfo}
-\alias{groupingInfo,cellexalvrR-method}
+\alias{groupingInfo,cellexalvrR,cellexalLinear-method}
+\alias{groupingInfo,cellexalvrR,cellexalGrouping-method}
+\alias{groupingInfo,cellexalvrR,ANY-method}
 \title{get information on a sample grouping}
 \usage{
 groupingInfo(cellexalObj, gname = NULL)
 
-\S4method{groupingInfo}{cellexalvrR}(cellexalObj, gname = NULL)
+\S4method{groupingInfo}{cellexalvrR,cellexalLinear}(cellexalObj, gname = NULL)
+
+\S4method{groupingInfo}{cellexalvrR,cellexalGrouping}(cellexalObj, gname = NULL)
+
+\S4method{groupingInfo}{cellexalvrR,ANY}(cellexalObj, gname = NULL)
 }
 \arguments{
 \item{cellexalObj, }{cellexalvr object}

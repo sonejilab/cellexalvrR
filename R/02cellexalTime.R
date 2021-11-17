@@ -405,7 +405,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 	compareGeneClusters( x=x@gname, other=c(getLinearSelection(cellexalObj, other)),
 		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
 })
-	
+
 
 setMethod('compareGeneClusters', signature = c ('character', 'list', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
@@ -423,14 +423,18 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 		if ( parent != time@parentSelection){
 			stop("the other object is not from the same parent selection - stop")
 		}
+		if ( class(time) == "cellexalGrouping" ){
+			time = time@linarObj
+		}
 		if ( length(time@geneClusters) == 0 ){
 			stop( paste( sep="\n",
 			"Either the one or the other objects' geneClusters == 0",
-		 	"For all linearSelections the function 'createReport' has to be run first.") )
+		 	"For all linearSelections the function 'createReport' has to be run first.", paste("Error in", time@gname)) )
 		}
 		times = c(times, time)
 	}
 
+	browser()
 
 	if ( is.null(color) ) {
 		color= grDevices::rainbow(length(times))
@@ -648,7 +652,7 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'character'),
 definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 	info = groupingInfo(cellexalObj, info )
-	createReport ( x =x, cellexalObj=cellexalObj, info=groupingInfo(x,info), deg.genes=deg.genes )
+	createReport ( x =x, cellexalObj=cellexalObj, info=info, deg.genes=deg.genes )
 })
 
 #' @rdname createReport

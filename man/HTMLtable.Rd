@@ -7,14 +7,16 @@
 \alias{HTMLtable,cellexalGrouping-method}
 \title{log specififc - create an HTML summary table for this selection}
 \usage{
-HTMLtable(x)
+HTMLtable(x, addCol = NULL)
 
-\S4method{HTMLtable}{cellexalLinear}(x)
+\S4method{HTMLtable}{cellexalLinear}(x, addCol = NULL)
 
-\S4method{HTMLtable}{cellexalGrouping}(x)
+\S4method{HTMLtable}{cellexalGrouping}(x, addCol = NULL)
 }
 \arguments{
 \item{x}{the cellexalLinear object}
+
+\item{addCol}{a list with colors as names that describes one additional column of data (default NULL)}
 }
 \description{
 Create a html table that descibes a grouping (multi group or pseudo time)

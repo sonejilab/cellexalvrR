@@ -47,7 +47,7 @@ compareGeneClusters(
 \arguments{
 \item{x}{the cellexalLinear object}
 
-\item{other}{the other linearSelection (the parentSelection has to match)}
+\item{other}{the other linearSelection(s) (the parentSelection has to match)}
 
 \item{cellexalObj}{the cellexalObj to add the report to.}
 

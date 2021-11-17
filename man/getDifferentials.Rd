@@ -17,7 +17,8 @@ getDifferentials(
   minPct = 0.1,
   onlyPos = TRUE,
   report4genes = NULL,
-  text = NULL
+  text = NULL,
+  bulkStats = TRUE
 )
 
 \S4method{getDifferentials}{cellexalvrR,character}(
@@ -30,7 +31,8 @@ getDifferentials(
   minPct = 0.1,
   onlyPos = TRUE,
   report4genes = NULL,
-  text = NULL
+  text = NULL,
+  bulkStats = TRUE
 )
 
 \S4method{getDifferentials}{character,ANY}(
@@ -64,6 +66,8 @@ getDifferentials(
 \item{report4genes}{a list of genes you want to get a report on.}
 
 \item{text}{an optional additional text to show in the log}
+
+\item{bulkStats}{apply stats to pseudo bulk samples instead of cells? (default TRUE)}
 }
 \value{
 the cellexalvrr object with the stats table stored in x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]]

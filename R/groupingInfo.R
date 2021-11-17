@@ -1,5 +1,7 @@
 #' groupingInfo collects all information about one grouping from 
 #' the cellexalvrR internals and returns them as a cellealGrouping object.
+#' This function can also return a list of groupings and can process both 
+#' cellexalLinear and cellexalGrouping classes as input. But not mixed stings and objects!
 #' 
 #' @name groupingInfo
 #' @docType methods
@@ -17,12 +19,30 @@ setGeneric('groupingInfo', ## Name
 )
 #}
 
+#' @rdname groupingInfo
+setMethod('groupingInfo', signature = c ('cellexalvrR', 'list'),
+	definition = function ( cellexalObj, gname=NULL ) {
+		if ( length(gname) > 1){
+			groupingInfo( cellexalObj, unlist(lapply(gname, function(d){d@gname} ) ))
+		}else {
+			groupingInfo( cellexalObj, gname )
+		}
+	}
+)
+
+
+
 
 #' @rdname groupingInfo
 setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, gname=NULL ) {
 	if ( is.null(gname)){
 		gname = cellexalObj@usedObj$lastGroup
+	}
+	tmp = gname
+	if ( length(gname) > 1) {
+		## OK here we can only (1) get the entry for the second one - not add anything new!
+		gname = gname[1]
 	}
 	if ( !is.null( cellexalObj@groupSelectedFrom[[gname]])){
 		if ( ncol(cellexalObj@groupSelectedFrom[[gname]]@linarObj@dat)==0){
@@ -32,6 +52,11 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 					cellexalObj@groupSelectedFrom[[gname]]@linarObj = time
 				}
 			}
+		}
+		gname = tmp
+		if (length( gname ) > 1){
+			ret = unlist( lapply( gname, function(name) { cellexalObj@groupSelectedFrom[[name]]} ) )
+			return ( ret )
 		}
 		return ( cellexalObj@groupSelectedFrom[[gname]] )
 	}
@@ -84,5 +109,11 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	"correct the returned object and put it there: cellexalObj@groupSelectedFrom[['",
 	gname, "']]")
 	)
+
+	gname = tmp
+	if (length( gname ) > 1){
+		ret = unlist( lapply( gname, function(name) { cellexalObj@groupSelectedFrom[[name]]}) )
+		return ( ret )
+	}
 	cellexalObj@groupSelectedFrom[[gname]]
 } )
