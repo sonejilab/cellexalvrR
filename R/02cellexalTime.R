@@ -389,7 +389,7 @@ function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL) {
 #' @rdname compareGeneClusters
 setMethod('compareGeneClusters', signature = c ('character', 'character', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
-	compareGeneClusters( x=x, other=c(getLinearSelection(cellexalObj, other)),
+	compareGeneClusters( x=getLinearSelection(cellexalObj,x), other=c(getLinearSelection(cellexalObj, other)),
 		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
 })
 
@@ -407,12 +407,13 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 })
 
 
-setMethod('compareGeneClusters', signature = c ('character', 'list', 'cellexalvrR' ),
+setMethod('compareGeneClusters', signature = c ('cellexalLinear', 'list', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
 	
 	if ( is.character( x) ){
 		x= getLinearSelection(cellexalObj, x)
 	}
+
 	parent = x@parentSelection
 
 	times = list()
@@ -434,7 +435,6 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 		times = c(times, time)
 	}
 
-	browser()
 
 	if ( is.null(color) ) {
 		color= grDevices::rainbow(length(times))
