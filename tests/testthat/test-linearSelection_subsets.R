@@ -68,7 +68,6 @@ x = getDifferentials( x,cellidfile='User.group.1', deg.method= 'wilcox' , Log=TR
 
 expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2" ), label="correct time names")
 
-browser()
 
 expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["User.group.1"]][['clusters']]),
 			c("1","2","3","4","5",'6'), label = "geneClusters are part of the linearSelections" )
@@ -113,6 +112,7 @@ expt = list(
 expt[[x@outpath]] = 0
 collect[[x@outpath]] = 0
 
+browser()
 
 collect = checkFile(collect, ofile )
 
