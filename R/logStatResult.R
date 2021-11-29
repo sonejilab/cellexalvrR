@@ -50,16 +50,23 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		gname = gInfo@gname
 
 		if ( !is.na( match( paste(gname, "pseudoBulk"), names(x@groupSelectedFrom)))){
-			tableHTML = HTMLtable(gInfo,  
+			pseudoB_group = groupingInfo( x, paste(gname, "pseudoBulk") )
+			if ( ! empty(pseudoB_group@linarObj) ){
+				tab = table( pseudoB_group@linarObj@dat$col)
+			}else {
+				tab = table(pseudoB_group@grouping)
+			}
+			if ( ! empty(gInfo@linarObj) ){
+				tmp = gInfo@linarObj
+			}else {
+				tmp = gInfo
+			}
+			tableHTML = HTMLtable(tmp,  
 				list ( 
-					'pseudo bulk samples [n]' = table(groupingInfo( x, paste(gname, "pseudoBulk") )@grouping) 
+					'pseudo bulk samples [n]' = tab 
 				) )
 		}
 
-		if ( nrow(gInfo@linarObj@dat) > 0 ) {
-			tableHTML = HTMLtable(gInfo@linarObj)
-			gname = gInfo@gname
-		}
 		tableHTML = paste(tableHTML, "\n")
 		## this need to become a relative path - relative to the final outfile
 

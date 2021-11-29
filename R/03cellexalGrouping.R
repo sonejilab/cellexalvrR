@@ -19,25 +19,7 @@ setMethod('show', signature = c ('cellexalGrouping'),
 )
 
 
-#' @name pseudoBulk
-#' @docType methods
-#' @description mean collapses the data to contain an even amount of single cells per pseudo bulk sample
-#' @param object the cellexalGrouping
-#' @param cellexalObj the corresponding cellexal Object
-#' @param minSize the minimum size of a group (default 10 (cells))
-#' @param minBulks the minimal number of pseudo bulk samples (default 10)
-#' @param maxBulks the maximum number of pseudo bulk samples (default 500)
-#' @title show for a cellexalGrouping object
-#' @returns a cellexalvrR object where each cell represents a pseudo sample.
-#' @export
-
-
-setGeneric('pseudoBulk', ## Name
-	function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) { 
-		standardGeneric('pseudoBulk')
-	}
-)
-
+#' @rdname pseudoBulk
 setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {
 

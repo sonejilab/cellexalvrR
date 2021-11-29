@@ -41,6 +41,9 @@ if ( !file.exists(x@outpath)){
 x = reset(x)
 x@outpath = file.path(prefix,'data','output','timeLineTest' )
 
+if ( file.exists( file.path( x@outpath, 'timeSessionsubsets')  )){
+	unlink( file.path( x@outpath, 'timeSessionsubsets') , recursive=TRUE )
+}
 
 x = sessionPath( x, 'timeSessionsubsets')
 expect_true( x@usedObj$sessionName == 'timeSessionsubsets',  label='session path not set correctly')
@@ -97,6 +100,7 @@ collect = list(
 	'Time.group.2 TimeLine control' = 0,
 	'as group Time.group.2' = 0,
 	'Time.group.2.Linear.csv' = 0,
+	'Time.group.2.Linear.1.csv' = 0,
 	'Session Log for Session timeSessionsubsets' = 0,
 	'2D DRC DDRtree dim 2,3' = 0,
 	'href="https://www.genecards.org/cgi-bin/' = 0
@@ -104,15 +108,16 @@ collect = list(
 expt = list( 
 	'Time.group.2 TimeLine control' = 4, # one in the text and one in the TOC
 	'as group Time.group.2' = 2,
-	'Time.group.2.Linear.csv' = 2,
+	'Time.group.2.Linear.csv' = 1,
+	'Time.group.2.Linear.1.csv' = 1,
 	'Session Log for Session timeSessionsubsets' = 2, # one in the text and one in the TOC
-	'2D DRC DDRtree dim 2,3' = 8, # this figure is shown twice..
+	'2D DRC DDRtree dim 2,3' = 10, # this figure is shown twice..
 	'href="https://www.genecards.org/cgi-bin/' = 1000 # two 250 gene lists times two (heatmap and lexical order)
 )
 expt[[x@outpath]] = 0
 collect[[x@outpath]] = 0
 
-browser()
+#browser()
 
 collect = checkFile(collect, ofile )
 

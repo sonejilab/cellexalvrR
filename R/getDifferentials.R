@@ -124,7 +124,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
-				x  = createStats( cellexalLinear, x,  num.sig= num.sig )
+				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
 				ret = createReport(cellexalLinear, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
 					info = groupingInfo( x, info@gname ) 

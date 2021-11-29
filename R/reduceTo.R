@@ -91,6 +91,10 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								OK = match( colnames(x@data), names(x@groupSelectedFrom[[na]]@grouping))
 								x@groupSelectedFrom[[na]]@order = x@groupSelectedFrom[[na]]@order[OK]
 								x@groupSelectedFrom[[na]]@grouping = x@groupSelectedFrom[[na]]@grouping[OK]
+								if ( ! empty(x@groupSelectedFrom[[na]]@linarObj)  ){
+									x@groupSelectedFrom[[na]]@linarObj = 
+									   subset( x@groupSelectedFrom[[na]]@linarObj, colnames(x@data) )
+								}
 							}
 							
 						}

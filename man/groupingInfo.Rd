@@ -3,16 +3,13 @@
 \docType{methods}
 \name{groupingInfo}
 \alias{groupingInfo}
-\alias{groupingInfo,cellexalvrR,cellexalLinear-method}
-\alias{groupingInfo,cellexalvrR,cellexalGrouping-method}
+\alias{groupingInfo,cellexalvrR,list-method}
 \alias{groupingInfo,cellexalvrR,ANY-method}
 \title{get information on a sample grouping}
 \usage{
 groupingInfo(cellexalObj, gname = NULL)
 
-\S4method{groupingInfo}{cellexalvrR,cellexalLinear}(cellexalObj, gname = NULL)
-
-\S4method{groupingInfo}{cellexalvrR,cellexalGrouping}(cellexalObj, gname = NULL)
+\S4method{groupingInfo}{cellexalvrR,list}(cellexalObj, gname = NULL)
 
 \S4method{groupingInfo}{cellexalvrR,ANY}(cellexalObj, gname = NULL)
 }
@@ -30,4 +27,6 @@ returns the information stored for the last grouping read
 \details{
 groupingInfo collects all information about one grouping from 
 the cellexalvrR internals and returns them as a cellealGrouping object.
+This function can also return a list of groupings and can process both 
+cellexalLinear and cellexalGrouping classes as input. But not mixed stings and objects!
 }

@@ -3,11 +3,14 @@
 \docType{methods}
 \name{getLinearSelection}
 \alias{getLinearSelection}
+\alias{getLinearSelection,cellexalvrR,list-method}
 \alias{getLinearSelection,cellexalvrR,character-method}
 \alias{getLinearSelection,cellexalvrR,cellexalLinear-method}
 \title{get an existing linearSelection or throw an error}
 \usage{
 getLinearSelection(cellexalObj, name)
+
+\S4method{getLinearSelection}{cellexalvrR,list}(cellexalObj, name)
 
 \S4method{getLinearSelection}{cellexalvrR,character}(cellexalObj, name)
 

@@ -101,14 +101,19 @@ setMethod('renderReport', signature = c ('cellexalvrR'),
 
 	if ( OK ){
 
-		## get rid of all section html files
+		## get rid of all selection html files
 		expected_outfiles = expected_outfiles[grep ( expected_outfile, expected_outfiles)]
+
 		htmls <-  list.files( cellexalObj@outpath, full.names = TRUE, pattern='*.html')
 		mine = htmls[ grep(paste( sep="", '_',cellexalObj@usedObj$sessionName) , htmls )]
+
 		do.call(file.remove, list(mine))
 
 		zfile = paste(sep=".",paste(sep="_",'PortableLog',cellexalObj@usedObj$sessionName),'zip')
 		
+		#this works as the folder is kept VERY clean after each run.
+		expected_outfiles <-  list.files( cellexalObj@outpath, full.names = TRUE, pattern='*.html')
+
 		files = c(
 			sapply(expected_outfiles, basename), 
 			cellexalObj@usedObj$sessionName, 

@@ -92,9 +92,12 @@ expect = list(
 	"a href='./test/tables/Time.group.2.Linear.csv' download" = 1,
 	"a href='./test/tables/User.group.3.Cpp.csv' download" = 1,
 	"a href='./test/TimeSelection.Time.group.2.txt' download" = 1,
-	'Time.group.2' = 30,
+	'Time.group.2' = 31,
 	'User.group.3' = 13
 )
+
+#browser()
+#rbind(expect, collect)
 
 collect = checkFile( collect, file.path(path, "session-log-for-session-test.html") )
 

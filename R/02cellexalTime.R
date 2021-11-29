@@ -41,6 +41,24 @@ definition = function ( object ) {
 )
 
 
+#' @name empty
+#' @docType methods
+#' @description check if this object is empty
+#' @param object the cellexalLinear object
+#' @return true - is empty; false - contains data
+#' @title show the object contents
+#' @export empty
+setGeneric('empty', ## Name
+function ( object  ) { 
+	standardGeneric('empty')
+}
+)
+setMethod('empty', signature = c ('cellexalLinear'),
+definition = function ( object ) {
+	nrow(object@dat) == 0
+}
+)
+
 #' Method to copy a selection from cellexalObj to cellexalObj.
 #' This function makes sure that the linear grouping is fitting into the object.
 #' @name addSelection
@@ -561,7 +579,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 						cellexalObj = cellexalObj
 					), "\n\n")
  		}
-   		return (text);
+   		return ( paste(text, '\n', sep="") );
    	})))
 
 
@@ -744,11 +762,12 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 #' @param cellexalObj the object to get the data from
 #' @param num.sig the amountof genes to return as top genes (default 250)
 #' @param p.cut use a p value cut of instead of a number of significant genes
+#' @param bulkStats create bulk stats even if the total number of cells is below 1000?
 #' @title linear correlation between the pseudo time and the gene expression
 #' @export 
 #if ( ! isGeneric('createStats') ){
 setGeneric('createStats', ## Name
-function ( x, cellexalObj, num.sig=250, p.cut = NULL ) { 
+function ( x, cellexalObj, num.sig=250, p.cut = NULL, bulkStats=FALSE ) { 
 	standardGeneric('createStats')
 }
 )
@@ -756,13 +775,13 @@ function ( x, cellexalObj, num.sig=250, p.cut = NULL ) {
 
 #' @rdname createStats
 setMethod('createStats', signature = c ( 'character', 'cellexalvrR' ),
-	definition = function ( x, cellexalObj, num.sig=250, p.cut = NULL ) {
+	definition = function ( x, cellexalObj, num.sig=250, p.cut = NULL, bulkStats=FALSE ) {
 		createStats(x= getLinearSelection(cellexalObj, x ), cellexalObj=cellexalObj, num.sig=num.sig, p.cut=p.cut )
 })
 
 #' @rdname createStats
 setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
-	definition = function ( x, cellexalObj, num.sig=250, p.cut = NULL ) {
+	definition = function ( x, cellexalObj, num.sig=250, p.cut = NULL, bulkStats=FALSE ) {
 
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
 	# focus on our data only
@@ -794,6 +813,17 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		
 			colnames( bulk@data ) = cn
 			rownames( bulk@data ) = rn
+			cellexalObj@usedObj$pseudoBulk = TRUE
+			cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
+
+		}
+		else if ( bulkStats ) {
+			## oops with the new pseudo bulk stuff we might want to still collapse the data?!
+			bulk = pseudoBulk( x, cellexalObj, maxBulks = 1000 )
+			warning( "Too little data to run pseudo bulk analysis - forced collapse")
+			cellexalObj@usedObj$pseudoBulk = TRUE
+			cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
+
 		}
 		else {
 			warning( "Too little data to run pseudo bulk analysis")
@@ -806,7 +836,6 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 			ofile=file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ),
 			x@gname
 		)
-
 		m = match( colnames(bulk@data), rownames(x@dat))
 
 		ps = FastWilcoxTest::CorMatrix_N(  
@@ -815,8 +844,8 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 			bulk@data,
 			x@dat$time[m]
 			#1:ncol(loc@data)
-		) 
-		rownames(ps) = rownames(loc@data)
+		)
+		rownames(ps) = rownames(bulk@data)
 		addPval = function(dat){ 
 			if( dat[2] < 3){
 				1.1
@@ -1090,7 +1119,7 @@ definition = function (x, addCol=NULL) {
 				color,'"',
 				"></td><td>",
 				color,"</td><td>",
-				cellCount[match(color, dimnames(cellCount)[[1]])], "</td><td>",addCol[[1]][id],"</td></tr>"
+				cellCount[match(color, dimnames(cellCount)[[1]])], "</td><td>",addCol[[1]][color],"</td></tr>"
 					)
 				}))
 			, '</table> '
@@ -1441,6 +1470,83 @@ definition = function ( x, ofile, cellexalObj, color=NULL ) {
 })
 
 
+#' @name pseudoBulk
+#' @docType methods
+#' @description mean collapses the data to contain an even amount of single cells per pseudo bulk sample
+#' @param object the cellexalGrouping
+#' @param cellexalObj the corresponding cellexal Object
+#' @param minSize the minimum size of a group (default 10 (cells))
+#' @param minBulks the minimal number of pseudo bulk samples (default 10)
+#' @param maxBulks the maximum number of pseudo bulk samples (default 500)
+#' @title show for a cellexalGrouping object
+#' @returns a cellexalvrR object where each cell represents a pseudo sample.
+#' @export
+
+
+setGeneric('pseudoBulk', ## Name
+	function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) { 
+		standardGeneric('pseudoBulk')
+	}
+)
+
+setMethod('pseudoBulk', signature = c ('cellexalLinear'),
+	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {
+
+		tab = table( object@dat$col)
+		min_cells = min(tab)
+		toCells = minSize
+		if ( floor(min_cells/minSize) < minBulks ){
+			warning( "one group has very view cells - created less pseudo samples that wanted")
+			toCells = minSize
+			if ( floor(min_cells/toCells) < 2 ){
+				## that is really really too little cells here!
+				toCells = ceiling(min_cells/2)
+			}
+		}else if ( floor(max(tab)/minSize) > maxBulks ){
+			toCells = ceiling(max(tab)/maxBulks)
+			if ( floor(min_cells/toCells) < minBulks ){
+				toCells = floor(max(tab)/minBulks)
+				warning( paste("using more than",maxBulks,"max pseudo samples in a group"  ) )
+			}
+		}
+
+		toIDs = function(n) {
+			toGroups = floor(n / toCells)
+			if ( toGroups  == 0 ){
+				toGroups = 2
+			}
+			if ( is.na(toGroups)){
+				browser(text="toGroups is not defined!")
+			}
+			tryCatch( {
+				ids = rep( 1:toGroups, floor(n/toGroups))
+				},
+				error = function(err){ print(err); browser( text="in the try catch construct an error has occured")})
+			ids = rep( 1:toGroups, floor(n/toGroups))
+			ids = c( ids, sample( 1:toGroups, n%%toGroups))
+			ids = sort(ids)
+			ids
+		}
+
+		cellexalObj = reorderSamples ( cellexalObj, object@gname )
+		object = groupingInfo(cellexalObj, object@gname)@linarObj
+
+		ids =  toIDs(tab[1])
+		for (n in tab[-1]) {
+			ids = c( ids, toIDs(n) + max(ids))
+		}
+
+		# now I need to construct the pseudoBulk object...
+		PseudoBulk = reduceTo( cellexalObj, what='col', to= rownames(object@dat)[match(unique(ids), ids)])
+		#browser()
+		PseudoBulk@data = Matrix(FastWilcoxTest::collapse( cellexalObj@data[,rownames(object@dat)], ids, type=2 ), sparse=TRUE) ## mean expression
+
+		rownames(PseudoBulk@data) = rownames(cellexalObj@data)
+		colnames(PseudoBulk@data) = rownames(object@dat)[match(unique(ids), ids)]
+		invisible ( PseudoBulk )
+		
+	}
+)
 
 #' Subset a cellexalLinear object based on a list of cells.
 #'
