@@ -3,6 +3,11 @@ prefix = '.'
 opath = file.path(prefix, 'data','output', 'fileCleanup')
 
 ## now lets get a as simple session as possible:
+if ( ! file.exists(file.path(prefix, 'data','output') )){
+	dir.create( file.exists(file.path(prefix, 'data','output') ), recursive=TRUE)
+}
+
+cellexalObj = reset(cellexalObj)
 
 cellexalObj@outpath = opath
 
@@ -10,7 +15,8 @@ cellexalObj = sessionPath( cellexalObj, NULL) ## the way cellexalVR does it
 
 sessionA = cellexalObj@usedObj$sessionName
 
-expect_true( file.exists(file.path(opath,sessionA)) , label="session path reated")
+expect_true( file.exists(file.path(opath,sessionA)) , label="session path created")
+
 
 cellexalObj = renderReport( cellexalObj )
 

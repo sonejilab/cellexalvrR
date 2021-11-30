@@ -47,6 +47,9 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 
 		
 		tableHTML = HTMLtable(gInfo)
+		if ( ! empty(gInfo@linarObj) ){
+			tableHTML = HTMLtable(gInfo@linarObj)
+		}
 		gname = gInfo@gname
 
 		if ( !is.na( match( paste(gname, "pseudoBulk"), names(x@groupSelectedFrom)))){

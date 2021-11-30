@@ -571,7 +571,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 
  			text = paste( text, sep=" ", "\n\n#### Expression in", 
 					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
-					paste("![](",correctPath(groupCol, cellexalObj ),")"),
+					paste("![](",correctPath(groupCol, cellexalObj ),")\n"),
 					plotHeatmap_rmd( 
 						x=t(times[[i]]@geneClusters[[times[[i]]@gname]]$matrix[,genes]), 
 						color=color[i] ,

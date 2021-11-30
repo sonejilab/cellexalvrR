@@ -54,7 +54,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		n = sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'sessionCounter.R'
 
 		if (  class(timeInfo)[[1]] == 'cellexalGrouping'){
-			if ( nrow(timeInfo@linarObj@dat) > 0 ){
+			if ( ! empty(timeInfo@linarObj@dat) ){
 				timeInfo = timeInfo@linarObj
 			}
 		}
@@ -121,7 +121,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		content = paste( sep="\n",collapse="\n", content,
 			#paste(collapse = "\n", sep="\n",drcFiles2HTML(cellexalObj, info, "original selection")), #function definition in file 'drcPlot2D.R'
 			" ",
-			paste("![](",correctPath(groupCol, cellexalObj )),
+#			paste(sep="","![](",correctPath(groupCol, cellexalObj ), ")"),# this serves no point here
 			" ",
 			paste(collapse = "\n", sep="\n",drcFiles2HTMLlinear(cellexalObj, info, "time line")) #function definition in file 'drcPlot2Dtime.R'
 

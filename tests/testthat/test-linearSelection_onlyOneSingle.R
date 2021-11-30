@@ -35,13 +35,13 @@ x@usedObj$gene_clusters = 10
 
 x@outpath = file.path(prefix,'data','output','timeLineTest' )
 
-if ( file.exists(x@outpath ) ){
-	unlink( x@outpath ,recursive=TRUE)
-}
-dir.create( x@outpath )
 
 x = reset(x)
 x@outpath = file.path(prefix,'data','output','timeLineTest' )
+
+if ( file.exists( file.path(x@outpath, 'oneSingle' ) ) ){
+	unlink( file.path(x@outpath, 'oneSingle' ) ,recursive=TRUE)
+}
 
 x = sessionPath( x, 'oneSingle')
 
