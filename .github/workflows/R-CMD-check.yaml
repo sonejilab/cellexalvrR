@@ -26,7 +26,7 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
       - name: Check
-      - uses: docker://pandoc/core:2.9
+        uses: docker://pandoc/core:2.9
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
