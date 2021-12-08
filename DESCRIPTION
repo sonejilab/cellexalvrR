@@ -6,7 +6,8 @@ Authors@R: c(person("Stefan", "Lang", email = "stefan.lang@med.lu.se", role = c(
 Description: This is the data analysis backend for the CellexalVR application.
 Suggests:
     testthat,
-    Seurat
+    Seurat,
+
 biocViews:
     AnnotationDbi,
 	DelayedMatrixStats,
@@ -29,6 +30,7 @@ Imports:
 	gplots,
 	graph,
 	grDevices,
+	hdf5r,
 	irlba,
 	knitr,
 	Matrix.utils,
