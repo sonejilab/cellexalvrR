@@ -207,7 +207,15 @@ definition = function (x, cellexalObj=NULL) {
 		if ( ncol(x@geneClusters[['collapsedExp']] ) > 1000 ) {
 			warning("Linear selection collapsedExp too much data!")
 		}
-	}	
+	}
+	if ( identical(x@gname, character(0)) ){
+		if ( ! is.null(cellexalObj) ){
+			x@gname = cellexalObj@usedObj$lastGroup
+		}
+		else {
+			stop("The name of the timeline is missing!")
+		}
+	}
 	invisible(x)
 } )
 
@@ -786,7 +794,6 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
 	# focus on our data only
 	cellexalObj@usedObj$lastGroup = x@gname
-
 	if (  is.null(cellexalObj@usedObj$sigGeneLists$lin[[x@gname]])) {
 			## otherwise the stats have already been calculated and do not need to be re-run.
 		loc = reduceTo(cellexalObj, what='col', to=rownames(x@dat) )
@@ -959,7 +966,6 @@ definition = function ( x, parentSelection=NULL ) {
 		rownames= rownames[-bad]
 	}
 
-	
 	opt = optGroupCountKmeans( dat )
 	group = stats::kmeans( dat , opt )
 	dist_of_centers = NULL
@@ -1024,6 +1030,10 @@ definition = function ( x, parentSelection=NULL ) {
 			curves[[use]]$s[,3]
 		}
 	}
+	if ( ! is.null(parentSelection)){
+		x@gname = parentSelection@gname
+	}
+	#plotTime(checkTime(x))
 	checkTime(x) ## adds the color info
 }
 )

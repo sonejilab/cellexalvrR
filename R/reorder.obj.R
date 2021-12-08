@@ -23,10 +23,27 @@ setMethod('reorderSamples', signature = c ('cellexalvrR'),
 		if ( ncol( dataObj@data ) <= 1 ) {
 			invisible(dataObj)
 		}
+	ids = NULL
 	if (! is.na( match ( column, colnames(dataObj@meta.cell)) ) ) {
 		ids = order( dataObj@meta.cell[,column])
-	}else {
+	}else if (! is.na( match ( column, colnames(dataObj@userGroups)) ) ){
 		ids = order( dataObj@userGroups[,column])
+	}else if ( ! is.null(dataObj@usedObj$samples ) ){
+		## just copy that into the userGroups...
+		tmp = data.frame( factor(dataObj@usedObj$samples[,column]), 1:ncol(dataObj@data))
+		colnames(tmp) = c( column, paste(column, 'order'))
+		tmp[which(is.na(tmp[,1])), 2] = NA
+
+		if ( nrow( dataObj@userGroups) == 0){
+			dataObj@userGroups = tmp
+		}else {
+			dataObj@userGroups = cbind( dataObj@userGroups, tmp)
+		}
+		ids = order( dataObj@userGroups[,column])
+	}
+
+	if ( is.null(ids)) {
+		stop(paste("column", column, "neither round in meta.cells nor usergroups nor usedObj@samples tables")) 
 	}
 	dataObj@data <- dataObj@data[ , ids]
 	if ( ncol(dataObj@data) == nrow(dataObj@meta.cell) ) {
@@ -34,6 +51,9 @@ setMethod('reorderSamples', signature = c ('cellexalvrR'),
 	}
 	if ( ncol(dataObj@data) == nrow(dataObj@userGroups) ) {
 		dataObj@userGroups <- dataObj@userGroups[ids,]
+	}
+	if ( !is.null( dataObj@usedObj$samples) ) {
+		dataObj@usedObj$samples <- dataObj@usedObj$samples[ids,]
 	}
 	for ( n in names(dataObj@drc) ) {
 		#browser()
@@ -78,7 +98,7 @@ setMethod('reorderSamples', signature = c ('cellexalvrR'),
 		}
 	}
 	if ( !dataObj@usedObj$checkPassed ) {
-		if(interactive()) { browser() }
+		if(interactive()) { browser( text="check dataObj failed") }
 	}
 	invisible(dataObj)
 } )

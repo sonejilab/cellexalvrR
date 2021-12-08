@@ -96,9 +96,10 @@ expect = list(
 	'User.group.3' = 13
 )
 
-#browser()
-#rbind(expect, collect)
-
 collect = checkFile( collect, file.path(path, "session-log-for-session-test.html") )
+
+print(rbind(expect, collect))
+browser()
+
 
 expect_equal( collect, expect, label="html outfile contents")

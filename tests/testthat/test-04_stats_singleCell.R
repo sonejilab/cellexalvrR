@@ -66,3 +66,28 @@ for ( fn in names(search)[3:5]) {
 	expect_true(file.exists( file.path(x@outpath, fn) ), label=fn)
 }
 
+## stats data is in gene2@usedObj$sigGeneLists$Cpp$"User.group.1"
+## lets validate some
+
+## e.g. them: gene2@usedObj$deg.genes
+context('stat functions singleCells - rerun stats')
+
+toCheck = gene2@usedObj$sigGeneLists$Cpp$"User.group.1"[
+which(!is.na( 
+	match(gene2@usedObj$sigGeneLists$Cpp$"User.group.1"[,'gene'], gene2@usedObj$deg.genes)
+	)),
+]
+
+toCheck = toCheck[which(toCheck$p.value > 1e-16),] ## the intern wilcox test doe not get 'better' p values.
+
+checkThis = function(id){
+	cluster = toCheck[id,'cluster']
+	gene = gene2@data[toCheck[id,'gene'],]
+	A = which( gene2@userGroups[,'User.group.1'] == cluster )
+	Bbad = c( which( is.na ( gene2@userGroups[,'User.group.1'] )  ), A)
+	B = (1:nrow(gene2@data))[-Bbad]
+
+	expect_equal( toCheck[id,"p.value"], wilcox.test( gene[A], gene[B])$p.value, label=paste("Wilcox result gene", toCheck[id,"gene"]))
+}
+
+t = lapply( 1:nrow(toCheck), checkThis )

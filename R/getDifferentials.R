@@ -118,12 +118,16 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					message('defining time')
 					x = pseudotimeTest3D( x, grouping= info@gname )
 					info = groupingInfo( x, info@gname ) ## load changes
+					if ( empty( info@linarObj )){
+						info = groupingInfo( x, x@usedObj$lastGroup ) 
+					}
 					cellexalLinear = info@linarObj
 				}
 				else {
 					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
+
 				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
 				ret = createReport(cellexalLinear, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
@@ -143,11 +147,11 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					r = NULL
 					if ( length(OK) > 0 & length(BAD) >0){
 						#try({
-
 						r = as.data.frame(
 								FastWilcoxTest::StatTest(
 									Matrix::t( loc@data),
-										as.vector(OK), as.vector(BAD),
+										as.vector(BAD), as.vector(OK),
+#										as.vector(OK), as.vector(BAD),
 										logfc.threshold, minPct, onlyPos=onlyPos )
 						)
 						r= r[order( r[,'p.value']),]
@@ -162,11 +166,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					## here is where we need the pseudo bulk approach.
 					## sumething similar is implemented in the compactTime function
 					cellexalObj@usedObj$pseudoBulk = TRUE
+
+					loc = pseudoBulk ( info,  loc )
 					toGSEA( loc, 
 						ofile=file.path( loc@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ),
 						info@gname
 					)
-					loc = pseudoBulk ( info,  loc )
 					save( loc, file=file.path( x@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ) )
 					grp.vec = groupingInfo( loc, info@gname )@grouping
 					x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] = groupingInfo( loc, info@gname )

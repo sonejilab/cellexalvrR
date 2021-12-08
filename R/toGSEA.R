@@ -35,7 +35,7 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping
 		ofile = paste(sep=".", ofile, 'gct')
 		
 		loc = reduceTo( x, what = 'col', to=names( gname@grouping[which ( ! is.na( gname@grouping)) ] ) )
-		loc = pseudoBulk ( gname,  loc )
+		#loc = pseudoBulk ( gname,  loc )
 		
 		df = cbind( 'NAME'=rownames(loc@data), 'Description' = rep('NA', nrow(loc@data)), as.matrix(loc@data) )
 		gname =groupingInfo( loc, gname@gname )

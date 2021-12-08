@@ -69,11 +69,14 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 
 		# now I need to construct the pseudoBulk object...
 		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(object@grouping)[match(unique(ids), ids)])
-
+		PseudoBulk@usedObj$pseudoBulk_groupings = ids
+		names(PseudoBulk@usedObj$pseudoBulk_groupings) = colnames(cellexalObj@data)
+		
 		PseudoBulk@data = Matrix(FastWilcoxTest::collapse( cellexalObj@data, ids, type=2 ), sparse=TRUE) ## mean expression
 
 		rownames(PseudoBulk@data) = rownames(cellexalObj@data)
 		colnames(PseudoBulk@data) = names(object@grouping)[match(unique(ids), ids)]
+
 		invisible ( PseudoBulk )
 		
 	}
