@@ -125,7 +125,15 @@ checkThis = function(id){
 	A = which( loc@userGroups[,'User.group.1'] == cluster )
 	Bbad = c( which( is.na ( loc@userGroups[,'User.group.1'] )  ), A)
 	B = (1:ncol(loc@data))[-Bbad]
-	expect_equal( toCheck[id,"p.value"], wilcox.test( gene[A], gene[B])$p.value, label=paste("Wilcox result gene", toCheck[id,"gene"]))
+	p.value = wilcox.test( gene[A], gene[B], exact = FALSE )$p.value
+	expect_equal( 
+		toCheck[id,"p.value"], 
+		p.value, 
+		label=paste("Wilcox result gene", toCheck[id,"gene"]),
+		#tolerance= 0.01
+
+		)
+	p.value
 }
 
 
@@ -138,6 +146,7 @@ exp = gene2@usedObj$sigGeneLists$Cpp$"User.group.1"
 rownames(exp) = NULL
 expect_equal( stats, exp, label="stats table data as expected" )
 
-browser()
-#t = lapply( 1:nrow(toCheck), checkThis )
+t = unlist(lapply( 1:nrow(toCheck), checkThis ))
 
+#browser()
+#toCheck = cbind( toCheck, 'R stats' = t)
