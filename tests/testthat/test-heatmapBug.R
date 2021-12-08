@@ -98,8 +98,8 @@ expect = list(
 
 collect = checkFile( collect, file.path(path, "session-log-for-session-test.html") )
 
-print(rbind(expect, collect))
-browser()
+#print(rbind(expect, collect))
+#browser()
 
 
 expect_equal( collect, expect, label="html outfile contents")

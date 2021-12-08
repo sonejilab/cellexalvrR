@@ -1,3 +1,8 @@
+# 0.14.8
+
+Bug fix of the main stats function: CellexalvrR now identifies genes higher expressed in the group of interest and not vice versa. Plus additional log function (bug) fixes and more tests.
+
+
 # 0.14.7
 
 Statistics functions now by default create pseudo bulk samples before analyzing the data.
