@@ -20,6 +20,9 @@ if ( ! file.exists(x@outpath)){
 	dir.create(x@outpath)
 }
 
+if ( file.exists( file.path(x@outpath,'cellexalGroupTest')  )){
+	unlink( file.path(x@outpath,'cellexalGroupTest'), recursive=TRUE)
+}
 x = sessionPath( x, 'cellexalGroupTest' )
 
 grouping <- file.path(prefix, 'data/selection1.txt')
@@ -85,5 +88,8 @@ ofile = file.path( x@outpath, 'session-log-for-session-cellexalgrouptest.html')
 expect_true( file.exists( ofile), label = ofile)
 
 collect = checkFile(collect, ofile, '21321§"!3' ) ## not split the lines!
+
+#browser()
+#rbind(collect, expect)
 
 expect_equal( collect, expect, label="simple test of resulting HTML")

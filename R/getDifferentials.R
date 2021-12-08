@@ -17,6 +17,7 @@
 #' @param onlyPos select only genes showing an higher expression in the group (default =T)
 #' @param report4genes a list of genes you want to get a report on.
 #' @param text an optional additional text to show in the log
+#' @param bulkStats apply stats to pseudo bulk samples instead of cells? (default TRUE)
 #' @keywords DEGs
 #' @title main Statistics function for cellexalvrR
 #' @examples 
@@ -30,7 +31,7 @@
 setGeneric('getDifferentials', ## Name
 			function (x,cellidfile,
 					deg.method='wilcox',
-					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL ) { 
+					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) { 
 				standardGeneric('getDifferentials') 
 			}
 	) 
@@ -41,7 +42,7 @@ setGeneric('getDifferentials', ## Name
 setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 		definition = function (x,cellidfile,
 				deg.method='wilcox',
-				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL ) {
+				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
@@ -117,13 +118,17 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					message('defining time')
 					x = pseudotimeTest3D( x, grouping= info@gname )
 					info = groupingInfo( x, info@gname ) ## load changes
+					if ( empty( info@linarObj )){
+						info = groupingInfo( x, x@usedObj$lastGroup ) 
+					}
 					cellexalLinear = info@linarObj
 				}
 				else {
 					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
-				x  = createStats( cellexalLinear, x,  num.sig= num.sig )
+
+				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
 				ret = createReport(cellexalLinear, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
 					info = groupingInfo( x, info@gname ) 
@@ -143,7 +148,10 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					if ( length(OK) > 0 & length(BAD) >0){
 						#try({
 						r = as.data.frame(
-								FastWilcoxTest::StatTest( Matrix::t( loc@data), OK, BAD, 
+								FastWilcoxTest::StatTest(
+									Matrix::t( loc@data),
+										as.vector(BAD), as.vector(OK),
+#										as.vector(OK), as.vector(BAD),
 										logfc.threshold, minPct, onlyPos=onlyPos )
 						)
 						r= r[order( r[,'p.value']),]
@@ -153,11 +161,28 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					r
 				}
 				all_markers = NULL;
+				#tmp = loc
+				if ( bulkStats ){
+					## here is where we need the pseudo bulk approach.
+					## sumething similar is implemented in the compactTime function
+					cellexalObj@usedObj$pseudoBulk = TRUE
+
+					loc = pseudoBulk ( info,  loc )
+					toGSEA( loc, 
+						ofile=file.path( loc@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ),
+						info@gname
+					)
+					save( loc, file=file.path( x@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ) )
+					grp.vec = groupingInfo( loc, info@gname )@grouping
+					x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] = groupingInfo( loc, info@gname )
+				}
+				
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
 
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
+
 				try ( {
 					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
 					## And get additional info about the genes

@@ -7,11 +7,11 @@
 \alias{createStats,cellexalLinear,cellexalvrR-method}
 \title{linear correlation between the pseudo time and the gene expression}
 \usage{
-createStats(x, cellexalObj, num.sig = 250, p.cut = NULL)
+createStats(x, cellexalObj, num.sig = 250, p.cut = NULL, bulkStats = FALSE)
 
-\S4method{createStats}{character,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL)
+\S4method{createStats}{character,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL, bulkStats = FALSE)
 
-\S4method{createStats}{cellexalLinear,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL)
+\S4method{createStats}{cellexalLinear,cellexalvrR}(x, cellexalObj, num.sig = 250, p.cut = NULL, bulkStats = FALSE)
 }
 \arguments{
 \item{x}{the object}
@@ -21,6 +21,8 @@ createStats(x, cellexalObj, num.sig = 250, p.cut = NULL)
 \item{num.sig}{the amountof genes to return as top genes (default 250)}
 
 \item{p.cut}{use a p value cut of instead of a number of significant genes}
+
+\item{bulkStats}{create bulk stats even if the total number of cells is below 1000?}
 }
 \description{
 Create statistics for the linearSelection.

@@ -79,6 +79,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	print(p)
 	
 	grDevices::dev.off()
+
 	DRC2 = DRC3= NULL
 
 	if (  var( cellexalObj@drc[[gInfo@drc]][,3]) != 0 ) {
@@ -118,8 +119,7 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
 	x[,1] = as.numeric(x[,1])
 	x[,2] = as.numeric(x[,2])
 	x$col=  c(grey(.6),col)[as.numeric(x$id)]
-	
-	
+
 	p = ggplot2::ggplot(x, ggplot2::aes(x=x, y=y) ) + ggplot2::theme_classic()
 	p = p +   ggplot2::geom_point(color = x$col , show.legend = FALSE)
 
@@ -131,21 +131,35 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
     theta <- seq(pi/8, 2*pi, length.out=48)
     xo <- diff(range(pos[,1]))/1200
     yo <- diff(range(pos[,2]))/1200
+    xo1 <- diff(range(pos[,1]))/700
+    yo1 <- diff(range(pos[,2]))/700
     C1 = c(grey(.6),col)
     C2 = 'black'
+
+    df = t(data.frame(stringr::str_split( names(table( paste(x$id, x$col))), " ")))
+    df = df[order(df[,1]),]
+
     for(i in theta) {
-        p <- p + ggplot2::geom_text( data=data.frame(pos),
+    	p <- p + ggplot2::geom_text( data=data.frame(pos),
             ggplot2::aes_q(
-                x = bquote(pos[,1]+.(cos(i)*xo)),
-                y = bquote(pos[,2]+.(sin(i)*yo)),
-                label=sort(as.numeric(unique(x$id)))-1), 
-                    size=10, colour=C2 )
+                x = bquote(pos[,1]+.(cos(i)*xo1)),
+                y = bquote(pos[,2]+.(sin(i)*yo1)),
+                label=sort(as.numeric(unique(x$id)) -1 )), 
+                    size=10, colour="white" )
+        #p <- p + ggplot2::geom_text( data=data.frame(pos),
+        #    ggplot2::aes_q(
+        #        x = bquote(pos[,1]+.(cos(i)*xo)),
+        #        y = bquote(pos[,2]+.(sin(i)*yo)),
+        #        label=sort(as.numeric(unique(x$id)) )), 
+        #            size=10, colour=C2 )
+        
     }
     if ( length(C1) -1 == length(unique(x$id) ) ){
     	C1 = C1[-1]
     }
     p = p + ggplot2::annotate('text', x = pos[,1], y = pos[,2],
-     label = sort(as.numeric(unique(x$id))) -1, size = 10, col=C1[sort(as.numeric(unique(x$id)))] )  
+     #label = df[,1] , size = 10, col= colorspace::lighten(df[,2], amount=.3) )  
+     label = paste(as.numeric(df[,1] ) -1 ) , size = 10, col= 'black' )  
 	}
     p
 }  

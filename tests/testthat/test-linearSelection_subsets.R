@@ -41,15 +41,18 @@ if ( !file.exists(x@outpath)){
 x = reset(x)
 x@outpath = file.path(prefix,'data','output','timeLineTest' )
 
+if ( file.exists( file.path( x@outpath, 'timeSessionsubsets')  )){
+	unlink( file.path( x@outpath, 'timeSessionsubsets') , recursive=TRUE )
+}
 
-x = sessionPath( x, 'timeSession_subsets')
-expect_true( x@usedObj$sessionName == 'timeSession_subsets',  label='session path not set correctly')
+x = sessionPath( x, 'timeSessionsubsets')
+expect_true( x@usedObj$sessionName == 'timeSessionsubsets',  label='session path not set correctly')
 
-ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSession_subsets', 'AA_Start_paritalLog.Rmd' )
+ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSessionsubsets', 'AA_Start_paritalLog.Rmd' )
 expect_true( file.exists( ofile), label="start session optupt is missing")
 
 
-ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSession_subsets', 'AB_OneGroupTime_paritalLog.Rmd' )
+ofile = file.path( prefix, 'data','output','timeLineTest', 'timeSessionsubsets', 'AB_OneGroupTime_paritalLog.Rmd' )
 if ( file.exists( ofile) ) {
 	unlink( ofile )
 }
@@ -61,11 +64,13 @@ grouping <- file.path(prefix, 'data', gFile )
 
 ## I need the 3D vectors for the cells in e.g. group 1
 
+
 x = userGrouping( x, grouping)
 
 x = getDifferentials( x,cellidfile='User.group.1', deg.method= 'wilcox' , Log=TRUE)
 
 expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2" ), label="correct time names")
+
 
 expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["User.group.1"]][['clusters']]),
 			c("1","2","3","4","5",'6'), label = "geneClusters are part of the linearSelections" )
@@ -73,7 +78,6 @@ expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["U
 
 subset = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(1,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
 linearSubset = subset( x@usedObj$linearSelections[["lastEntry"]], subset)
-
 
 x = linearAnalysisSubset( linearSubset, x )
 
@@ -87,7 +91,7 @@ expect_equal(names(x@usedObj$linearSelections[["Time.group.3"]]@geneClusters[["T
 x= renderReport( x )
 
 ofile = file.path( prefix, 'data','output', 'timeLineTest', 
-	'session-log-for-session-timesession-subsets.html' )
+	'session-log-for-session-timesessionsubsets.html' )
 expect_true( file.exists( ofile), label= ofile )
 
 ## check the html file for duplicated entries (sections).
@@ -96,21 +100,24 @@ collect = list(
 	'Time.group.2 TimeLine control' = 0,
 	'as group Time.group.2' = 0,
 	'Time.group.2.Linear.csv' = 0,
-	'Session Log for Session timeSession_subsets' = 0,
+	'Time.group.2.Linear.1.csv' = 0,
+	'Session Log for Session timeSessionsubsets' = 0,
 	'2D DRC DDRtree dim 2,3' = 0,
 	'href="https://www.genecards.org/cgi-bin/' = 0
 )
 expt = list( 
 	'Time.group.2 TimeLine control' = 4, # one in the text and one in the TOC
 	'as group Time.group.2' = 2,
-	'Time.group.2.Linear.csv' = 2,
-	'Session Log for Session timeSession_subsets' = 2, # one in the text and one in the TOC
-	'2D DRC DDRtree dim 2,3' = 8, # this figure is shown twice..
+	'Time.group.2.Linear.csv' = 1,
+	'Time.group.2.Linear.1.csv' = 1,
+	'Session Log for Session timeSessionsubsets' = 2, # one in the text and one in the TOC
+	'2D DRC DDRtree dim 2,3' = 10, # this figure is shown twice..
 	'href="https://www.genecards.org/cgi-bin/' = 1000 # two 250 gene lists times two (heatmap and lexical order)
 )
 expt[[x@outpath]] = 0
 collect[[x@outpath]] = 0
 
+#browser()
 
 collect = checkFile(collect, ofile )
 

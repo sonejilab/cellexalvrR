@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stefan Lang" />
 
-<meta name="date" content="2021-09-16" />
+<meta name="date" content="2021-12-08" />
 
 <title>Linear selections in VR and beyond</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Linear selections in VR and beyond</h1>
 <h4 class="author">Stefan Lang</h4>
-<h4 class="date">2021-09-16</h4>
+<h4 class="date">2021-12-08</h4>
 
 
 
@@ -183,24 +183,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">userGrouping</span>( cellexalObj, selectionFile )</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">pseudotimeTest3D</span>(cellexalObj, <span class="at">grouping=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>lastGroup )</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( <span class="st">&quot;lastEntry&quot;</span> , cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>bossLinearSelection <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections[[<span class="st">&quot;lastEntry&quot;</span>]]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>(bossLinearSelection, cellexalObj, <span class="at">info =</span> bossLinearSelection)<span class="sc">$</span>cellexalObj</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in createStats(x = getLinearSelection(cellexalObj, x), cellexalObj =</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; cellexalObj, : Too little data to run pseudo bulk analysis</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in write.table(df, file = ofile, sep = &quot;\t&quot;, quote = F, row.names = F, :</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; appending column names to file</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Saving stats table as I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/tables/Time.group.2.Linear.csv&quot;</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">## the statistics table</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> ( <span class="fu">head</span>( cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>sigGeneLists<span class="sc">$</span>lin[[ cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>lastGroup ]] ))</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               cor   n         t      p.value</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Ybx1   -0.6707616 159 -11.33197 3.951966e-22</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Atpif1 -0.6655834 159 -11.17443 1.062379e-21</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Rpl41  -0.6621109 159 -11.07040 2.039468e-21</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Gatm   -0.6619455 158 -11.03019 2.814973e-21</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mt1    -0.6618513 159 -11.06268 2.140638e-21</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Npm1   -0.6527164 159 -10.79526 1.140915e-20</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>( cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>deg.genes)</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 250</span></span></code></pre></div>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>bossLinearSelection <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections[[<span class="st">&quot;lastEntry&quot;</span>]]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>(bossLinearSelection, cellexalObj, <span class="at">info =</span> bossLinearSelection)<span class="sc">$</span>cellexalObj</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;creating this filename for grouping Time.group.2 : I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/png/Time.group.2.groupColors.png&quot;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">## the statistics table</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span> ( <span class="fu">head</span>( cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>sigGeneLists<span class="sc">$</span>lin[[ cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>lastGroup ]] ))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               cor   n         t      p.value</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Ybx1   -0.6707616 159 -11.33197 3.951966e-22</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Atpif1 -0.6655834 159 -11.17443 1.062379e-21</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Rpl41  -0.6621109 159 -11.07040 2.039468e-21</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Gatm   -0.6619455 158 -11.03019 2.814973e-21</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mt1    -0.6618513 159 -11.06268 2.140638e-21</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Npm1   -0.6527164 159 -10.79526 1.140915e-20</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>( cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>deg.genes)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 250</span></span></code></pre></div>
 <p>You can get information about the existsing linear selections in a cellexalvrR object by printing the linearSelections slot entry.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>linearSelections</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $lastEntry</span></span>
@@ -241,21 +247,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="do">## run the analysis for the two partial linear selections</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSelection, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>deg.genes <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>deg.genes</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>( linearSubset1, cellexalObj, </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>     linearSubset1, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSubset2, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>(linearSubset2, cellexalObj, </span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>     linearSubset2, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="do">## and finally compare them</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">compareGeneClusters</span> ( linearSubset1<span class="sc">@</span>gname, linearSubset2<span class="sc">@</span>gname, </span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>     cellexalObj, <span class="at">altGroupNames=</span><span class="fu">c</span>(<span class="st">&quot;subset A&quot;</span>, <span class="st">&quot;subset B&quot;</span> ) </span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Saving stats table as I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/tables/Time.group.2.Linear.1.csv&quot;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>deg.genes <span class="ot">=</span> cellexalObj<span class="sc">@</span>usedObj<span class="sc">$</span>deg.genes</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>( linearSubset1, cellexalObj, </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>     linearSubset1, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in createStats(x, cellexalObj, num.sig = num.sig): Too little data to</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; run pseudo bulk analysis</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in write.table(df, file = ofile, sep = &quot;\t&quot;, quote = F, row.names = F, :</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; appending column names to file</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Saving stats table as I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/tables/Time.group.3.Linear.csv&quot;</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;creating this filename for grouping Time.group.3 : I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/png/Time.group.3.groupColors.png&quot;</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createStats</span>( linearSubset2, cellexalObj,  <span class="at">num.sig=</span> <span class="dv">250</span> )</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in createStats(linearSubset2, cellexalObj, num.sig = 250): Too little</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data to run pseudo bulk analysis</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in createStats(linearSubset2, cellexalObj, num.sig = 250): appending</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; column names to file</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Saving stats table as I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/tables/Time.group.4.Linear.csv&quot;</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">createReport</span>(linearSubset2, cellexalObj, </span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>     linearSubset2, <span class="at">deg.genes =</span> deg.genes )<span class="sc">$</span>cellexalObj</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;I am analyzing 250 deg.genes&quot;</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;creating this filename for grouping Time.group.4 : I:\\CellexalVR\\git\\cellexalvrR\\vignettes\\linearExample/png/Time.group.4.groupColors.png&quot;</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="do">## and finally compare them</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">compareGeneClusters</span> ( linearSubset1<span class="sc">@</span>gname, linearSubset2<span class="sc">@</span>gname, </span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>     cellexalObj, <span class="at">altGroupNames=</span><span class="fu">c</span>(<span class="st">&quot;subset A&quot;</span>, <span class="st">&quot;subset B&quot;</span> ) </span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>In the end the report has to be finalized:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cellexalObj <span class="ot">=</span> <span class="fu">renderReport</span>( cellexalObj)</span></code></pre></div>
 </div>

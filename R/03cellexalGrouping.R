@@ -19,6 +19,69 @@ setMethod('show', signature = c ('cellexalGrouping'),
 )
 
 
+#' @rdname pseudoBulk
+setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
+	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {
+
+		tab = table( object@grouping)
+		min_cells = min(tab)
+		toCells = minSize
+		if ( floor(min_cells/minSize) < minBulks ){
+			warning( "one group has very view cells - created less pseudo samples that wanted")
+			toCells = minSize
+			if ( floor(min_cells/toCells) < 2 ){
+				## that is really really too little cells here!
+				toCells = ceiling(min_cells/2)
+			}
+		}else if ( floor(max(tab)/minSize) > maxBulks ){
+			toCells = ceiling(max(tab)/maxBulks)
+			if ( floor(min_cells/toCells) < minBulks ){
+				toCells = floor(max(tab)/minBulks)
+				warning( paste("using more than",maxBulks,"max pseudo samples in a group"  ) )
+			}
+		}
+
+		toIDs = function(n) {
+			toGroups = floor(n / toCells)
+			if ( toGroups  == 0 ){
+				toGroups = 2
+			}
+			if ( is.na(toGroups)){
+				browser(text="toGroups is not defined!")
+			}
+			tryCatch( {
+				ids = rep( 1:toGroups, floor(n/toGroups))
+				},
+				error = function(err){ print(err); browser( text="in the try catch construct an error has occured")})
+			ids = rep( 1:toGroups, floor(n/toGroups))
+			ids = c( ids, sample( 1:toGroups, n%%toGroups))
+			ids = sort(ids)
+			ids
+		}
+
+		cellexalObj = reorderSamples ( cellexalObj, object@gname )
+		object = groupingInfo(cellexalObj, object@gname)
+
+		ids =  toIDs(tab[1])
+		for (n in tab[-1]) {
+			ids = c( ids, toIDs(n) + max(ids))
+		}
+
+		# now I need to construct the pseudoBulk object...
+		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(object@grouping)[match(unique(ids), ids)])
+		PseudoBulk@usedObj$pseudoBulk_groupings = ids
+		names(PseudoBulk@usedObj$pseudoBulk_groupings) = colnames(cellexalObj@data)
+		
+		PseudoBulk@data = Matrix(FastWilcoxTest::collapse( cellexalObj@data, ids, type=2 ), sparse=TRUE) ## mean expression
+
+		rownames(PseudoBulk@data) = rownames(cellexalObj@data)
+		colnames(PseudoBulk@data) = names(object@grouping)[match(unique(ids), ids)]
+
+		invisible ( PseudoBulk )
+		
+	}
+)
+
 #' @name exportSelection
 #' @docType methods
 #' @description Export this linear selection as CellexalVR selection file
@@ -31,14 +94,13 @@ setMethod('show', signature = c ('cellexalGrouping'),
 setMethod('exportSelection', signature = c ('cellexalGrouping'),
 	definition = function (x, fname) {
 
-	dat = x@dat[order(x@dat$time),]
-	d = cbind( rownames(dat), as.vector(dat$col), rep( x@drc , nrow(dat) ), as.numeric( dat$col )  )
+	d = cbind( names(x@grouping), x@col[as.vector(x@grouping)], rep( x@drc , length(x@grouping) ), as.vector(x@grouping)-1  )
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
 
-	f2 = paste( sep=".",fname,'points')
+#	f2 = paste( sep=".",fname,'points')
 
-	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
-	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
+#	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
+#	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
 
 	invisible(x)
 } )
@@ -72,21 +134,39 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 
 
 		if ( ! is.null(addCol) ){
+			#browser(text="This table is not OK - check why!")
 			tableLine = function(id ) {
 			OK = which( x@grouping == id)
-			paste(sep="",
+			## the not selected cells!
+			ret = NULL
+			if (id == 0){
+				ret = paste(sep="",
+				'<tr><td style="background-color:',
+				grey(.6),'"></td><td>',
+				grey(.6),"</td><td>",
+				length(OK),"</td><td>",
+				x@VRgrouping[OK[1]], "</td><td>",
+				id,"</td>", "<td>", addCol[[1]][id], "</td></tr>"
+				)
+			}
+			else {
+				id = as.numeric(id)
+				ret = paste(sep="",
 				'<tr><td style="background-color:',
 				x@col[id],'"></td><td>',
 				x@col[id],"</td><td>",
 				length(OK),"</td><td>",
 				x@VRgrouping[OK[1]], "</td><td>",
-				id,"</td>", "<td>", addCol[[x@col[id]]], "</td></tr>"
-			)
+				id,"</td>", "<td>", addCol[[1]][paste(id)], "</td></tr>"
+				)
+			}
+
+			return (ret)
 			}
 			ret = paste( sep="", collapse="",
 			"\n### group information table\n\n",
-			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th><th></th></tr>',
-			paste(sep="\n",collapse="\n",sapply( 1:length(x@col), tableLine) ),"</table>"
+			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th><th>',names(addCol)[1],'</th></tr>',
+			paste(sep="\n",collapse="\n",sapply( names(table(x@grouping)), tableLine) ),"</table>"
 			)
 		}
 		
@@ -192,6 +272,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 
    	for (id in names(table(x@grouping)) ){
    		tmp = reduceTo( cellexalObj, what='col', to=colnames(cellexalObj@data)[which(x@grouping == id)] )
+   		#browser(text= "check that the tmp has the correct data." )
    		tmp = getDifferentials( tmp, other@gname, 
    			text=paste( "Group",x@gname,"cluster",id,"analyzed for differential expression of grouping",other@gname ) )
    		genes = c( genes, tmp@usedObj$deg.genes)

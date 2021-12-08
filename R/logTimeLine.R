@@ -54,7 +54,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		n = sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'sessionCounter.R'
 
 		if (  class(timeInfo)[[1]] == 'cellexalGrouping'){
-			if ( nrow(timeInfo@linarObj@dat) > 0 ){
+			if ( ! empty(timeInfo@linarObj@dat) ){
 				timeInfo = timeInfo@linarObj
 			}
 		}
@@ -81,6 +81,9 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		if ( ! is.null(text) ){
 			content = paste( content, "<p>", text, "</p>", collapse="\n", sep="\n")
 		}
+		if ( ! is.null(cellexalObj@usedObj$pseudoBulk) ){
+			content = paste( content, "<p>The data has been analyzed using pseudo bulk samples (max 1000).</p>", collapse="\n", sep="\n")
+		}
 
 		
 		if ( file.exists( png[1] ) ) {
@@ -90,20 +93,22 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 			content = paste( collapse="\n", sep=" ", content,"",
 				paste( "\n\n### Linear selection plot showing mean expression of a set of genes (from R)\n\n"),
 				"",paste("![](",figureF,")") ,"",
-				"<p>In short: the genes are grouped by there expression pattern; 
-				the mean expression values of all genes in a group per cell are collected; 
+				"<p>In short: the genes are grouped by their expression pattern; 
+				the mean expression values of all genes in a group per cell are collected and 
 				the main expression trend is extrapolated using the loess R function and these smoothened values are plotted.</p>",
 				""
 				)
 		}
 		## genes should be a list
+		groupCol = paste( timeInfo@gname, 'groupColors','png', sep=".")
+		groupCol = file.path( cellexalObj@usedObj$sessionPath, 'png', groupCol )
 		
 		content = paste( collapse="\n", 
 			content, "", "\n\n### Detailed Gene Expression as heatmaps",
 			"\n\nThe scaling of the x axis is different from the previouse Linear selection plots.",
 			"They are scaled to the (arbitrary) pseudo time whereas here the heatmaps are showing each cell after the other.",
 			"Hence in these plots each time 'slot' has the same size if the grouping has not been modified later:","",
-			"",paste("![](",correctPath(timeInfo@geneClusters[[1]]$groupColors, cellexalObj ),")") ,""
+			"",paste("![](",correctPath(groupCol, cellexalObj ),")") ,""
 			) 
 		for ( i in 1:length(genes) ) {
 
@@ -115,6 +120,9 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 		}
 		content = paste( sep="\n",collapse="\n", content,
 			#paste(collapse = "\n", sep="\n",drcFiles2HTML(cellexalObj, info, "original selection")), #function definition in file 'drcPlot2D.R'
+			" ",
+#			paste(sep="","![](",correctPath(groupCol, cellexalObj ), ")"),# this serves no point here
+			" ",
 			paste(collapse = "\n", sep="\n",drcFiles2HTMLlinear(cellexalObj, info, "time line")) #function definition in file 'drcPlot2Dtime.R'
 
 			)

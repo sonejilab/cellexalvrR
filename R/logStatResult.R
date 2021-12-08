@@ -24,12 +24,18 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 	if (! is.null( x@usedObj$sessionName)) {
 
 		## export the data into a file and add a small download link into the report
-		ofile =   paste( x@usedObj$lastGroup,method,"csv", sep="."   )
-		if ( ! file.exists(file.path( x@usedObj$sessionPath,'tables') )) {
-			dir.create( file.path( x@usedObj$sessionPath,'tables') )
+		opath = file.path( x@usedObj$sessionPath,'tables')
+		if ( ! file.exists( opath )) {
+			dir.create( opath )
 		}
 
-		utils::write.table( data, file= file.path( x@usedObj$sessionPath,'tables',ofile) , quote=F, sep="," )
+		## get a unique file not overwriting old ones.
+		ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
+		print( paste( "Saving stats table as", file.path(opath,ofile)))
+		if ( colnames(data)[1] == 'cor' ){
+			data = cbind( 'Gene Name' = rownames(data), data )
+		}
+		utils::write.table( data, file= file.path(opath, ofile) , quote=F, sep=",", row.names=FALSE )
 
 		mainOfile = x@usedObj$sessionRmdFiles[1]
 
@@ -37,14 +43,33 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## the VR ids are R ID's -1 (!!) make that clearly visible.
 		## get the VR order:
 		gInfo = groupingInfo(x)
+
+
 		
 		tableHTML = HTMLtable(gInfo)
+		if ( ! empty(gInfo@linarObj) ){
+			tableHTML = HTMLtable(gInfo@linarObj)
+		}
 		gname = gInfo@gname
 
-		if ( nrow(gInfo@linarObj@dat) > 0 ) {
-			tableHTML = HTMLtable(gInfo@linarObj)
-			gname = gInfo@gname
+		if ( !is.na( match( paste(gname, "pseudoBulk"), names(x@groupSelectedFrom)))){
+			pseudoB_group = groupingInfo( x, paste(gname, "pseudoBulk") )
+			if ( ! empty(pseudoB_group@linarObj) ){
+				tab = table( pseudoB_group@linarObj@dat$col)
+			}else {
+				tab = table(pseudoB_group@grouping)
+			}
+			if ( ! empty(gInfo@linarObj) ){
+				tmp = gInfo@linarObj
+			}else {
+				tmp = gInfo
+			}
+			tableHTML = HTMLtable(tmp,  
+				list ( 
+					'pseudo bulk samples [n]' = tab 
+				) )
 		}
+
 		tableHTML = paste(tableHTML, "\n")
 		## this need to become a relative path - relative to the final outfile
 
@@ -55,6 +80,12 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				exportSelection( gInfo@linarObj, sesionFile )
 			}
 		}else {
+			if ( is.null(x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] )){
+				fname = file.path( x@outpath, x@usedObj$sessionName, paste(sep=".","selection", x@usedObj$lastGroup, "txt") )
+				fname = stringr::str_replace_all( fname, '\\s+', '_')
+				exportSelection( groupingInfo( x, x@usedObj$lastGroup), fname=fname )
+				x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] = fname
+			}
 			sesionFile = file.path( x@usedObj$sessionPath, basename( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] ) )
 			if ( ! file.exists( sesionFile )){
 				file.copy( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]], sesionFile)
@@ -64,6 +95,13 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		if ( is.null(text)){
 			text = ""
 		}
+
+		text = paste("\n", text, paste(
+			"The statistical test is based on psedo bulk samples,",
+			"not single cells as it has been shown that merging single",
+			"cells into pseudo bulk samples improves the gene expression varianze",
+			"which in turn increases the reliability of the statistical tests (<a href='https://www.nature.com/articles/s41467-021-25960-2#Sec10'>paper</a>).")
+		)
 
 		if ( length(grep('Time.group', x@usedObj$lastGroup)) > 0 ){
 			figures = drcFiles2HTMLlinear(x, gInfo, showIDs = FALSE )
@@ -82,21 +120,22 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				    "<a href='",file.path( ".", x@usedObj$sessionName, basename(sesionFile)),"' download>"," this selection file</a>", ".","\n"),
 				paste(collapse = "\n", sep="\n",figures)
 		)
-		## the 1-log10 p value histogram
-		## actually make this a volcano plot instead ...
+
+		## the -log10 p value histogram
 		if ( ! is.null(col) ){
 
-			ofile = file.path(x@usedObj$sessionName, 'png',paste( 'hist',x@usedObj$lastGroup,method,"png", sep="."   ) )
-			grDevices::png( file= file.path( x@outpath, ofile ), width=800, height=800)
+			opath = file.path( x@outpath, x@usedObj$sessionName, 'png' )
+			ofile = filename( c( 'hist',x@usedObj$lastGroup,method,"png"), opath )
+			grDevices::png( file= file.path(opath, ofile), width=800, height=800)
 			#browser()
-			dat = -log10(data[,col])
+			dat = -log10(as.numeric(data[,col]))
 			# should not be used here as we lack the < 1 fraction of the plot due to the VR requirements
 			#graphics::plot( data[,'logFC'], -log10(data[,'p.value']), main = paste( x@usedObj$sessionName, gname ), ylab='-log10(p.value)', xlab="logFC" )
-			graphics::hist( dat[which(!is.na(dat))], main = paste( x@usedObj$sessionName, gname )  )
+			graphics::hist( dat[which(!is.na(dat))], main = paste( x@usedObj$sessionName, gname ), xlab="-log10(pvalue)"  )
 			grDevices::dev.off()
 
 			content = c( content, paste( sep="\n",
-					paste("![](",ofile,")"),
+					paste("![](",file.path(x@usedObj$sessionName, 'png', ofile),")"),
 					"" ))
 		}
 		

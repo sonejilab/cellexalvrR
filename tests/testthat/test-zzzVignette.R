@@ -1,5 +1,7 @@
 context('re-create Vignettes')
 
+skip("Too time consuming call cellexalvrR::buildVignette() if needed")
+
 
 prefix = file.path(".","inst", "doc")
 savePath = file.path('.',"helperScripts","vignettes")

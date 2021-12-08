@@ -16,14 +16,34 @@ setGeneric('getLinearSelection', ## Name
 )
 #}
 
+#' @rdname getLinearSelection
+setMethod('getLinearSelection', signature = c ('cellexalvrR', 'list'),
+
+	definition = function ( cellexalObj, name ) {
+
+		toIt = function (d) { 
+			if (class(d) == "cellexalGrouping" ){
+				d@linarObj
+			}else{
+				d
+			}
+		}
+		unlist(lapply( name, doIt ))
+	}
+)
 
 #' @rdname getLinearSelection
 setMethod('getLinearSelection', signature = c ('cellexalvrR', 'character'),
 	definition = function ( cellexalObj, name ) {
 	
+	if ( length(name) > 1) {
+		ret = unlist( lapply( name, function(d){ cellexalObj@usedObj$linearSelections[[d]] }))
+		return (ret)
+	}
 	if ( is.null( cellexalObj@usedObj$linearSelections[[name]])){
 		stop( paste("The linearSelection",name,"could not be found in this cellexal object" ) )	
 	}
+
 	cellexalObj@usedObj$linearSelections[[name]]
 	})
 

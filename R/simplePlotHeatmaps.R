@@ -95,10 +95,25 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		smoothedClusters[[ gn ]] = smoothedClusters[[ gn ]][which(! is.na(smoothedClusters[[ gn ]]))]
 	}
 	## could I use this here to create a heatmap with the cluster info
-	grDevices::png(  paste(fname, "groupColors", 'png',sep="."), width=1000, height=300)
-	graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
-	grDevices::dev.off()
-
+	## if this is also a timeline - change the name to the time name - otherwise the log can not find the correct files!
+	legName = file.path(path, paste(info@gname, "groupColors", 'png',sep="."))
+	if (  class(info@linarObj) == 'cellexalLinear' ) {
+		legName = file.path(path, paste(info@linarObj@gname, "groupColors", 'png',sep="."))
+	}
+	tryCatch(
+	{
+		print ( paste( "creating this filename for grouping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
+		grDevices::png(  legName, width=1000, height=200)
+		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
+		grDevices::dev.off()
+	}, 
+	error =function (err) { 
+		grDevices::dev.off() 
+		grDevices::png(  legName, width=1000, height=200)
+		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
+		grDevices::dev.off()
+	} 
+	)
 	for( i in 1:(length(gr)-2)  ) {
 		genes = names(gr$geneClusters)[which( gr$geneClusters == i)]
 		if ( length(which(is.na( match( genes, colnames(toPlot)) ))) > 0){
@@ -185,6 +200,7 @@ setMethod('clusterGenes', signature = c ('cellexalLinear'),
 setMethod('clusterGenes', signature = c ('matrix'),
 	definition = function ( x, deg.genes=NULL, info=NULL, cellexalObj=NULL, geneclusters=NULL ) {
 
+		#geneclusters = 15 ## define it like cellexalObj@usedObj$gene_clusters = 15
 		message("Clustering genes based on pca and kmeans")
 		pca = irlba::prcomp_irlba ( x, center=T, n=3 )$x
 
@@ -233,11 +249,10 @@ setMethod('clusterGenes', signature = c ('matrix'),
 		geneTrajectories = list(MaxInCluster = list())
 		
 		if ( ! is.null(info@linarObj ) ) {
-			cT = collapseTime( info@linarObj )
-			m = match( colnames(x), rownames(cT@dat))
-			if ( length(is.na(m)) == 1000 ) {
-				colnames(x) = rownames(cT@dat)
-				m = match( colnames(x), rownames(cT@dat))
+
+			cT = collapseTime( info@linarObj, to =ncol(x) )
+			if ( ncol(x) == nrow(cT@dat)){
+				colnames(x) = rownames(cT@dat) ## best guess as both data sets have been collapsed. Naming might be slightly different.
 			}
 
 			defaultW <- getOption("warn")
@@ -249,18 +264,24 @@ setMethod('clusterGenes', signature = c ('matrix'),
 				#print(i)
 
 				geneTrajectories[[groupname]] = tryCatch( { 
-					stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[m,'time'], span=.005) )
+					stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=.005) )
 				}, error=function(err){ 
 					message("loess failed with span .005")
 					} )
 				
 				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
 					geneTrajectories[[groupname]] = tryCatch({
-						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[m,'time'], span=.2) )
+						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=.2) )
 						}, error=function(err){message("loess failed with span .2") })	
 				}
 
-				inClusters = sapply( split( geneTrajectories[[groupname]], cT@dat$col[m]), max, na.rm=T )
+				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
+					geneTrajectories[[groupname]] = tryCatch({
+						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=1) )
+						}, error=function(err){message("loess failed with span .2") })	
+				}
+
+				inClusters = sapply( split( geneTrajectories[[groupname]], cT@dat$col), max, na.rm=T )
 
 				geneTrajectories[['MaxInCluster']][[groupname]] = 
 					c( which( inClusters ==max(inClusters)[1]), max(inClusters)[1] )

@@ -54,6 +54,10 @@ For the sake of this vignette we set the OutPath to the CellexalVR Data path so 
 OutPath = "i:/CellexalVR/CellexalVR_0.14.0_build/Data/"
 ## I have downloaded the data files into the R tempPath
 InPath = tempdir()
+## but to make this reproducable I'll pput the outfiles also into the tempdir
+OutPath = file.path( InPath, 'Data' )
+dir.create( OutPath )
+
 ```
 
 ```{r, include=FALSE, eval=T}

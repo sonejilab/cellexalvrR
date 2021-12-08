@@ -401,6 +401,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 
 				## now lets double check the factors
 				## x[[slotName]][['__categories']][[id]][]
+				try({
 				if ( ! is.na( match ('__categories', names(x[[slotName]] )) ) ){
 
 				for (catName in names(x[[slotName]][['__categories']]) ) {
@@ -419,7 +420,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 					}
 				}
 				}
-				
+				})
 				rownames(obs) =  make.names ( #function definition in file 'as_cellexalvrR.R'
 						as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
 			}
