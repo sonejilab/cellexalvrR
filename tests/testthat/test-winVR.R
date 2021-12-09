@@ -151,7 +151,9 @@ li = list()
 for (x in list.files(file.path(tmpDir, 'testSession')) ){ li[[x]] =1}
 
 for( f in files ){
-	expect_true( li[[f]] == 1, label=paste("expected file", f))
+	if ( ! expect_true( li[[f]] == 1, label=paste("expected file", f)) ){
+		print ( list.files(file.path(tmpDir, 'testSession')) )
+	}
 }
 
 
