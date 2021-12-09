@@ -5,6 +5,7 @@
 \alias{compareGeneClusters}
 \alias{compareGeneClusters,character,character,cellexalvrR-method}
 \alias{compareGeneClusters,cellexalLinear,cellexalLinear,cellexalvrR-method}
+\alias{compareGeneClusters,cellexalLinear,list,cellexalvrR-method}
 \alias{compareGeneClusters,cellexalGrouping,cellexalGrouping,cellexalvrR-method}
 \title{compare two cellexalLinear objects (interactive mode only)}
 \usage{
@@ -27,6 +28,24 @@ compareGeneClusters(
 )
 
 \S4method{compareGeneClusters}{cellexalLinear,cellexalLinear,cellexalvrR}(
+  x,
+  other,
+  cellexalObj,
+  altGroupNames = NULL,
+  color = NULL,
+  GOIs = NULL
+)
+
+\S4method{compareGeneClusters}{cellexalLinear,list,cellexalvrR}(
+  x,
+  other,
+  cellexalObj,
+  altGroupNames = NULL,
+  color = NULL,
+  GOIs = NULL
+)
+
+\S4method{compareGeneClusters}{cellexalLinear,list,cellexalvrR}(
   x,
   other,
   cellexalObj,

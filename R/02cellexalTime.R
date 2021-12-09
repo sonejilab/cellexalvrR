@@ -426,13 +426,14 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
 })
 
+#' @rdname compareGeneClusters
 setMethod('compareGeneClusters', signature = c ('cellexalLinear', 'list', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
 	compareGeneClusters( x=x@gname, other=c(getLinearSelection(cellexalObj, other)),
 		cellexalObj=cellexalObj, altGroupNames=altGroupNames, color=color )
 })
 
-
+#' @rdname compareGeneClusters
 setMethod('compareGeneClusters', signature = c ('cellexalLinear', 'list', 'cellexalvrR' ),
 definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GOIs=NULL ) {
 	

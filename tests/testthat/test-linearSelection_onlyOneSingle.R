@@ -2,6 +2,10 @@ context('linearSelection - only one')
 
 #skip('not stable enough')
 
+if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
+	skip ( "Pandoc needed - but missing here")
+}
+
 prefix = './'
 
 #genes <- file.path(prefix, 'data/heatmap_0.txt')

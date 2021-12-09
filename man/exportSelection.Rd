@@ -4,6 +4,7 @@
 \name{exportSelection}
 \alias{exportSelection}
 \alias{exportSelection,cellexalLinear-method}
+\alias{exportSelection,cellexalGrouping-method}
 \title{export a cellexalLinear object for CellexalVR}
 \usage{
 exportSelection(x, fname)
@@ -18,7 +19,5 @@ exportSelection(x, fname)
 \item{fname}{the file to write the info to}
 }
 \description{
-Export this linear selection as CellexalVR selection file
-
 Export this linear selection as CellexalVR selection file
 }

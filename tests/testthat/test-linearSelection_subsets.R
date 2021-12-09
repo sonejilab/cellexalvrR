@@ -1,5 +1,8 @@
 context('linearSelection - subsets')
 
+if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
+	skip ( "Pandoc needed - but missing here")
+}
 #skip('not stable enough')
 
 #prefix = 'tests/testthat'

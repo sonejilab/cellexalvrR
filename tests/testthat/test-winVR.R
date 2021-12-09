@@ -1,5 +1,9 @@
 context('server VR interface')
 
+if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
+	skip ( "Pandoc needed - but missing here")
+}
+
 skip("the only test that keeps the github actions from working?")
 if ( .Platform$OS.type != 'windows' ) {
 	skip('More in detail test for linux available')

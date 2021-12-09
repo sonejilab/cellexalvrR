@@ -1,5 +1,10 @@
 context('create sessionPath')
 
+
+if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
+	skip ( "Pandoc needed - but missing here")
+}
+
 prefix = './'
 #prefix = 'tests/testthat'
 

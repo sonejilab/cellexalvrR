@@ -82,13 +82,6 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 	}
 )
 
-#' @name exportSelection
-#' @docType methods
-#' @description Export this linear selection as CellexalVR selection file
-#' @param x the object
-#' @param fname the file to write the info to
-#' @title export a cellexalLinear object for CellexalVR
-#' @export 
 
 #' @rdname exportSelection
 setMethod('exportSelection', signature = c ('cellexalGrouping'),

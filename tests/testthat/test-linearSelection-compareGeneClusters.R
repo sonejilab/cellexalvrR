@@ -1,5 +1,8 @@
 context('linearSelection-compareGeneClusters')
 
+if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
+  skip ( "Pandoc needed - but missing here")
+}
 
 ## This is a little more complictaed here.
 ## What the function expects two reported linearSelections (including gene clusters)
