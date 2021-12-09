@@ -140,26 +140,22 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 			## the not selected cells!
 			ret = NULL
 			if (id == 0){
-				ret = paste(sep="",
-				'<tr><td style="background-color:',
-				grey(.6),'"></td><td>',
-				grey(.6),"</td><td>",
-				length(OK),"</td><td>",
-				x@VRgrouping[OK[1]], "</td><td>",
-				id,"</td>", "<td>", addCol[[1]][id], "</td></tr>"
-				)
+				addvalue = addCol[[1]][id]
+				col = grey(.6)
 			}
 			else {
 				id = as.numeric(id)
-				ret = paste(sep="",
+				addvalue = addCol[[1]][paste(id)]
+				col = x@col[id]
+			}
+			ret = paste(sep="",
 				'<tr><td style="background-color:',
-				x@col[id],'"></td><td>',
-				x@col[id],"</td><td>",
+				col,'"></td><td>',
+				col,"</td><td>",
 				length(OK),"</td><td>",
 				x@VRgrouping[OK[1]], "</td><td>",
-				id,"</td>", "<td>", addCol[[1]][paste(id)], "</td></tr>"
-				)
-			}
+				id,"</td>", "<td>", addvalue, "</td></tr>"
+			)
 
 			return (ret)
 			}

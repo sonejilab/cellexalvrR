@@ -59,7 +59,6 @@ setMethod("logNetworkStats", signature = c("cellexalvrR"),
 
     ## to make this data usable I need to plot the tables into single clusters.
     ## Otherwise it is quite complictaed t use this data in e.g. cytoscape.
-
     ## the networks file should be here:
     if ( ! file.exists(file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"Networks.nwk"))) ){
         message("The Networks.nwk file is missing!")
@@ -68,13 +67,15 @@ setMethod("logNetworkStats", signature = c("cellexalvrR"),
     dat = read.delim( file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"Networks.nwk")) )
     res = lapply ( unique(dat[,7]), function(id) { dat[which(dat[,7] == id),] })
     names(res) = unique(dat[,7])
+
     for ( i in 1:length(res)) {
         fname = file.path( cellexalObj@usedObj$sessionPath, paste(sep="", Add,"_",i,"_", "Networks.nwk"))
         write.table( res[[i]], file= fname, sep="\t", quote=F, row.names=F)
         res[[i]] = paste(sep="", "<a href='./", file.path( cellexalObj@usedObj$sessionName, basename( fname) ),
             "' download>Network File</a>")
     }
-
+    res = list('download network' = as.vector(unlist(res)))
+    names(res[[1]]) = 1:length(res[[1]])
 
 
     content = paste(sep="",

@@ -32,7 +32,9 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'character'),
 #' @rdname toGSEA
 setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping'),
 	definition = function (x, ofile, gname ) {
-		ofile = paste(sep=".", ofile, 'gct')
+
+		ofile=stringr::str_replace_all( ofile, '..RData', '')
+		ofile = file.path( dirname(ofile), filename( c(  basename(ofile), "gct" ), dirname(ofile) ))
 		
 		loc = reduceTo( x, what = 'col', to=names( gname@grouping[which ( ! is.na( gname@grouping)) ] ) )
 		#loc = pseudoBulk ( gname,  loc )

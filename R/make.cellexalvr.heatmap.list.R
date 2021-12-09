@@ -29,6 +29,9 @@ setGeneric('make.cellexalvr.heatmap.list', ## Name
 setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 		definition = function (cvrObj,cellidfile,num.sig,outfile, stats_method='wilcox') {
 
+			if ( ! file.exists( dirname( outfile ))){## did happen in the winVR test script
+				dir.create( dirname( outfile ), recursive=TRUE)
+			}
 
 			if ( file.exists( paste(sep=".", outfile, 'sqlite3')) ){
 				unlink( paste(sep=".", outfile, 'sqlite3') )
