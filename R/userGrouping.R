@@ -181,6 +181,20 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		gname = cellidfile
 		names(ginfo@grouping) = rownames(cellexalObj@userGroups)
 	}
+	else if( ! is.null(cellexalObj@usedObj$samples) && 
+		!is.na( match(cellidfile,colnames(cellexalObj@usedObj$samples) ) ) ){
+		## use one of the orig cell info
+		df = data.frame( cellexalObj@usedObj$samples[, cellidfile])
+		colnames(df) = cellidfile
+		cellexalObj@usedObj$samples[, paste(cellidfile, 'order') ] = 1:nrow(df)
+		if ( ncol(cellexalObj@userGroups) == 0 ){
+			cellexalObj@userGroups = df
+		}else {
+			cellexalObj@userGroups = cbind( cellexalObj@userGroups, df )
+		}
+		ginfo = groupingInfo( cellexalObj, cellidfile )
+		cellexalObj@groupSelectedFrom[[cellidfile]] = ginfo
+	}
 	else {
 		stop( paste("Cannot process the request for grouping",cellidfile,"\nIt is neither a file nor a known user grouping name\n" ) )
 	}
