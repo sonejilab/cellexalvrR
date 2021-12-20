@@ -102,11 +102,22 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			"cells into pseudo bulk samples improves the gene expression varianze",
 			"which in turn increases the reliability of the statistical tests (<a href='https://www.nature.com/articles/s41467-021-25960-2#Sec10'>paper</a>).")
 		)
+		figures   = NULL
+		figures2 = NULL
 
 		if ( length(grep('Time.group', x@usedObj$lastGroup)) > 0 ){
 			figures = drcFiles2HTMLlinear(x, gInfo, showIDs = FALSE )
 		}else {
 			figures = drcFiles2HTML(x, gInfo, showIDs = TRUE )
+		}
+		if ( length( gInfo@drc) > 1 ){
+			## I do not support more than two here to ignore if it is more
+			gInfo@drc = c( gInfo@drc[2], gInfo@drc[1])
+			if ( length(grep('Time.group', x@usedObj$lastGroup)) > 0 ){
+				figures2 = drcFiles2HTMLlinear(x, gInfo, showIDs = FALSE )
+			}else {
+				figures2 = drcFiles2HTML(x, gInfo, showIDs = TRUE )
+			}
 		}
 
 		content=paste( sep="\n", collapse = "\n",
@@ -118,8 +129,42 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				paste(sep="",  "<a href='",file.path( ".", x@usedObj$sessionName, 'tables',ofile),"' download>","This tab separated table </a>",
 					" contains the statistical results for ",
 				    "<a href='",file.path( ".", x@usedObj$sessionName, basename(sesionFile)),"' download>"," this selection file</a>", ".","\n"),
-				paste(collapse = "\n", sep="\n",figures)
+				""
 		)
+		if ( is.null(figures2) ) { #default
+			content=paste( sep="\n", collapse = "\n", 
+				content,
+				paste(collapse = "\n", sep="\n",figures)
+			)
+		}
+		else {
+			figures = stringr::str_replace_all( figures, '###', '')
+			figures2 = stringr::str_replace_all( figures2, '###', '')
+			## remember drc names have been flipped
+			content=paste( sep="\n", collapse = "\n", 
+				content,
+				paste( sep="",
+					"<table><tr><th>drc dimensions [x,y]</th><th>", gInfo@drc[2],"</th><th>", gInfo@drc[1],"</th></tr>\n",
+					"<tr><td> 1,2 </td><td>",figures[3],"</td><td>",figures2[3],"</td></tr>"
+					)
+			)
+			if ( length(figures) + length(figures2) > 2 ) {
+				content=paste( sep="\n", collapse = "\n", 
+				content,
+				paste( sep="",
+					"<tr><td> 1,3 </td><td>",figures[7],"</td><td>",figures2[7],"</td></tr>\n",
+					"<tr><td> 2,3 </td><td>",figures[11],"</td><td>",figures2[11],"</td></tr>\n",
+					"</table>\n"
+					)
+				)
+			}
+			else {
+				content=paste( sep="\n", collapse = "\n", 
+					content, "</table>\n"
+				)
+			}
+		}
+
 
 		## the -log10 p value histogram
 		if ( ! is.null(col) ){

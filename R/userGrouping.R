@@ -102,12 +102,27 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		for ( i in 1:length(colR)) {
 			colVR[colorIDs[i]] = as.character(colR[i])
 		}
+		## look into the drs - do all cells come from one single drc?
+		drc = unique(as.vector(cellid[,3]))
+		realDRC = drc
+		for ( name in realDRC ){## could already be more
+			m = match(cellid[,1], rownames( cellexalObj@drc[[name]]) )
+			if ( length(which(is.na(m))) > 0 ){## lets hope they have been selected from a different drc ;-)
+				badIDs = which(is.na(m))
+				badCells = cellid[badIDs,1]
+				matches = unlist(lapply( cellexalObj@drc, function(x) { length(which(!is.na(match(badCells, rownames(x) ))))} ) )
+				goodDRC = names(cellexalObj@drc)[which(matches == max(matches))[1]]
+				drc = c(drc, goodDRC)
+			}
+		}
+		drc = unique( drc )
+
 		ginfo = new( 'cellexalGrouping',
 			gname = gname,
 			selectionFile= basename( cellidfile ),
 			grouping = cellexalObj@userGroups[,gname] ,
 			order = as.integer(order),
-			'drc' = unique(as.vector(cellid[,3])),
+			'drc' = drc,
 			col = colVR
 		)
 		names(ginfo@grouping) = rownames(cellexalObj@userGroups)

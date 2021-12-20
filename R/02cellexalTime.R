@@ -119,11 +119,11 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
 
-	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc]]) )
+	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
 
 	t1 = as.matrix(x@dat[,c('a','b','c')])
 
-	t2 = as.matrix(cellexalObj@drc[[x@drc]][m,1:3])
+	t2 = as.matrix(cellexalObj@drc[[x@drc[1]]][m,1:3])
 
 	colnames(t1) = colnames(t2)
 	#rownames(t1) = rownames(t2)
@@ -225,19 +225,19 @@ setMethod('checkTime', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function (x, cellexalObj=NULL) {
 
 	error = NULL
-	if ( is.null(cellexalObj@drc[[x@drc]])){
+	if ( is.null(cellexalObj@drc[[x@drc[1]]])){
 		error = c( error, paste( sep="",
-			"The basis drc for this linearSelection (", cellexalObj@drc,
+			"The basis drc for this linearSelection (", paste(names(cellexalObj@drc)),
 			") is not part of this cellexal object" ))
 	}else {
 		mine = x@dat[,c('a','b','c')]
 		ids = NULL
-		if ( !is.null(rownames(cellexalObj@drc[[x@drc]])) ){
-			ids = match(rownames(x@dat), rownames(cellexalObj@drc[[x@drc]]) )
+		if ( !is.null(rownames(cellexalObj@drc[[x@drc[1]]])) ){
+			ids = match(rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
 		}else {
 			ids = match(rownames(x@dat), colnames(cellexalObj@data) )
 		}
-		other = cellexalObj@drc[[x@drc]][ids,1:3]
+		other = cellexalObj@drc[[x@drc[1]]][ids,1:3]
 
 		if ( class(other)[1] == 'numeric'){
 			other = data.frame (matrix( other, ncol=3))
@@ -1062,7 +1062,7 @@ setMethod('exportSelection', signature = c ('cellexalLinear'),
 	definition = function (x, fname) {
 
 	dat = x@dat[order(x@dat$time),]
-	d = cbind( rownames(dat), as.vector(dat$col), rep( x@drc , nrow(dat) ), as.numeric( dat$col )  )
+	d = cbind( rownames(dat), as.vector(dat$col), rep( x@drc[1] , nrow(dat) ), as.numeric( dat$col )  )
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
 
 	f2 = paste( sep=".",fname,'points')

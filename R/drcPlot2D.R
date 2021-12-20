@@ -45,64 +45,65 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
 	}
 
+	na = names( gInfo@grouping )
 	gInfo@grouping = as.numeric( gInfo@grouping )
-
-	## there is a possibilty that the cells have been selected from different drc models.
-	## This is only recoverable if there is a drc that contains all cells.
-	if ( length( gInfo@drc) > 1 ){
-		all = colnames(cellexalObj@data)[which(!is.na(gInfo@grouping))]
-		OK = sapply ( cellexalObj@drc, function(drc){ length(which(! is.na( match( all, rownames(drc))))) } )
-		gInfo@drc = names(OK) [ which( OK  == max(OK))]
-	} 
+	names(gInfo@grouping) = na
 
 	gInfo@grouping[ which(is.na(gInfo@grouping))] = 0
 
 	#gInfo@grouping = as.numeric(as.factor(gInfo@grouping))
-	if ( ! gInfo@drc %in% names(cellexalObj@drc) ){
-		stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc, "not in list", paste( collapse=", ", names(cellexalObj@drc))))
+	if ( ! gInfo@drc[1] %in% names(cellexalObj@drc) ){
+		stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc[1], "not in list", paste( collapse=", ", names(cellexalObj@drc))))
 	}
 
 	#x@usedObj$samples[,group] = factor( x@usedObj$samples[,group] )
 
     #options(repr.plot.width=24, repr.plot.height=24)
     gr = factor(gInfo@grouping+1)
+    names(gr) = na
 
-    if ( length(cellexalObj@drc[[gInfo@drc]][,1]) != length(gr) ){
-    	OK = match( rownames(cellexalObj@drc[[gInfo@drc]]), colnames(cellexalObj@data))
-    	gr = gr[OK]
+    if ( length(cellexalObj@drc[[gInfo@drc[1]]][,1]) != length(gr) ){
+    	OK = match( names(gr), colnames(cellexalObj@data))
+    	gr = gr[OK[which(!is.na(OK))]]
     }
 
+    ## now we can have drc's that do not contain all data!
+    OK = match(rownames(cellexalObj@drc[[gInfo@drc[1]]]), names(gr))
+    gr = gr[OK]
 	grDevices::png( file= DRC1, width=1000, height=1000)
+	toPlot = data.frame(
+		x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),1], 
+		y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),2], 
+		id=gr 
+	)
 
-	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc]][,1], y=cellexalObj@drc[[gInfo@drc]][,2], id=gr )
     p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs )
 	print(p)
-	
 	grDevices::dev.off()
 
 	DRC2 = DRC3= NULL
 
-	if (  var( cellexalObj@drc[[gInfo@drc]][,3]) != 0 ) {
-		DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+	if (  var( cellexalObj@drc[[gInfo@drc[1]]][,3]) != 0 ) {
+		DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 		if ( ! showIDs ) {
-			DRC2 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "2_3",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
+			DRC2 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc[1] , "2_3",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
 		}
 
 		grDevices::png( file= DRC2, width=1000, height=1000)
 	
-    	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc]][,2], y=cellexalObj@drc[[gInfo@drc]][,3], id=gr )
+    	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),2], y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),3], id=gr )
     	p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs  ) #function definition in file drcPlot2D.R
     	print(p) ## write the plot
 		grDevices::dev.off()
 
-		DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+		DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 		if ( ! showIDs ) {
-			DRC3 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_3",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
+			DRC3 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc[1] , "1_3",'NoIDs', 'png' ), file.path( sessionPath , 'png') ))
 		}
 
 		grDevices::png( file= DRC3, width=1000, height=1000)
 	
-    	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc]][,1], y=cellexalObj@drc[[gInfo@drc]][,3], id=gr )
+    	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),1], y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),3], id=gr )
     	p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs  ) #function definition in file drcPlot2D.R
     	print(p) ## write the plot
 		grDevices::dev.off()
@@ -197,18 +198,18 @@ drcFiles2HTML = function( cellexalObj, gInfo, showIDs=TRUE, addOn = NULL ) {
 	}	
 	drcFiles =sapply( drcPlots2D( cellexalObj, gInfo, showIDs=showIDs ), correctPath, cellexalObj )
 	str = c(
-		paste( "### 2D DRC", gInfo@drc, "dim 1,2","(", gInfo@gname,")", addOn),"\n",
+		paste( "### 2D DRC", gInfo@drc[1], "dim 1,2","(", gInfo@gname,")", addOn),"\n",
 		paste("![](",drcFiles[1],")"),
 		'')
 	if ( ! is.na(drcFiles[2]) ){
 		str = c( str, 
-		paste( "### 2D DRC", gInfo@drc, "dim 2,3","(", gInfo@gname,")", addOn),"\n",
+		paste( "### 2D DRC", gInfo@drc[1], "dim 2,3","(", gInfo@gname,")", addOn),"\n",
 		paste("![](",drcFiles[2],")"),
 		"")
 	}
 	if ( ! is.na(drcFiles[3]) ){
 		str = c( str, 
-		paste( "### 2D DRC", gInfo@drc, "dim 1,3","(", gInfo@gname,")", addOn),"\n",
+		paste( "### 2D DRC", gInfo@drc[1], "dim 1,3","(", gInfo@gname,")", addOn),"\n",
 		paste("![](",drcFiles[3],")"),
 		"")
 	}

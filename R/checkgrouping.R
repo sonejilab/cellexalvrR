@@ -35,7 +35,7 @@ setMethod('checkGrouping', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	if ( is.null( cellexalObj@userGroups[, paste(x@gname, 'order')])){
 		x@error = c( x@error, paste("the order info for gname", x@gname,"is not defined in the cellexalObj"))
 	}
-	if ( is.null( cellexalObj@drc[[x@drc]])){
+	if ( is.null( cellexalObj@drc[[ x@drc[1] ]])){
 		x@error = c( x@error, paste("the drc", x@drc,"is not defined in the cellexalObj"))
 	}
 	if ( ! all.equal( x@grouping, cellexalObj@userGroups[, x@gname]) == TRUE ){

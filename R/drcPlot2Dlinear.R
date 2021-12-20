@@ -37,11 +37,11 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		if ( ! file.exists(file.path( sessionPath , 'png') )){
 			dir.create(file.path( sessionPath , 'png')  )
 		}
-		if ( ! gInfo@drc %in% names(cellexalObj@drc) ){
-			stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc, "not in list", paste( collapse=", ", names(cellexalObj@drc))))
+		if ( ! gInfo@drc[1] %in% names(cellexalObj@drc) ){
+			stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc[1], "not in list", paste( collapse=", ", names(cellexalObj@drc))))
 		}
 		
-		drc = cellexalObj@drc[[gInfo@drc]]
+		drc = cellexalObj@drc[[gInfo@drc[1]]]
 		gInfo@order[ which(is.na(gInfo@order))] = as.integer(0)
 		if ( any( ! is.numeric(gInfo@order)) ) {
 			message("wrong data in gInfo@order")
@@ -49,7 +49,7 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		if ( min(as.vector(gInfo@order)) == 0) {
 			gInfo@order = as.integer(as.vector(gInfo@order) +1)
 		}
-		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc[1] , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 		
 		grDevices::png( file= DRC1, width=1000, height=1000)
 		#browser()
@@ -87,13 +87,13 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		#rgl::plot3d( linearSelection$x[linearSelection$time], linearSelection$y[linearSelection$time], linearSelection$z[linearSelection$time], col=gplots::bluered( length( linearSelection$x)))
 		#rgl::plot3d( linearSelection$a[linearSelection$time], linearSelection$b[linearSelection$time], linearSelection$c[linearSelection$time], col=gplots::bluered( length( linearSelection$x)) )
 		DRC2 = DRC3 = NULL
-		if ( ! var(cellexalObj@drc[[gInfo@drc]][,3]) == 0 ) {
-			DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+		if ( ! var(cellexalObj@drc[[gInfo@drc[1]]][,3]) == 0 ) {
+			DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 			grDevices::png( file= DRC2, width=1000, height=1000)
 			p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,2], y=	drc[,3],col= col) ) #function definition in file drcPlot2D.R
     		print(p) #write the plot
 			grDevices::dev.off()
-			DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc, "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+			DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 			grDevices::png( file= DRC3, width=1000, height=1000)
 			p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,1], y=	drc[,3],col= col) ) #function definition in file drcPlot2D.R
     		print(p) #write the plot
@@ -139,18 +139,18 @@ drcFiles2HTMLlinear = function( cellexalObj, gInfo, showIDs=TRUE, addOn = NULL )
 	# create a file containing the grouping info (and thereby color) and the drc info - do not create doubles
 	drcFiles =sapply( drcPlots2Dlinear( cellexalObj, gInfo ), correctPath, cellexalObj )
 	str = c(
-		paste( "### 2D DRC", gInfo@drc, "dim 1,2","(", gInfo@gname,")", addOn),"\n",
+		paste( "### 2D DRC", gInfo@drc[1], "dim 1,2","(", gInfo@gname,")", addOn),"\n",
 		paste("![](",drcFiles[1],")"),
 		'',"")
 	if ( ! is.na(drcFiles[2]) ){
 		str = c( str, 
-		paste( "### 2D DRC", gInfo@drc, "dim 2,3","(", gInfo@gname,")", addOn),"\n",
+		paste( "### 2D DRC", gInfo@drc[1], "dim 2,3","(", gInfo@gname,")", addOn),"\n",
 		paste("![](",drcFiles[2],")"),
 		"","")
 	}
 	if ( ! is.na(drcFiles[3]) ){
 		str = c( str, 
-		paste( "### 2D DRC", gInfo@drc, "dim 1,3","(", gInfo@gname,")", addOn),"\n",
+		paste( "### 2D DRC", gInfo@drc[1], "dim 1,3","(", gInfo@gname,")", addOn),"\n",
 		paste("![](",drcFiles[3],")"),
 		"","")
 	}

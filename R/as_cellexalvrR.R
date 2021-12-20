@@ -381,9 +381,11 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 			}
 			names(col_uniq) = colnames( obs )
 			## most likely cell names column
+			if ( ! is.na(match('_index', colnames( obs )))){
+				namecol = '_index'
+			}
 			if ( ! is.null(namecol )) {
-				rownames(obs) =  forceAbsoluteUniqueSample ( #function definition in file 'as_cellexalvrR.R'
-						as.vector(obs[, namecol]) )
+				rownames(obs) =  as.vector(obs[, namecol]) 
 			}else {
 				## now I need to check for strings...
 
@@ -398,10 +400,12 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 				}))
 
 				names(OK) = colnames(obs)
-
-				## now lets double check the factors
-				## x[[slotName]][['__categories']][[id]][]
-				try({
+				rownames(obs) =  make.names ( #function definition in file 'as_cellexalvrR.R'
+						as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
+			}
+			## now lets double check the factors
+			## x[[slotName]][['__categories']][[id]][]
+			try({
 				if ( ! is.na( match ('__categories', names(x[[slotName]] )) ) ){
 
 				for (catName in names(x[[slotName]][['__categories']]) ) {
@@ -420,10 +424,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 					}
 				}
 				}
-				})
-				rownames(obs) =  make.names ( #function definition in file 'as_cellexalvrR.R'
-						as.vector(obs[, names(OK)[which(OK == max(OK))[1]]]) )
-			}
+			})
 			if ( onlyStrings ) {
 				for( i in 1:length(col_uniq) ) {
 					if ( col_uniq[i] == 0 ){ # all entries convertable to numeric
