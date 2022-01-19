@@ -77,7 +77,9 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								## existing IDs
 								x@drc[[na]] = x@drc[[na]][match(here, tolower(rownames( x@drc[[na]]))),]
 							}else {
-								x@drc[[na]] = x@drc[[na]][useOnly,]
+								if ( nrow( x@drc[[na]] ) > 0 ){ ## otherwise there is nothing to do here ;-)
+									x@drc[[na]] = x@drc[[na]][useOnly,]
+								}
 							}
 							
 						}
