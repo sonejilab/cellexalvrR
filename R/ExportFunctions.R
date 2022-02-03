@@ -75,6 +75,10 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	ofile = file.path(path,"index.facs")
 	if ( ! file.exists( ofile) ){
 		if ( nrow(x@index) == ncol(x@data) ){
+			if ( mode(x@index) == "character") {
+				print( "the index matrix if in character mode - this can produce hard to detect errors - changing to numeric")
+				mode(x@index) = 'numeric'
+			}
 			utils::write.table(x@index,ofile,row.names=T,col.names=NA,quote=F,sep="\t",eol="\n")
 		}
 	}
