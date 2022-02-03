@@ -79,7 +79,12 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 				print( "the index matrix if in character mode - this can produce hard to detect errors - changing to numeric")
 				mode(x@index) = 'numeric'
 			}
-			utils::write.table(x@index,ofile,row.names=T,col.names=NA,quote=F,sep="\t",eol="\n")
+
+			## scale the data to look better in VR:
+			ret = apply( mtx, 2, scale)
+			rownames(ret) = rownames(x@index)
+
+			utils::write.table(ret, ofile, row.names=T, col.names=NA, quote=F, sep="\t", eol="\n")
 		}
 	}
 	ofile = file.path(path,"c.meta.gene")
