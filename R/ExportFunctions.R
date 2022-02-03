@@ -81,7 +81,7 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 			}
 
 			## scale the data to look better in VR:
-			ret = apply( mtx, 2, scale)
+			ret = apply( x@index, 2, scale)
 			rownames(ret) = rownames(x@index)
 
 			utils::write.table(ret, ofile, row.names=T, col.names=NA, quote=F, sep="\t", eol="\n")
