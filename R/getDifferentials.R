@@ -42,7 +42,7 @@ setGeneric('getDifferentials', ## Name
 setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 		definition = function (x,cellidfile,
 				deg.method='wilcox',
-				num.sig=250, Log=TRUE, logfc.threshold = 0.1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) {
+				num.sig=250, Log=TRUE, logfc.threshold = 0.5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
