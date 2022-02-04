@@ -43,8 +43,9 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping
 		gname =groupingInfo( loc, gname@gname )
 		cn = colnames(loc@data)
 		cn = unlist (stringr::str_replace_all( cn, '\\.', '_' ) )
+		#browser()
 		colnames(df) =c( 'NAME', 'Description', paste(gname@grouping, cn, sep="." ) )
-
+		#colnames(df) =c( 'NAME', 'Description', gname@grouping )
 		if ( file.exists(ofile) ){
 			unlink(ofile)
 		}
@@ -52,6 +53,19 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping
 		writeLines(c("#1.2",paste( nrow(loc@data), ncol(loc@data), sep="\t") ), fileConn)
 		close(fileConn)
 		write.table( df, file=ofile, sep="\t", quote=F, row.names=F, append=T)
+
+		## now add a cls file, too:
+		ofile=stringr::str_replace_all( ofile, '.gct', '')
+		ofile = file.path( dirname(ofile), filename( c(  basename(ofile), "cls" ), dirname(ofile) ))
+		fileConn<-file( ofile )
+		writeLines(c(
+			paste( sep=" ", length(gname@grouping), length(table(gname@grouping)), 1), 
+			paste( sep=" ", collapse=" ", c("#", names(table(gname@grouping)))), 
+			paste( sep=" ", collapse=" ", gname@grouping) ), 
+			fileConn)
+		close(fileConn)
+
 		return (ofile)
+
 	}
 )
