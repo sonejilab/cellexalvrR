@@ -1,3 +1,8 @@
+# 1.0.0
+
+All numeric data describing the cells (of a h5ad file) is not pushed into the index table in cellexalvrR.
+This data (z-scored) is available as FACS plot in VR.
+
 # 0.14.8
 
 Bug fix of the main stats function: CellexalvrR now identifies genes higher expressed in the group of interest and not vice versa. Plus additional log function (bug) fixes and more tests.
