@@ -218,6 +218,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		stop( "I could not obtain the expression data from the h5 file")
 	}
 	meta.data = H5Anno2df( x, 'obs')
+
 	annotation = H5Anno2df( x, 'var')
 	if ( is.na(match("_index", colnames(annotation))) ){
 		annotation[,'_index'] = rownames(m)
@@ -247,6 +248,27 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			} )
 
 	names(drcs) = embeddings
+
+	# ## the 'cellrank' pythion package results contain a lot more in the obsm slot.
+	# ## All of this could be displayed in VR - let's try this and check what we get there
+	# for (n in c('initial_states_memberships', 'schur_vectors_bwd', 'schur_vectors_fwd', 
+	# 	'terminal_states_memberships', 'to_terminal_states')){
+	# 	if (! is.na( match (n , names(x[['obsm']]) ) ) ){
+	# 		locEmbDim = x[['obsm']][[n]][['dims']][1]
+	# 		if ( locEmbDim == 1 ){
+	# 			next
+	# 		}
+	# 		if ( locEmbDim > embeddingDims ){
+	# 			locEmbDim = embeddingDims
+	# 		}
+	# 		ret = t(x[['obsm']][[n]][1:locEmbDim,])
+	# 		if ( locEmbDim == 2 ){
+	# 			ret = cbind(ret, rep(0, nrow(ret)) )
+	# 		}
+	# 		rownames(ret) = meta.data[,'_index']
+	# 		drcs[[n]] = ret
+	# 	}
+	# }
 
 	cellexalvrR = new( 'cellexalvrR', 
 			data=m, meta.cell=as.matrix(meta.data), 
@@ -307,6 +329,10 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		rownames(cellexalvrR@meta.gene) = rownames(cellexalvrR@data)
 	}
 
+	## and one last one - populate index with the numeric values in the cell annotation table
+	cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
+	cellexalvrR@index = cellexalvrR@index[, which(!is.na(as.numeric(cellexalvrR@index[1,] )))]
+	mode(cellexalvrR@index) = 'numeric'
 	cellexalvrR
 } )
 

@@ -33,12 +33,11 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	good_names = stringr::str_replace_all( colnames(x@data),'\\s+', '_')
 
 	if ( forceDB ) {
-		 if (file.exists(path)){
-		 	unlink( path, recursive=TRUE)
-		 	dir.create( path )
+		 if ( dir.exists(path) ){
+		 	unlink(  file.path(path,'*') , recursive=TRUE)
 		 }
 	}
-	if ( ! file.exists(path)){
+	if ( ! dir.exists(path)){
 		warning("path does not exists - creating it now")
 		dir.create( path )
 	}
