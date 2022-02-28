@@ -74,7 +74,11 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			}
 			
 			info <- groupingInfo( loc, cellidfile ) #function definition in file 'groupingInfo.R'
-			
+			if ( class(info)[1] == "cellexalvrR"){
+				loc = info
+				info <- groupingInfo( loc, cellidfile )
+			}
+
 			rem.ind <- which(Matrix::rowSums(loc@data)==0)
 			
 			grp.vec <- info@grouping
@@ -105,6 +109,10 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				
 				info = groupingInfo(x, info@gname ) ## get the info for the big object
+				if ( class(info)[1] == "cellexalvrR"){
+					x = info
+					info <- groupingInfo( x, cellidfile )
+				}
 				drc = x@drc[[ info@drc ]]
 				 if ( is.null(drc) ){
 				 	message(paste("the drc info",info@drc, "can not be found in the data! (", paste(collapse=", ", names(loc@drc)) ))
@@ -118,6 +126,10 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					message('defining time')
 					x = pseudotimeTest3D( x, grouping= info@gname )
 					info = groupingInfo( x, info@gname ) ## load changes
+					if ( class(info)[1] == "cellexalvrR"){
+						x = info
+						info <- groupingInfo( x, cellidfile )
+					}
 					if ( empty( info@linarObj )){
 						info = groupingInfo( x, x@usedObj$lastGroup ) 
 					}

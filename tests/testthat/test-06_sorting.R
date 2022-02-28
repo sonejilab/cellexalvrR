@@ -100,8 +100,8 @@ expect_true( sum(png0 - png1) == 0, label="drc plots are exactly the same for or
 context('sorting - linear')
 
 
-obj@userGroups[,'test'] = rep(1, nrow( obj@userGroups))
-obj@userGroups[,'test order'] = 1:nrow( obj@userGroups)
+obj@userGroups[,'test'] = rep(1, nrow(obj@userGroups) )
+obj@userGroups[,'test order'] = 1:nrow(obj@userGroups)
 
 obj = getDifferentials( obj, 'test', log=FALSE, num.sig = 40) ## should get a linear object
 

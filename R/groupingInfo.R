@@ -58,6 +58,13 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 			ret = unlist( lapply( gname, function(name) { cellexalObj@groupSelectedFrom[[name]]} ) )
 			return ( ret )
 		}
+		
+		if ( length(cellexalObj@groupSelectedFrom[[gname]]@grouping) == ncol(cellexalObj@data) ){
+			if ( is.null(rownames(grouping)) ){
+				## best guess - it is the same as the colnames
+				names(cellexalObj@groupSelectedFrom[[gname]]@grouping) = colnames( cellexalObj@data )
+			}
+		}
 		return ( cellexalObj@groupSelectedFrom[[gname]] )
 	}
 
@@ -98,7 +105,6 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		if ( is.factor(grouping) ){
 			grouping = as.numeric( grouping)
 		}
-
 		names(grouping) = colnames(cellexalObj@data)
 	}
 
@@ -125,3 +131,45 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	message(paste("You have obtained an updated cellexalvrR object - please re-run the function!" ) )
 	cellexalObj
 } )
+
+#' saveGroupingInfocalls groupingInfo internally and returns both the cellexalObj and the grouping info
+#' 
+#' @name saveGroupingInfo
+#' @docType methods
+#' @description  returns the information stored for the last grouping read
+#' @param cellexalObj, cellexalvr object
+#' @param gname The optional group name to get info on a specific grouping (not the last)
+#' @title get information on a sample grouping
+#' @return a cellexalGrouping object
+#' @export 
+#if ( ! isGeneric('saveGroupingInfo') ){
+setGeneric('saveGroupingInfo', ## Name
+	function ( cellexalObj, gname=NULL ) { 
+		standardGeneric('saveGroupingInfo') 
+	}
+)
+#}
+
+#' @rdname saveGroupingInfo
+setMethod('groupingInfo', signature = c ('cellexalvrR', 'list'),
+	definition = function ( cellexalObj, gname=NULL ) {
+		if ( length(gname) > 1){
+			saveGroupingInfo( cellexalObj, unlist(lapply(gname, function(d){d@gname} ) ))
+		}else {
+			saveGroupingInfo( cellexalObj, gname )
+		}
+	}
+)
+
+
+#' @rdname saveGroupingInfo
+setMethod('saveGroupingInfo', signature = c ('cellexalvrR'),
+	definition = function ( cellexalObj, gname=NULL ) {
+		info = groupingInfo( cellexalObj, gname )
+		if ( class(info)[1] == "cellexalvrR"){
+			cellexalObj = info
+			info <- groupingInfo( cellexalObj, cellidfile )
+		}
+		return (list( cellexalObj, info ))
+ }
+)
