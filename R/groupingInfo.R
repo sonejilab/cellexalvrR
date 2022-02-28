@@ -61,7 +61,7 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		return ( cellexalObj@groupSelectedFrom[[gname]] )
 	}
 
-	message( "This object is not build up correctly - the session info is missing - creating it from scratch")
+	message( "The session info is missing - creating it from scratch")
 
 	if ( is.null(cellexalObj@groupSelectedFrom)) {
 		cellexalObj@groupSelectedFrom = list()
@@ -75,8 +75,15 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	if ( ! is.na( match(gname, colnames(cellexalObj@userGroups)) ) ){
 		grouping = cellexalObj@userGroups[,gname]
 		order = as.integer(cellexalObj@userGroups[,paste(gname, 'order')])
-		message(paste("the grouping", gname, "is not part of the cellexalvrR object" ) )
+		message(paste("grouping", gname, "has been fetched from the userGroups table" ) )
 
+	}else if ( ! is.null( cellexalObj@usedObj$samples) ){
+		if (! is.na( match(gname, colnames(cellexalObj@usedObj$samples)) )){
+			grouping = cellexalObj@userGroups[,gname] = cellexalObj@usedObj$samples[,gname]
+			## this has not been selected in VR - hence there is no grouping.
+			order = cellexalObj@userGroups[,paste(gname, 'order')] = 1:ncol(cellexalObj@data)
+			message(paste("grouping", gname, "has been fetched from the usedObj$samples table" ) )
+		}
 	}
 
 	if ( is.null(grouping) ) {
@@ -106,8 +113,8 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 
 	cellexalObj@groupSelectedFrom[[gname]] = ginfo
 	message( paste( sep="",
-	"correct the returned object and put it there: cellexalObj@groupSelectedFrom[['",
-	gname, "']]")
+	"correct the drc info: cellexalObj@groupSelectedFrom[['",
+	gname, "']]@drc if ",cellexalObj@groupSelectedFrom[[gname]]@drc," is not correct" )
 	)
 
 	gname = tmp
@@ -115,5 +122,6 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		ret = unlist( lapply( gname, function(name) { cellexalObj@groupSelectedFrom[[name]]}) )
 		return ( ret )
 	}
-	cellexalObj@groupSelectedFrom[[gname]]
+	message(paste("You have obtained an updated cellexalvrR object - please re-run the function!" ) )
+	cellexalObj
 } )

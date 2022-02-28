@@ -232,9 +232,10 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	}
 	if ( length(embeddings) == 0 ) {
 			message("A CellexalVR session without 3D embeddings is not making sense! STOP?!")
+			drcs = list()
 	}
-
-	drcs = lapply(embeddings, function(n) {
+	else {
+		drcs = lapply(embeddings, function(n) {
 				locEmbDim = x[['obsm']][[paste(sep="_",'X',n)]][['dims']][1]
 				if ( locEmbDim > embeddingDims ){
 					locEmbDim = embeddingDims
@@ -247,8 +248,8 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 				ret
 			} )
 
-	names(drcs) = embeddings
-
+		names(drcs) = embeddings
+	}
 	# ## the 'cellrank' pythion package results contain a lot more in the obsm slot.
 	# ## All of this could be displayed in VR - let's try this and check what we get there
 	# for (n in c('initial_states_memberships', 'schur_vectors_bwd', 'schur_vectors_fwd', 

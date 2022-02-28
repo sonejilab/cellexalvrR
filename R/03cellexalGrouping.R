@@ -87,7 +87,8 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 setMethod('exportSelection', signature = c ('cellexalGrouping'),
 	definition = function (x, fname) {
 
-	d = cbind( names(x@grouping), x@col[as.vector(x@grouping)], rep( x@drc , length(x@grouping) ), as.vector(x@grouping)-1  )
+	d = cbind( names(x@grouping), x@col[as.vector(x@grouping)],
+	 rep( x@drc , length(x@grouping) ), as.numeric(x@grouping)-1  )
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
 
 #	f2 = paste( sep=".",fname,'points')

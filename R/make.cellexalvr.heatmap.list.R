@@ -38,6 +38,10 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 			}
 			
 			if ( ! file.exists( file.path(cvrObj@outpath, basename(cellidfile)) ) ){
+				if ( ! file.exists( cellidfile )) {
+					# crap! - A user defined fake grouping. Create this file from scratch
+					exportSelection ( groupingInfo(cvrObj,cellidfile ), cellidfile )
+				}
 				file.copy( cellidfile, cvrObj@outpath )
 			}
 
