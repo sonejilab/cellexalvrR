@@ -36,9 +36,6 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		if ( ! file.exists(file.path( sessionPath , 'png') )){
 			dir.create(file.path( sessionPath , 'png')  )
 		}
-		# if ( gInfo@gname == 'Time.group.3') {
-		# 	browser()
-		# }
 
 	DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 	if ( ! showIDs ) {

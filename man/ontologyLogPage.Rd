@@ -8,32 +8,36 @@
 \usage{
 ontologyLogPage(
   cellexalObj,
-  genes,
+  GOIs,
   grouping = NULL,
   ontology = "BP",
   topNodes = 10,
+  heatmaps = NULL,
   ...
 )
 
 \S4method{ontologyLogPage}{cellexalvrR}(
   cellexalObj,
-  genes,
+  GOIs,
   grouping = NULL,
   ontology = "BP",
   topNodes = 10,
+  heatmaps = NULL,
   ...
 )
 }
 \arguments{
 \item{cellexalObj}{the cellexalvrR object}
 
-\item{genes}{a list of gene symbols (IMPORTANT)}
+\item{GOIs}{a list of gene symbols (IMPORTANT)}
 
 \item{grouping}{the grouping this gene list originated on (default = NULL; use last grouping)}
 
 \item{ontology}{which GO ontology to choose from (default = "BP")}
 
 \item{topNodes}{how many GO terms to report (default 10)}
+
+\item{heatmaps}{a prefix for the heatmap file (requires pheatmap package - default NULL)}
 
 \item{...}{unused}
 }

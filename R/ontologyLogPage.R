@@ -1,19 +1,20 @@
-#' The ontology analysis for the log files.
+	#' The ontology analysis for the log files.
 #' Response time is too slow for VR.
 #' @name ontologyLogPage
 #' @docType methods
 #' @description creates the GO analysis for a gene list and puts it into the report.
 #' @param cellexalObj the cellexalvrR object
-#' @param genes a list of gene symbols (IMPORTANT)
+#' @param GOIs a list of gene symbols (IMPORTANT)
 #' @param grouping the grouping this gene list originated on (default = NULL; use last grouping)
 #' @param ontology which GO ontology to choose from (default = "BP")
 #' @param topNodes how many GO terms to report (default 10)
+#' @param heatmaps a prefix for the heatmap file (requires pheatmap package - default NULL)
 #' @param ... unused
 #' @import org.Mm.eg.db org.Hs.eg.db topGO
 #' @title old log function to create a pathways analysis for a list of genes.
 #' @export
 setGeneric('ontologyLogPage', ## Name
-	function ( cellexalObj, genes, grouping=NULL, ontology = 'BP', topNodes=10, ... ) {
+	function ( cellexalObj, GOIs, grouping=NULL, ontology = 'BP', topNodes=10, heatmaps= NULL, ... ) {
 		standardGeneric('ontologyLogPage')
 	}
 )
@@ -21,19 +22,29 @@ setGeneric('ontologyLogPage', ## Name
 
 #' @rdname ontologyLogPage
 setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
-	definition = function ( cellexalObj, genes, grouping=NULL, ontology = 'BP', topNodes=10, ... ) {
+	definition = function ( cellexalObj, GOIs, grouping=NULL, ontology = 'BP', topNodes=10, heatmaps= NULL, ... ) {
 	## process the ontology for this gene list and add one ontology report page
 	#requireNamespace( 'AnnotationDbi' )
-	requireNamespace( 'topGO' )
+	library( 'topGO' )
 	
-	if ( file.exists(genes)) {
-		genes = as.vector(utils::read.delim(genes)[,1])
-	}
+	#if ( file.exists(GOIs[1])) {
+	#	GOIs = as.vector(utils::read.delim(GOIs)[,1])
+	#}
 	if ( is.null( grouping )) {
 		grouping = cellexalObj@usedObj$lastGroup
 	}
-	cellexalObj = userGrouping( cellexalObj, grouping ) #function definition in file 'userGrouping.R'
-	cellexalObj = sessionRegisterGrouping( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'sessionRegisterGrouping.R'
+	if ( !is.null( grouping )) {
+		cellexalObj = userGrouping( cellexalObj, grouping ) #function definition in file 'userGrouping.R'
+		cellexalObj = sessionRegisterGrouping( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'sessionRegisterGrouping.R'
+	}
+	else{
+		print( "Neither a user defined grouping not a lastGroup defined.")
+	}
+	if ( is.null(names(GOIs))){
+		tmp = GOIs  
+		GOIs = rep(0.001, length(GOIs))
+		names(GOIs) = tmp
+	}
 	
 	#error = ""
 	# message( paste( sep=" ","ontologyLogPage genes:",  paste( sep=", ",genes) ) )
@@ -64,8 +75,7 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 		cellexalObj@usedObj$GO2genes = AnnotationDbi::mapIds(x, AnnotationDbi::keys(x,'GO'), 'SYMBOL', 'GO', multiVals = 'list')
 	}
 	
-	
-	all = is.na(match(rownames(cellexalObj@data), genes ))
+	all = is.na(match(rownames(cellexalObj@data), names(GOIs) ))
 	names(all) = rownames(cellexalObj@data)
 	all = factor(all)
 	if ( length(table(all)) == 1) {
@@ -73,34 +83,37 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 		return ( cellexalObj )
 	}
 
-	cellexalObj@usedObj$analysis = methods::new("topGOdata", ontology = ontology, allGenes=all
-		,geneSel =  function(x) {x} ,  annot = topGO::annFUN.GO2genes, GO2genes= cellexalObj@usedObj$GO2genes)
+	cellexalObj@usedObj$analysis = methods::new("topGOdata", ontology = ontology, allGenes=all,
+		geneSel =  GOIs ,  annot = topGO::annFUN.GO2genes, GO2genes= cellexalObj@usedObj$GO2genes)
 
 
-	#resultFisher <- topGO::runTest(cellexalObj@usedObj$analysis, algorithm = "classic", statistic = "fisher")
+	resultFisher <- topGO::runTest(cellexalObj@usedObj$analysis, algorithm = "classic", statistic = "fisher")
 	resultKS <- topGO::runTest(cellexalObj@usedObj$analysis, algorithm = "classic", statistic = "ks")
 	resultKS.elim <- topGO::runTest(cellexalObj@usedObj$analysis, algorithm = "elim", statistic = "ks")
 	topNodes <- as.numeric(topNodes)
+
 	allRes <- topGO::GenTable(cellexalObj@usedObj$analysis,
-			#classicFisher = resultFisher,
+			classicFisher = resultFisher,
 			classicKS = resultKS, elimKS = resultKS.elim,
-			orderBy = "elimKS",  topNodes = topNodes)
+			ranksOf = "classicKS", topNodes = topNodes, orderBy = "classicKS")
 
 	GOI_2_genes <- matrix( 1, nrow=topNodes, ncol=3)
+
 	colnames(GOI_2_genes) = c("GO ID", "Rmd Gene list", "Mapping Gene List")
 	for( i in 1:nrow(allRes) ) {
 		GOI_2_genes[i,1] = allRes[i,1]
-		GOI_2_genes[i,2] = paste( intersect( genes,cellexalObj@usedObj$GO2genes[[allRes[i,1]]]), collapse=" ")
-		GOI_2_genes[i,3] = md_gene_links ( intersect( genes,cellexalObj@usedObj$GO2genes[[allRes[i,1]]]) )
-
+		ID = allRes[i,1]
+		GOI_2_genes[i,2] = paste( intersect( GOIs,cellexalObj@usedObj$GO2genes[[ ID ]]), collapse=" ")
+		GOI_2_genes[i,3] = md_gene_links ( intersect( GOIs,cellexalObj@usedObj$GO2genes[[ ID ]]) )
 	}
 	for ( i in 1:nrow(allRes) ) {
 		allRes[i,1] = rmdLink(allRes[i,1],"http://amigo.geneontology.org/amigo/term/", lineEnd=FALSE ) #function definition in file 'rmdLink.R'
 	}
 
 	GOI_2_genes = cbind(GOI_2_genes,  allRes )	
-	
-	utils::write.table(GOI_2_genes, sep='\t', quote=F, row.names=F, file= 
+	browser()
+	if ( ! is.null(cellexalObj@usedObj$sessionPath) ){
+		utils::write.table(GOI_2_genes, sep='\t', quote=F, row.names=F, file= 
 					file.path( 
 							cellexalObj@usedObj$sessionPath, 
 							'tables', 
@@ -111,7 +124,8 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 								) 
 							) 
 					) 
-	)
+		)
+	}
 	
 	GOI_2_genes = GOI_2_genes[,c(1,3)]
 	
