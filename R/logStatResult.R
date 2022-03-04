@@ -121,8 +121,10 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		}
 
 		toppGF = filename( c(  x@usedObj$lastGroup,'toppgeneInput', "csv" ), opath )
-		toppgenes = getSigGenes( cellexalObj@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]], count=100)
-		write.table( toppgenes, file=file.path(opath, toppGF), col.names=F, row.names=F, quote=F, sep="," )
+		try( {
+			toppgenes = getSigGenes( x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]], count=100)
+			write.table( toppgenes, file=file.path(opath, toppGF), col.names=F, row.names=F, quote=F, sep="," )
+		})
 
 		content=paste( sep="\n", collapse = "\n",
 				paste( "##", x@usedObj$lastGroup,"Statistical Result" ),
