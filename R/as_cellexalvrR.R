@@ -285,6 +285,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	else if ( velocity == 'scvelo' ) {
 		for ( n in names(cellexalvrR@drc)) {
 			velo_n = paste( sep="_", 'velocity', n )
+			try( {embeddingDims = ncol( x[['obsm']][[velo_n]][,])}, silent =TRUE)
 			tryCatch({
 				cellexalvrR@drc[[n]] = 
 					cbind( 
