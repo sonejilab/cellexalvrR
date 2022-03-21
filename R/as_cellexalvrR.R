@@ -285,14 +285,15 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	else if ( velocity == 'scvelo' ) {
 		for ( n in names(cellexalvrR@drc)) {
 			velo_n = paste( sep="_", 'velocity', n )
-			try( {embeddingDims = ncol( x[['obsm']][[velo_n]][,])}, silent =TRUE)
+
 			tryCatch({
+				locDims = nrow( x[['obsm']][[velo_n]][,])
 				cellexalvrR@drc[[n]] = 
 					cbind( 
 						cellexalvrR@drc[[n]], 
-						cellexalvrR@drc[[n]][,1:embeddingDims] + t(x[['obsm']][[velo_n]][,] * scaleArrowTravel)
+						cellexalvrR@drc[[n]][,1:locDims] + t(x[['obsm']][[velo_n]][,] * scaleArrowTravel)
 					)
-				if ( embeddingDims == 2 ){
+				if ( locDims == 2 ){
 					cellexalvrR@drc[[n]] =
 						cbind(cellexalvrR@drc[[n]],rep(0, nrow(cellexalvrR@drc[[n]])))
 				}
