@@ -27,6 +27,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
     ## try to cut short - is the grouping already known?
     info = try({groupingInfo( tmp,'sampleType')}, silent=TRUE)
     if ( class(info) == 'cellexalGrouping'){
+    	cellexalObj@usedObj$lastGroup = cellidfile
     	return ( cellexalObj )
     }
 	#init local vars
