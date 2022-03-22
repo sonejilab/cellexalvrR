@@ -23,6 +23,12 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	
 	cellexalObj <- renew(cellexalObj) #function definition in file 'renew.R'
 	save = FALSE
+	
+    ## try to cut short - is the grouping already known?
+    info = try({groupingInfo( tmp,'sampleType')}, silent=TRUE)
+    if ( class(info) == 'cellexalGrouping'){
+    	return ( cellexalObj )
+    }
 	#init local vars
 	id= (ncol(cellexalObj@userGroups) /2) + 1
 	gname = paste( "User.group", id, sep="." ) #the VR program dependeds on it
@@ -51,7 +57,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		m = match(cellid[,1], colnames(cellexalObj@data))
 		if ( length(which(is.na(m))) > 0 ){
 			stop( paste (
-				"The grouping file has cells that are not part of the object:", 
+				"The grouping file",cellidfile," has cells that are not part of the object:", 
 				paste(as.vector(cellid[which(is.na(m)),1]), collapse=", " )
 					))
 
