@@ -52,7 +52,7 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping
 		fileConn<-file( ofile )
 		writeLines(c("#1.2",paste( nrow(loc@data), ncol(loc@data), sep="\t") ), fileConn)
 		close(fileConn)
-		write.table( df, file=ofile, sep="\t", quote=F, row.names=F, append=T)
+		write.table( df, file=ofile, sep="\t", quote=F, row.names=F, col.names=T, append=T)
 
 		## now add a cls file, too:
 		ofile=stringr::str_replace_all( ofile, '.gct', '')

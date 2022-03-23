@@ -24,6 +24,13 @@ setGeneric('getSigGenes', ## Name
 
 
 #' @rdname getSigGenes
+setMethod('getSigGenes', signature = c ('matrix'),
+	definition = function( tab, count=500 ){
+		getSigGenes( as.data.frame(tab), count=count )
+	}
+)
+
+#' @rdname getSigGenes
 setMethod('getSigGenes', signature = c ('data.frame'),
 		definition = function( tab, count=500 ){
 			

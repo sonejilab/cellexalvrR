@@ -102,7 +102,7 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 	}
 	tryCatch(
 	{
-		print ( paste( "creating this filename for grouping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
+#		print ( paste( "creating this filename for grouping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
 		grDevices::png(  legName, width=1000, height=200)
 		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
 		grDevices::dev.off()

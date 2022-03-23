@@ -31,7 +31,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 
 		## get a unique file not overwriting old ones.
 		ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
-		print( paste( "Saving stats table as", file.path(opath,ofile)))
+		#print( paste( "Saving stats table as", file.path(opath,ofile)))
 		if ( colnames(data)[1] == 'cor' ){
 			data = cbind( 'Gene Name' = rownames(data), data )
 		}

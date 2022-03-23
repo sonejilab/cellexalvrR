@@ -85,7 +85,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	)
 
     p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs )
-	print(p)
+	suppressWarnings(print(p))
 	grDevices::dev.off()
 
 	DRC2 = DRC3= NULL
@@ -100,7 +100,8 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	
     	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),2], y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),3], id=gr )
     	p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs  ) #function definition in file drcPlot2D.R
-    	print(p) ## write the plot
+    	#browser()
+    	suppressWarnings(print(p)) ## write the plot
 		grDevices::dev.off()
 
 		DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
@@ -112,7 +113,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	
     	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),1], y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),3], id=gr )
     	p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs  ) #function definition in file drcPlot2D.R
-    	print(p) ## write the plot
+    	suppressWarnings(print(p)) ## write the plot
 		grDevices::dev.off()
 
 	}
@@ -126,6 +127,8 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
 	x[,1] = as.numeric(x[,1])
 	x[,2] = as.numeric(x[,2])
 	x$col=  c(grey(.6),col)[as.numeric(x$id)]
+
+    
 
 	p = ggplot2::ggplot(x, ggplot2::aes(x=x, y=y) ) + ggplot2::theme_classic()
 	p = p +   ggplot2::geom_point(color = x$col , show.legend = FALSE)
@@ -145,14 +148,15 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
     rownames(pos) = names(table(x$id))
     df = t(data.frame(stringr::str_split( names(table( paste(x$id, x$col))), " ")))
     df = df[order(df[,1]),]
-
     for(i in theta) {
+    	
     	p <- p + ggplot2::geom_text( data=data.frame(pos),
             ggplot2::aes_q(
                 x = bquote(pos[,1]+.(cos(i)*xo1)),
                 y = bquote(pos[,2]+.(sin(i)*yo1)),
                 label=rownames(pos)[match(i, theta)] ), 
                     size=10, colour="white" )
+    	
         #p <- p + ggplot2::geom_text( data=data.frame(pos),
         #    ggplot2::aes_q(
         #        x = bquote(pos[,1]+.(cos(i)*xo)),
@@ -164,9 +168,10 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
     if ( length(C1) -1 == length(unique(x$id) ) ){
     	C1 = C1[-1]
     }
+
     p = p + ggplot2::annotate('text', x = pos[,1], y = pos[,2],
      #label = df[,1] , size = 10, col= colorspace::lighten(df[,2], amount=.3) )  
-     label = as.character(df[,1]) , size = 10, col= 'black' )  
+     label = rownames(pos) , size = 10, col= 'black' )  
 	}
     p
 }  

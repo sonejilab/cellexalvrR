@@ -42,9 +42,9 @@ setMethod('check', signature = c ('cellexalGrouping'),
 		if (x@gname ==""){
 			stop("gname not set - empty?")
 		}
-		if ( ! file.exists( x@selectionFile) ){
-			warning( paste("selection file", x@selectionFile, "does not exists") )
-		}
+		#if ( ! file.exists( x@selectionFile) ){
+		#	warning( paste("selection file", x@selectionFile, "does not exists") )
+		#}
 		if ( is.null(names(x@grouping))){
 			warning("The grouping data is not named")
 		}

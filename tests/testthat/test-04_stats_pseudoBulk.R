@@ -155,6 +155,7 @@ stats = read.delim( stats_file , sep=',')
 exp = gene2@usedObj$sigGeneLists$Cpp$"User.group.1"
 #exp[,'cluster'] = as.numeric(exp[,'cluster'])
 rownames(exp) = NULL
+
 expect_equal( stats, exp, label="stats table data as expected" )
 
 t = unlist(lapply( 1:nrow(toCheck), checkThis ))

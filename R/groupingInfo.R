@@ -57,7 +57,9 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		}
 		gname = tmp
 		if (length( gname ) > 1){
-			ret = unlist( lapply( gname, function(name) { cellexalObj@groupSelectedFrom[[name]]} ) )
+			ret = unlist( lapply( gname, function(name) { 
+				cellexalObj@groupSelectedFrom[[name]]
+				} ) )
 			return ( ret )
 		}
 		
@@ -88,7 +90,13 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 
 	}else if ( ! is.null( cellexalObj@usedObj$samples) ){
 		if (! is.na( match(gname, colnames(cellexalObj@usedObj$samples)) )){
-			grouping = cellexalObj@userGroups[,gname] = cellexalObj@usedObj$samples[,gname]
+			if ( ncol(cellexalObj@userGroups) == 0){
+				cellexalObj@userGroups = data.frame( gname = cellexalObj@usedObj$samples[,gname] )
+				colnames(cellexalObj@userGroups) = gname
+			}else {
+				 cellexalObj@userGroups[,gname] = cellexalObj@usedObj$samples[,gname]
+			}
+			grouping = cellexalObj@usedObj$samples[,gname]
 			## this has not been selected in VR - hence there is no grouping.
 			order = cellexalObj@userGroups[,paste(gname, 'order')] = 1:ncol(cellexalObj@data)
 			message(paste("grouping", gname, "has been fetched from the usedObj$samples table" ) )
@@ -98,22 +106,18 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	if ( is.null(grouping) ) {
 		stop( paste("the grouping", gname, "is not found in this cellexalvrR object"))
 	}
-
+    if ( ! is.factor(grouping) ){
+		grouping = factor( grouping )
+	}
 	if ( length(grouping) == ncol(cellexalObj@data) ){
 		## the conversions and info loss is necessary to make this object work.
-		if ( is.character( grouping )) {
-			grouping = as.numeric(factor(grouping))
-		}
-		if ( is.factor(grouping) ){
-			grouping = as.numeric( grouping)
-		}
 		names(grouping) = colnames(cellexalObj@data)
 	}
-
+    
 	ginfo = new( 'cellexalGrouping',
 		gname = gname,
 		selectionFile= '',
-		grouping = as.factor(grouping) ,
+		grouping = grouping ,
 		order = order,
 		drc = names(cellexalObj@drc)[1],
 		col = rainbow( length(table(grouping)) )
