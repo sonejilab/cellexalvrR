@@ -44,7 +44,8 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		## OK here we can only (1) get the entry for the second one - not add anything new!
 		gname = gname[1]
 	}
-	if ( !is.null( cellexalObj@groupSelectedFrom[[gname]])){
+	if ( length( cellexalObj@groupSelectedFrom[[gname]] ) > 0 ){
+	   if( !is.null( cellexalObj@groupSelectedFrom[[gname]])){
 		if ( ncol(cellexalObj@groupSelectedFrom[[gname]]@linarObj@dat)==0){
 			for ( name in names(cellexalObj@usedObj$linearSelections) ) {
 				time = cellexalObj@usedObj$linearSelections[[name]]
@@ -52,6 +53,7 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 					cellexalObj@groupSelectedFrom[[gname]]@linarObj = time
 				}
 			}
+		 }
 		}
 		gname = tmp
 		if (length( gname ) > 1){
@@ -111,7 +113,7 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	ginfo = new( 'cellexalGrouping',
 		gname = gname,
 		selectionFile= '',
-		grouping = grouping ,
+		grouping = as.factor(grouping) ,
 		order = order,
 		drc = names(cellexalObj@drc)[1],
 		col = rainbow( length(table(grouping)) )

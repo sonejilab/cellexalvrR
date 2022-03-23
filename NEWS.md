@@ -1,6 +1,10 @@
+# 1.0.1
+
+Groupings can contain strings and do not need to be numeric as before.
+
 # 1.0.0
 
-All numeric data describing the cells (of a h5ad file) is not pushed into the index table in cellexalvrR.
+All numeric data describing the cells (of a h5ad file) is now pushed into the index table in cellexalvrR.
 This data (z-scored) is available as FACS plot in VR.
 
 # 0.14.8

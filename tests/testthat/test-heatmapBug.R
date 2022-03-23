@@ -86,6 +86,7 @@ collect = list(
 	"a href='./test/tables/Time.group.2.Linear.csv' download" = 0,
 	"a href='./test/tables/User.group.3.Cpp.csv' download" = 0,
 	"a href='./test/TimeSelection.Time.group.2.txt' download" = 0,
+	"a href='./test/tables/Time.group.2.toppClusterInput.csv' download" = 0,
 	'Time.group.2' = 0,
 	'User.group.3' = 0
 )
@@ -96,8 +97,9 @@ expect = list(
 	"a href='./test/tables/Time.group.2.Linear.csv' download" = 1,
 	"a href='./test/tables/User.group.3.Cpp.csv' download" = 1,
 	"a href='./test/TimeSelection.Time.group.2.txt' download" = 1,
-	'Time.group.2' = 31,
-	'User.group.3' = 13
+	"a href='./test/tables/Time.group.2.toppClusterInput.csv' download" = 1,
+	'Time.group.2' = 32,
+	'User.group.3' = 14
 )
 
 collect = checkFile( collect, file.path(path, "session-log-for-session-test.html") )

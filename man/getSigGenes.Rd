@@ -4,7 +4,7 @@
 \name{getSigGenes}
 \alias{getSigGenes}
 \alias{getSigGenes,data.frame-method}
-\title{convert stats table into toppgenes input file}
+\title{convert stats table into ToppCluster input file}
 \usage{
 getSigGenes(tab, count = 500)
 

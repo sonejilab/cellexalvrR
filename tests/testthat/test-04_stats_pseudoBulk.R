@@ -18,6 +18,12 @@ if ( file.exists( file.path(prefix,'data','output','statTest','statTestPsedoBulk
 
 x = reset(cellexalObj)
 x@outpath = file.path(prefix,'data','output','statTest' )
+
+if ( file.exists( x@outpath )){
+	unlink(x@outpath, recursive=TRUE)
+}
+dir.create( x@outpath )
+
 x = sessionPath( x, 'statTestPsedoBulk' )
 
 
@@ -25,7 +31,8 @@ if ( ! file.exists(x@outpath)){
 	dir.create(x@outpath)
 }
 
-grouping <- file.path(prefix, 'data/selection0.txt')
+grouping <- file.path(prefix, 'data/selection00.txt')
+
 
 gene2 = getDifferentials(x, grouping, 'wilcox', num.sig=100, Log=FALSE, logfc.threshold = .1, minPct=0.1, bulkStats=TRUE )
 
@@ -65,7 +72,6 @@ exp= list(
 	'pseudo bulk samples .n.' = 1
 )
 
-#browser()
 #rbind( exp, search )
 
 expect_equal( search, exp, label="html main file internals")
@@ -147,6 +153,7 @@ stats_file = file.path( gene2@usedObj$sessionPath, "tables", "User.group.1.Cpp.c
 expect_true( file.exists(stats_file), label="stats file exists")
 stats = read.delim( stats_file , sep=',')
 exp = gene2@usedObj$sigGeneLists$Cpp$"User.group.1"
+#exp[,'cluster'] = as.numeric(exp[,'cluster'])
 rownames(exp) = NULL
 expect_equal( stats, exp, label="stats table data as expected" )
 

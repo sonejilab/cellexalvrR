@@ -109,7 +109,7 @@ origids = orig[,4] +1
 names(origids) = orig[,1]
 m = match(names(origids), names(ids) ) ## likely some missing
 
-expect_true( all.equal(origids, ids[m]) == TRUE, 'grouping stored correctly')
+expect_true( all.equal(as.character(origids), as.vector(ids[m])) == TRUE, 'grouping stored correctly')
 ## and check the order and the colors, too
 
 expect_true( all.equal(cellexalObj@userGroups[m,2], 1:length(m)) == TRUE, 
@@ -124,7 +124,8 @@ expect_true( file.exists( file.path(cellexalObj@outpath, 'initialTest', 'selecti
 	label = "the selction's internal colname is stored")
 
 cellexalObj = userGrouping(cellexalObj, file.path(ipath, 'selection0.txt') )
-expect_equal( length(cellexalObj@userGroups) ,old_length +  2 ) # same grouing no adding of the data
+expect_equal( length(cellexalObj@userGroups) ,old_length +  2, 
+	label=paste("new grouping length",length(cellexalObj@userGroups),"and the expected = ", old_length +  2 ) ) # same grouing no adding of the data
 
 # context( "heatmap is produced" )
 # ofile = file.path(opath, 'heatmaps','testHeatmap.txt') 

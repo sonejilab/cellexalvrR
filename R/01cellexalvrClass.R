@@ -122,7 +122,7 @@ setClass("cellexalGrouping",
 	slots=list(
 		gname="character",
 		selectionFile="character",
-		grouping="numeric",
+		grouping="factor",
 		VRgrouping = "numeric",
 		order="integer",
 		drc="character",

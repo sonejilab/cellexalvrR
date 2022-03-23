@@ -44,15 +44,25 @@ setMethod('checkGrouping', signature = c ('cellexalvrR', 'cellexalGrouping'),
 
 	if ( length(which(is.na(x@col))) > 0 ){
 		#print ("there are NAs in the color info!")
-		x@VRgrouping = x@grouping -1
+		tmp = as.numeric(x@grouping)
+		if (length(which(is.na(tmp))) == length(which(is.na(x@grouping))) ){
+			## all values are numeric
+			OK = which(!is.na(tmp))
+			tmp[OK] = tmp[OK] -1
+			x@VRgrouping = tmp
+		}
 		## best would be to change the grouping IDs to something useful here.
 		goodIDS = 1:length(which(! is.na(x@col)))
 		badIDs  = which(! is.na(x@col))
 		# all.equal( x@grouping, cellexalObj@userGroups[, x@gname]) is true
+		tmp = as.vector(x@grouping)
+		na = names(x@grouping)
 		for ( id in goodIDS ){
 			to.change = which(cellexalObj@userGroups[, x@gname] == badIDs[id])
-			x@grouping[to.change] = id
+			tmp[to.change] = id
 		}
+		x@grouping = factor( tmp )
+		names(x@grouping) = na
 		cellexalObj@userGroups[, x@gname] = x@grouping
 		x@col = x@col[badIDs]
 		cellexalObj@groupSelectedFrom[[ x@gname ]] = x

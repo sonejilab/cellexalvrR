@@ -4,7 +4,7 @@
 #' @param cellexalObj the object to get the data from
 #' @param name the name for this linearSelection
 #' @title get an existing linearSelection or throw an error
-#' @example \dontrun{ 
+#' @examples \dontrun{ 
 #'	getLinearSelection( cellexalObj, 'Time.group.2') 
 #' }
 #' @export

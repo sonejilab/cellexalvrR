@@ -42,7 +42,13 @@ setMethod('exportUserGroups4vr', signature = c ('cellexalvrR'),
 			info = groupingInfo(cellexalObj, gname )
 			ids = which(! is.na(info@grouping))
 			if ( length(info@VRgrouping) == 0){
-				info@VRgrouping = info@grouping -1
+				if ( length(which(is.na(as.numeric(as.vector(info@grouping))))) == 0){
+					info@VRgrouping = as.numeric(as.vector(info@grouping)) -1
+				}
+				else {
+					# this will likely change the colors in VR, but better than nothing!
+					info@VRgrouping = as.numeric(info@grouping) -1
+				}
 			}
 			t <- data.frame( 
 				cellname = colnames(cellexalObj@data)[ids],

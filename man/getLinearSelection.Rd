@@ -24,3 +24,8 @@ getLinearSelection(cellexalObj, name)
 \description{
 Accessor function to get a cellexalLinear object from a cellexalvrR object by name.
 }
+\examples{
+\dontrun{ 
+getLinearSelection( cellexalObj, 'Time.group.2') 
+}
+}

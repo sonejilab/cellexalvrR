@@ -43,10 +43,13 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	}
 
 	na = names( gInfo@grouping )
-	gInfo@grouping = as.numeric( gInfo@grouping )
 	names(gInfo@grouping) = na
-
-	gInfo@grouping[ which(is.na(gInfo@grouping))] = 0
+    if ( length( which(is.na(gInfo@grouping)) ) > 0){
+         tmp = 	as.vector(gInfo@grouping)
+         tmp [which(is.na(tmp))] = 0
+         gInfo@grouping = factor( tmp )
+    }
+    names(gInfo@grouping) = na
 
 	#gInfo@grouping = as.numeric(as.factor(gInfo@grouping))
 	if ( ! gInfo@drc[1] %in% names(cellexalObj@drc) ){
@@ -56,13 +59,20 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	#x@usedObj$samples[,group] = factor( x@usedObj$samples[,group] )
 
     #options(repr.plot.width=24, repr.plot.height=24)
-    gr = factor(gInfo@grouping+1)
-    names(gr) = na
+ 	gr = gInfo@grouping
+    if ( length(which(is.na(gInfo@grouping))) == length(which(is.na(as.numeric(as.vector(gInfo@grouping))))) ){
+    	if ( min(as.numeric(as.vector(gInfo@grouping)), na.rm=T) == 0){
+    		gr = factor(as.numeric(as.vector(gInfo@grouping))+1)
+    		names(gr) = na
+    	}
+    }
+    
 
     if ( length(cellexalObj@drc[[gInfo@drc[1]]][,1]) != length(gr) ){
     	OK = match( names(gr), colnames(cellexalObj@data))
     	gr = gr[OK[which(!is.na(OK))]]
     }
+
 
     ## now we can have drc's that do not contain all data!
     OK = match(rownames(cellexalObj@drc[[gInfo@drc[1]]]), names(gr))
@@ -71,7 +81,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 	toPlot = data.frame(
 		x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),1], 
 		y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),2], 
-		id=gr 
+		id=gr
 	)
 
     p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs )
@@ -112,8 +122,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 
 
 prettyPlot2D = function(x, col, showIDs = TRUE){
-
-	x$id = as.vector(x$id)
+	#x$id = as.vector(x$id)
 	x[,1] = as.numeric(x[,1])
 	x[,2] = as.numeric(x[,2])
 	x$col=  c(grey(.6),col)[as.numeric(x$id)]
@@ -122,9 +131,9 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
 	p = p +   ggplot2::geom_point(color = x$col , show.legend = FALSE)
 
 	if ( showIDs ){
-	pos= t(sapply( sort(as.numeric(unique(x$id))), function(id) {
+	pos= t(sapply( sort(unique(x$id)), function(id) {
 		ok = which(x$id == id); 
-		c( stats::median(x[ok,1]), stats::median(x[ok,2]) )
+		c( stats::median(as.numeric(x[ok,1])), stats::median(as.numeric(x[ok,2])) )
 	} ))
     theta <- seq(pi/8, 2*pi, length.out=48)
     xo <- diff(range(pos[,1]))/1200
@@ -133,7 +142,7 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
     yo1 <- diff(range(pos[,2]))/700
     C1 = c(grey(.6),col)
     C2 = 'black'
-
+    rownames(pos) = names(table(x$id))
     df = t(data.frame(stringr::str_split( names(table( paste(x$id, x$col))), " ")))
     df = df[order(df[,1]),]
 
@@ -142,7 +151,7 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
             ggplot2::aes_q(
                 x = bquote(pos[,1]+.(cos(i)*xo1)),
                 y = bquote(pos[,2]+.(sin(i)*yo1)),
-                label=sort(as.numeric(unique(x$id)) -1 )), 
+                label=rownames(pos)[match(i, theta)] ), 
                     size=10, colour="white" )
         #p <- p + ggplot2::geom_text( data=data.frame(pos),
         #    ggplot2::aes_q(
@@ -157,7 +166,7 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
     }
     p = p + ggplot2::annotate('text', x = pos[,1], y = pos[,2],
      #label = df[,1] , size = 10, col= colorspace::lighten(df[,2], amount=.3) )  
-     label = paste(as.numeric(df[,1] ) -1 ) , size = 10, col= 'black' )  
+     label = as.character(df[,1]) , size = 10, col= 'black' )  
 	}
     p
 }  

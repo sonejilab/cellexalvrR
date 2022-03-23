@@ -18,6 +18,44 @@ setMethod('show', signature = c ('cellexalGrouping'),
 	}
 )
 
+#' The cellexalvrR sanity check.
+#' Prints out the problems and sets a x@usedObj$ceckPassed boolean value.
+#' This function is called in the export2cellexalvr function and others.
+#'
+#' @name check
+#' @docType methods
+#' @description checks cellexalvrR internals
+#' @param x the cellexalvrR object
+#' @param silent do not report warnings (default FALSE)
+#' @title cellexal internal checks
+#' @returns the checked cellexalvrR object
+#' @export 
+setGeneric('check', ## Name
+	function ( x, silent=FALSE ) {
+		standardGeneric('check')
+	}
+)
+
+#' @rdname check 
+setMethod('check', signature = c ('cellexalGrouping'),
+	definition = function ( x, silent=FALSE ) {
+		if (x@gname ==""){
+			stop("gname not set - empty?")
+		}
+		if ( ! file.exists( x@selectionFile) ){
+			warning( paste("selection file", x@selectionFile, "does not exists") )
+		}
+		if ( is.null(names(x@grouping))){
+			warning("The grouping data is not named")
+		}
+		if ( length(x@col) == 0 ){
+			warning("The color is not set - filling in rainbow")
+			x@col = rainbow( length( table(x@grouping) ) ) 
+		}
+		invisible(x)
+	}
+)
+
 
 #' @rdname pseudoBulk
 setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
@@ -104,13 +142,14 @@ setMethod('exportSelection', signature = c ('cellexalGrouping'),
 setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 	definition = function ( x, addCol=NULL ) {
 
+		x = check(x)
 		if ( length( x@VRgrouping) == 0){
-			x@VRgrouping = x@grouping -1
+			x@VRgrouping = as.numeric(x@grouping) -1
 		}
 
-		tableLine = function(id ) {
-			OK = which( x@grouping == id)
-			paste(sep="",
+		tableLine = function( id ) {
+			OK = which( as.numeric(x@grouping) == id)
+			paste(sep="", collapse="",
 				'<tr><td style="background-color:',
 				x@col[id],'"></td><td>',
 				x@col[id],"</td><td>",
@@ -123,14 +162,14 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 		ret = paste( sep="", collapse="",
 			"\n### group information table\n\n",
 			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th></tr>',
-			paste(sep="\n",collapse="\n",sapply( 1:length(x@col), tableLine) ),"</table>"
+			paste(sep="",collapse="",sapply( 1:length(x@col), tableLine) ),"</table>"
 		)
 
 
 		if ( ! is.null(addCol) ){
 			#browser(text="This table is not OK - check why!")
-			tableLine = function(id ) {
-			OK = which( x@grouping == id)
+			tableLine = function( id ) {
+			OK = which( as.numeric(x@grouping) == id)
 			## the not selected cells!
 			ret = NULL
 			if (id == 0){
@@ -142,7 +181,7 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 				addvalue = addCol[[1]][paste(id)]
 				col = x@col[id]
 			}
-			ret = paste(sep="",
+			ret = paste(sep="", collapse="",
 				'<tr><td style="background-color:',
 				col,'"></td><td>',
 				col,"</td><td>",
@@ -150,16 +189,14 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 				x@VRgrouping[OK[1]], "</td><td>",
 				id,"</td>", "<td>", addvalue, "</td></tr>"
 			)
-
 			return (ret)
 			}
 			ret = paste( sep="", collapse="",
 			"\n### group information table\n\n",
 			'<table>\n<tr><th>Color</th><th>HTML tag</th><th>cell count [n]</th><th>VR ID</th><th>R ID</th><th>',names(addCol)[1],'</th></tr>',
-			paste(sep="\n",collapse="\n",sapply( names(table(x@grouping)), tableLine) ),"</table>"
+			paste(sep="",collapse="",sapply( names(table(as.numeric(x@grouping))), tableLine) ),"</table>"
 			)
 		}
-		
 		return (ret)
 } )
 
@@ -183,6 +220,7 @@ setMethod('plotGroup', signature = c ( 'cellexalvrR', 'cellexalGrouping'),
 	definition = function ( y, x, gname=NULL, showIDs = TRUE ) {
 
 	if ( is.null(gname)){
+		
 		x@grouping[ which(is.na(x@grouping))] = 0
 
 		#x@grouping = as.numeric(as.factor(x@grouping))

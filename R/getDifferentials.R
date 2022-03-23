@@ -72,7 +72,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				#browser()
 				loc <- reorderSamples ( loc, gname ) #function definition in file 'reorder.obj.R'
 			}
-			
+
 			info <- groupingInfo( loc, cellidfile ) #function definition in file 'groupingInfo.R'
 			if ( class(info)[1] == "cellexalvrR"){
 				loc = info
@@ -192,7 +192,6 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
-
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
 				try ( {

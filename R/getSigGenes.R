@@ -7,7 +7,7 @@
 #' @param tab, cellexalvrR object
 #' @param count the number of to diff genes per cluster (default 500)
 #' @keywords DEGs
-#' @title convert stats table into toppgenes input file
+#' @title convert stats table into ToppCluster input file
 #' @examples 
 #' \dontrun{
 #' getSigGenes( cellexalObj@usedObj$sigGeneLists$Cpp$User.group.1 )

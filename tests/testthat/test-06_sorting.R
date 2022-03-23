@@ -126,3 +126,4 @@ expect_true( sum(png0 - png1) == 0, label="drc plots are exactly the same for or
 ## Strange - I really had expected to find some incoherences here.
 ## Crap. But better to test than to keep untested..
 
+obj = renderReport( obj )

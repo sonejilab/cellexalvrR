@@ -53,7 +53,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				}
 			}
 		}
-	#	browser()
+		#browser()
 		#find overlap with own data
 		m = match(cellid[,1], colnames(cellexalObj@data))
 		if ( length(which(is.na(m))) > 0 ){
@@ -66,7 +66,13 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 
 		m = match(colnames(cellexalObj@data), cellid[,1])
 		n = rep( NA, ncol(cellexalObj@data))
-		n[ which(! is.na(m)) ] = cellid[m[ which(! is.na(m)) ],4] +1
+		OK = m[ which(! is.na(m)) ]
+		if ( length(which(is.na(as.numeric(cellid[OK,4]) ))) == 0){
+			n[ which(! is.na(m)) ] = cellid[m[ which(! is.na(m)) ],4] +1
+		}
+		else {
+			n[ which(! is.na(m)) ] = cellid[m[ which(! is.na(m)) ],4]
+		}
 		
 		names(n) = colnames(cellexalObj@data)
 		order = n
@@ -102,13 +108,12 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 			}
 		}
 
-		colorIDs = as.numeric(unique(cellexalObj@userGroups[,gname][
-			which(!is.na(cellexalObj@userGroups[,gname]))]))
-		colR =  cellid[match( colorIDs-1, as.numeric(cellid[,4])),2]
-		colVR = c()
-		for ( i in 1:length(colR)) {
-			colVR[colorIDs[i]] = as.character(colR[i])
-		}
+		colorIDs = names(table(cellid[,4]))
+		colVR = colR =  cellid[match( colorIDs,cellid[,4]),2]
+		#colVR = c()
+		#for ( i in 1:length(colR)) {
+		#	colVR[colorIDs[i]] = as.character(colR[i])
+		#}
 		## look into the drs - do all cells come from one single drc?
 		drc = unique(as.vector(cellid[,3]))
 		realDRC = drc
@@ -123,11 +128,13 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 			}
 		}
 		drc = unique( drc )
-
+        if ( !is.factor(cellexalObj@userGroups[,gname]) ){
+        	cellexalObj@userGroups[,gname] = factor( cellexalObj@userGroups[,gname] )
+        }
 		ginfo = new( 'cellexalGrouping',
 			gname = gname,
 			selectionFile= basename( cellidfile ),
-			grouping = cellexalObj@userGroups[,gname] ,
+			grouping = cellexalObj@userGroups[,gname],
 			order = as.integer(order),
 			'drc' = drc,
 			col = colVR
@@ -186,7 +193,9 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		}else {
 			cellexalObj@userGroups = cbind( cellexalObj@userGroups, tmp )
 		}
-		 
+		if ( !is.factor(cellexalObj@userGroups[,cellidfile]) ){
+        	cellexalObj@userGroups[,cellidfile] = factor( cellexalObj@userGroups[,cellidfile] )
+        }
 		ginfo = new( 'cellexalGrouping',
 			gname = cellidfile,
 			selectionFile= "InternalGrouping",
@@ -215,6 +224,10 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 			cellexalObj@userGroups = cbind( cellexalObj@userGroups, df )
 		}
 		ginfo = groupingInfo( cellexalObj, cellidfile )
+		if ( class(ginfo)[1] == 'cellexalvrR'){
+			cellexalObj = ginfo
+			ginfo = groupingInfo( cellexalObj, cellidfile )
+		}
 		cellexalObj@groupSelectedFrom[[cellidfile]] = ginfo
 	}
 	else {

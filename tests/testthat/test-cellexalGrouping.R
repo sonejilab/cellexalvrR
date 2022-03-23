@@ -59,29 +59,29 @@ x = getDifferentials( x, grouping, deg.method='wilcox'	)
 x= renderReport(x)
 
 collect = list(
-	'User.group.2 Statistical Result' = 0,
+	'User.group.1 Statistical Result' = 0,
 	'group information table' = 0,
-	'User.group.2.Cpp.csv' = 0, 
-	'2D DRC DDRtree dim 1,2 . User.group.2 .' = 0,
-	'2D DRC DDRtree dim 2,3 . User.group.2 .' = 0,
-	'2D DRC DDRtree dim 1,3 . User.group.2 .' = 0,
-	'Time.group.4 Statistical Result' = 0,
-	'2D DRC DDRtree dim 1,2 . Time.group.4 .' = 0,
-	'2D DRC DDRtree dim 2,3 . Time.group.4 .' = 0,
-	'2D DRC DDRtree dim 1,3 . Time.group.4 .' = 0
+	'User.group.1.Cpp.csv' = 0, 
+	'2D DRC DDRtree dim 1,2 . User.group.1 .' = 0,
+	'2D DRC DDRtree dim 2,3 . User.group.1 .' = 0,
+	'2D DRC DDRtree dim 1,3 . User.group.1 .' = 0,
+	'Time.group.3 Statistical Result' = 0,
+	'2D DRC DDRtree dim 1,2 . Time.group.3 .' = 0,
+	'2D DRC DDRtree dim 2,3 . Time.group.3 .' = 0,
+	'2D DRC DDRtree dim 1,3 . Time.group.3 .' = 0
 )
 
 expect = list(
-	'User.group.2 Statistical Result' = 2,
+	'User.group.1 Statistical Result' = 2,
 	'group information table' = 4,
-	'User.group.2.Cpp.csv' = 1, 
-	'2D DRC DDRtree dim 1,2 . User.group.2 .' = 2,
-	'2D DRC DDRtree dim 2,3 . User.group.2 .' = 2,
-	'2D DRC DDRtree dim 1,3 . User.group.2 .' = 2,
-	'Time.group.4 Statistical Result' = 2,
-	'2D DRC DDRtree dim 1,2 . Time.group.4 .' = 4,
-	'2D DRC DDRtree dim 2,3 . Time.group.4 .' = 4,
-	'2D DRC DDRtree dim 1,3 . Time.group.4 .' = 4
+	'User.group.1.Cpp.csv' = 1, 
+	'2D DRC DDRtree dim 1,2 . User.group.1 .' = 2,
+	'2D DRC DDRtree dim 2,3 . User.group.1 .' = 2,
+	'2D DRC DDRtree dim 1,3 . User.group.1 .' = 2,
+	'Time.group.3 Statistical Result' = 2,
+	'2D DRC DDRtree dim 1,2 . Time.group.3 .' = 4,
+	'2D DRC DDRtree dim 2,3 . Time.group.3 .' = 4,
+	'2D DRC DDRtree dim 1,3 . Time.group.3 .' = 4
 )
 
 expect[[x@outpath]] = 0

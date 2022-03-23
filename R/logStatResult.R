@@ -57,7 +57,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			if ( ! empty(pseudoB_group@linarObj) ){
 				tab = table( pseudoB_group@linarObj@dat$col)
 			}else {
-				tab = table(pseudoB_group@grouping)
+				tab = table(as.numeric(pseudoB_group@grouping))
 			}
 			if ( ! empty(gInfo@linarObj) ){
 				tmp = gInfo@linarObj
@@ -120,7 +120,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			}
 		}
 
-		toppGF = filename( c(  x@usedObj$lastGroup,'toppgeneInput', "csv" ), opath )
+		toppGF = filename( c(  x@usedObj$lastGroup,'toppClusterInput', "csv" ), opath )
 		try( {
 			toppgenes = getSigGenes( data, count=100)
 			write.table( toppgenes, file=file.path(opath, toppGF), col.names=F, row.names=F, quote=F, sep="," )
@@ -135,7 +135,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				paste(sep="",  "<a href='",file.path( ".", x@usedObj$sessionName, 'tables',ofile),"' download>","This tab separated table </a>",
 					" contains the statistical results for ",
 				    "<a href='",file.path( ".", x@usedObj$sessionName, basename(sesionFile)),"' download>"," this selection file</a>", ".","\n\n",
-				    "You can use <a href='",file.path( ".", x@usedObj$sessionName, 'tables',toppGF),"' download>this file</a> to create a pathway analysis using the toppgenes web tool. "
+				    "You can use <a href='",file.path( ".", x@usedObj$sessionName, 'tables',toppGF),"' download>this file</a> to create a pathway analysis using the ToppCluster web tool. "
 				    ),
 				""
 		)
