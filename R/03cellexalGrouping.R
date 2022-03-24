@@ -146,7 +146,6 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 		if ( length( x@VRgrouping) == 0){
 			x@VRgrouping = as.numeric(x@grouping) -1
 		}
-		browser()
 		tableLine = function( id ) {
 			OK = which( as.numeric(x@grouping) == id)
 			paste(sep="", collapse="",
