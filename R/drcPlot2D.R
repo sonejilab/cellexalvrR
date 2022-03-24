@@ -128,8 +128,9 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
 	x[,2] = as.numeric(x[,2])
 	if ( length( table( x$id ) ) > length(col) ){
 		x$col=  c(grey(.6),col)[as.numeric(x$id)]
+	}else {
+		x$col=  col[as.numeric(x$id)]
 	}
-
     
 
 	p = ggplot2::ggplot(x, ggplot2::aes(x=x, y=y) ) + ggplot2::theme_classic()
