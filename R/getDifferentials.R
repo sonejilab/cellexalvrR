@@ -200,7 +200,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
 				try ( {
-					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text, nameAdd=nameAdd )
+					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
 					## And get additional info about the genes
 
 
