@@ -12,7 +12,8 @@ make.cellexalvr.heatmap.list(
   cellidfile,
   num.sig,
   outfile,
-  stats_method = "wilcox"
+  stats_method = "wilcox",
+  nameAdd = NULL
 )
 
 \S4method{make.cellexalvr.heatmap.list}{cellexalvrR}(
@@ -20,7 +21,8 @@ make.cellexalvr.heatmap.list(
   cellidfile,
   num.sig,
   outfile,
-  stats_method = "wilcox"
+  stats_method = "wilcox",
+  nameAdd = NULL
 )
 
 \S4method{make.cellexalvr.heatmap.list}{character}(
@@ -41,6 +43,8 @@ make.cellexalvr.heatmap.list(
 \item{outfile}{The name of the output file}
 
 \item{stats_method}{the stats method to use see getDifferentials()}
+
+\item{nameAdd}{one string to add to the clustion id in both the stats table and the ToppGene table.}
 }
 \description{
 Creates an outfile for CellexalVR containing a list of genes from which a heatmap is made in VR.

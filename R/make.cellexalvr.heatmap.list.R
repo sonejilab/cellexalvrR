@@ -12,12 +12,13 @@
 #' @param num.sig The number of differentials to be returned
 #' @param outfile The name of the output file
 #' @param stats_method the stats method to use see getDifferentials()
+#' @param nameAdd one string to add to the clustion id in both the stats table and the ToppGene table.
 #' @title Create the gene list files for VR
 #' @keywords differential, gene list
 #' @export 
 #if ( ! isGeneric('renew') ){
 setGeneric('make.cellexalvr.heatmap.list', ## Name
-			function (cvrObj,cellidfile,num.sig,outfile, stats_method='wilcox' ) { 
+			function (cvrObj,cellidfile,num.sig,outfile, stats_method='wilcox', nameAdd=NULL ) { 
 				standardGeneric('make.cellexalvr.heatmap.list') 
 			}
 )
@@ -27,7 +28,7 @@ setGeneric('make.cellexalvr.heatmap.list', ## Name
 
 #' @rdname make.cellexalvr.heatmap.list
 setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
-		definition = function (cvrObj,cellidfile,num.sig,outfile, stats_method='wilcox') {
+		definition = function (cvrObj,cellidfile,num.sig,outfile, stats_method='wilcox', nameAdd=NULL) {
 
 			if ( ! file.exists( dirname( outfile ))){## did happen in the winVR test script
 				dir.create( dirname( outfile ), recursive=TRUE)
@@ -45,7 +46,7 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 				file.copy( cellidfile, cvrObj@outpath )
 			}
 
-			cvrObj = getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig ) #function definition in file 'getDifferentials.R'
+			cvrObj = getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig, nameAdd=nameAdd ) #function definition in file 'getDifferentials.R'
 			#getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig) #function definition in file 'getDifferentials.R'
 
 			cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@heatmapBasename = basename( outfile )
