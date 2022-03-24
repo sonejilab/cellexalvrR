@@ -3,12 +3,15 @@
 \docType{methods}
 \name{getSigGenes}
 \alias{getSigGenes}
+\alias{getSigGenes,matrix-method}
 \alias{getSigGenes,data.frame-method}
 \title{convert stats table into ToppCluster input file}
 \usage{
-getSigGenes(tab, count = 500)
+getSigGenes(tab, count = 500, nameAdd = NULL)
 
-\S4method{getSigGenes}{data.frame}(tab, count = 500)
+\S4method{getSigGenes}{matrix}(tab, count = 500, nameAdd = NULL)
+
+\S4method{getSigGenes}{data.frame}(tab, count = 500, nameAdd = NULL)
 }
 \arguments{
 \item{tab, }{cellexalvrR object}

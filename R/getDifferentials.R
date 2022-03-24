@@ -18,6 +18,7 @@
 #' @param report4genes a list of genes you want to get a report on.
 #' @param text an optional additional text to show in the log
 #' @param bulkStats apply stats to pseudo bulk samples instead of cells? (default TRUE)
+#' @param nameAdd one string to add to the clustion id in both the stats table and the ToppGene table.
 #' @keywords DEGs
 #' @title main Statistics function for cellexalvrR
 #' @examples 
@@ -29,9 +30,9 @@
 #' @export 
 #if ( ! isGeneric('getDifferentials') ){
 setGeneric('getDifferentials', ## Name
-			function (x,cellidfile,
-					deg.method='wilcox',
-					num.sig=250, Log=TRUE, logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) { 
+			function (x,cellidfile,	deg.method='wilcox', num.sig=250, Log=TRUE, 
+				logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, 
+				text = NULL, bulkStats = TRUE, nameAdd=NULL ) { 
 				standardGeneric('getDifferentials') 
 			}
 	) 
@@ -40,9 +41,9 @@ setGeneric('getDifferentials', ## Name
 
 #' @rdname getDifferentials
 setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
-		definition = function (x,cellidfile,
-				deg.method='wilcox',
-				num.sig=250, Log=TRUE, logfc.threshold = 0.5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, text = NULL, bulkStats = TRUE ) {
+		definition = function (x,cellidfile, deg.method='wilcox', num.sig=250, Log=TRUE, 
+			logfc.threshold = 0.5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, 
+			text = NULL, bulkStats = TRUE, nameAdd=NULL ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
@@ -192,10 +193,14 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				for ( n in  unique( sort(grp.vec)) ) {
 					all_markers = rbind( all_markers, CppStats(n) )
 				}
+
+				if ( !is.null( nameAdd ) ) {
+					all_markers[,'cluster'] = paste( sep="",nameAdd, all_markers[,'cluster'] )
+				}
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
 				try ( {
-					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
+					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text, nameAdd=nameAdd )
 					## And get additional info about the genes
 
 

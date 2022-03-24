@@ -18,7 +18,8 @@ getDifferentials(
   onlyPos = TRUE,
   report4genes = NULL,
   text = NULL,
-  bulkStats = TRUE
+  bulkStats = TRUE,
+  nameAdd = NULL
 )
 
 \S4method{getDifferentials}{cellexalvrR,character}(
@@ -32,7 +33,8 @@ getDifferentials(
   onlyPos = TRUE,
   report4genes = NULL,
   text = NULL,
-  bulkStats = TRUE
+  bulkStats = TRUE,
+  nameAdd = NULL
 )
 
 \S4method{getDifferentials}{character,ANY}(
@@ -68,6 +70,8 @@ getDifferentials(
 \item{text}{an optional additional text to show in the log}
 
 \item{bulkStats}{apply stats to pseudo bulk samples instead of cells? (default TRUE)}
+
+\item{nameAdd}{one string to add to the clustion id in both the stats table and the ToppGene table.}
 }
 \value{
 the cellexalvrr object with the stats table stored in x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]]

@@ -8,10 +8,11 @@
 #' @param data the results table
 #' @param col the p value column to plot the -log10 histogram
 #' @param text an optional additional text shown after the heading
+#' @param nameAdd add this to the group name for the ToppGene output file. This allows for e.g. a sub analysis of a main clustering and some concatenation of the ToppGene files.
 #' @title make the stats table available in the log system
 #' @export
 setGeneric('logStatResult', ## Name
-	function ( x, method, data, col=NULL, text=NULL ) { ## Argumente der generischen Funktion
+	function ( x, method, data, col=NULL, text=NULL, nameAdd=NULL ) { ## Argumente der generischen Funktion
 		standardGeneric('logStatResult') ## der Aufruf von standardGeneric sorgt für das Dispatching
 	}
 )
@@ -20,7 +21,7 @@ setGeneric('logStatResult', ## Name
 
 #' @rdname logStatResult
 setMethod('logStatResult', signature = c ('cellexalvrR'),
-	definition = function ( x, method, data, col=NULL, text=NULL ) {
+	definition = function ( x, method, data, col=NULL, text=NULL, nameAdd=NULL ) {
 	if (! is.null( x@usedObj$sessionName)) {
 
 		## export the data into a file and add a small download link into the report
@@ -122,7 +123,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 
 		toppGF = filename( c(  x@usedObj$lastGroup,'toppClusterInput', "csv" ), opath )
 		try( {
-			toppgenes = getSigGenes( data, count=100)
+			toppgenes = getSigGenes( data, count=100, nameAdd = nameAdd)
 			write.table( toppgenes, file=file.path(opath, toppGF), col.names=F, row.names=F, quote=F, sep="," )
 		})
 

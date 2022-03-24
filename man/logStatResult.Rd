@@ -6,9 +6,9 @@
 \alias{logStatResult,cellexalvrR-method}
 \title{make the stats table available in the log system}
 \usage{
-logStatResult(x, method, data, col = NULL, text = NULL)
+logStatResult(x, method, data, col = NULL, text = NULL, nameAdd = NULL)
 
-\S4method{logStatResult}{cellexalvrR}(x, method, data, col = NULL, text = NULL)
+\S4method{logStatResult}{cellexalvrR}(x, method, data, col = NULL, text = NULL, nameAdd = NULL)
 }
 \arguments{
 \item{x}{the cellexalvrR object}
@@ -20,6 +20,8 @@ logStatResult(x, method, data, col = NULL, text = NULL)
 \item{col}{the p value column to plot the -log10 histogram}
 
 \item{text}{an optional additional text shown after the heading}
+
+\item{nameAdd}{add this to the group name for the ToppGene output file. This allows for e.g. a sub analysis of a main clustering and some concatenation of the ToppGene files.}
 }
 \description{
 Create a log file part including a stats data download link (coma separted table file)

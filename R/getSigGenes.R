@@ -16,7 +16,7 @@
 #' @export 
 #if ( ! isGeneric('getSigGenes') ){
 setGeneric('getSigGenes', ## Name
-			function (tab, count=500 ) { 
+			function (tab, count=500, nameAdd=NULL ) { 
 				standardGeneric('getSigGenes') 
 			}
 	) 
@@ -25,19 +25,19 @@ setGeneric('getSigGenes', ## Name
 
 #' @rdname getSigGenes
 setMethod('getSigGenes', signature = c ('matrix'),
-	definition = function( tab, count=500 ){
-		getSigGenes( as.data.frame(tab), count=count )
+	definition = function( tab, count=500, nameAdd=NULL ){
+		getSigGenes( as.data.frame(tab), count=count, nameAdd=nameAdd )
 	}
 )
 
 #' @rdname getSigGenes
 setMethod('getSigGenes', signature = c ('data.frame'),
-		definition = function( tab, count=500 ){
+		definition = function( tab, count=500, nameAdd=NULL ){
 			
 			info = split( tab$gene, tab$cluster )
 			ret = data.frame( 
 				genes= unlist(lapply( info, function(x){ c = count; if (c > length(x)){c = length(x)}; return(x[1:c])  })),
-				group= unlist(lapply( names(info), function(x){ c = count; if (c > length(info[[x]])){c = length(info[[x]])}; return( rep(x, c) )  })) 
+				group= paste(sep="", nameAdd , unlist(lapply( names(info), function(x){ c = count; if (c > length(info[[x]])){c = length(info[[x]])}; return( rep(x, c) )  })) )
 			)
 			return (ret)
 } )
