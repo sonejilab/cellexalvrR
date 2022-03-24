@@ -155,7 +155,7 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 				x@col[id],"</td><td>",
 				length(OK),"</td><td>",
 				x@VRgrouping[OK[1]], "</td><td>",
-				id,"</td></tr>"
+				names(table(x@grouping))[id],"</td></tr>"
 			)
 		}
 
@@ -187,7 +187,7 @@ setMethod('HTMLtable', signature = c ('cellexalGrouping'),
 				col,"</td><td>",
 				length(OK),"</td><td>",
 				x@VRgrouping[OK[1]], "</td><td>",
-				id,"</td>", "<td>", addvalue, "</td></tr>"
+				names(table(x@grouping))[id],"</td>", "<td>", addvalue, "</td></tr>"
 			)
 			return (ret)
 			}
