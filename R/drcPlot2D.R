@@ -126,7 +126,9 @@ prettyPlot2D = function(x, col, showIDs = TRUE){
 	#x$id = as.vector(x$id)
 	x[,1] = as.numeric(x[,1])
 	x[,2] = as.numeric(x[,2])
-	x$col=  c(grey(.6),col)[as.numeric(x$id)]
+	if ( length( table( x$id ) ) > length(x@col) ){
+		x$col=  c(grey(.6),col)[as.numeric(x$id)]
+	}
 
     
 
