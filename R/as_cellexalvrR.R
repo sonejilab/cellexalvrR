@@ -179,15 +179,15 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
-		if ( is.na(match("_index", colnames(annotation))) ){
-			rownames(m) = rownames(annotation)
-			colnames(m) = rownames(meta.data)
-			annotation[,'_index'] = rownames(m)
-			meta.data[,'_index']  = colnames(m)
-		}else{
-			rownames(m) = annotation[,'_index']
-			colnames(m) = meta.data[,'_index']
+		if ( is.na(match("_index", colnames(meta.data))) ){
+			meta.data[,'_index'] = colnames(m)
 		}
+		if ( s.na(match("_index", colnames(annotation))) ){}
+			annotation[,'_index'] = rownames(m)
+		}
+		
+		rownames(m) = annotation[,'_index']
+		colnames(m) = meta.data[,'_index']
 
 		m
 	}
