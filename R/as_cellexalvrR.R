@@ -181,10 +181,10 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		annotation = H5Anno2df( file,'var')
 
 		if ( is.na(match("_index", colnames(meta.data))) ){
-			meta.data[,'_index'] = colnames(m)
+			meta.data[,'_index'] = rownames(meta.data)
 		}
-		if ( s.na(match("_index", colnames(annotation))) ){
-			annotation[,'_index'] = rownames(m)
+		if ( is.na(match("_index", colnames(annotation))) ){
+			annotation[,'_index'] = rownames(annotation)
 		}
 
 		rownames(m) = annotation[,'_index']
