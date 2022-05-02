@@ -177,15 +177,9 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		j = j [-length(j)]
 		m = Matrix::sparseMatrix( i = i+1, j=j, x=x)
 
+		browser()
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
-
-		if ( is.na(match("_index", colnames(meta.data))) ){
-			meta.data$'_index' = rownames(meta.data)
-		}
-		if ( is.na(match("_index", colnames(annotation))) ){
-			annotation$'_index' = rownames(annotation)
-		}
 
 		rownames(m) = annotation[,'_index']
 		colnames(m) = meta.data[,'_index']
@@ -202,15 +196,9 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 				m = Matrix( m, sparse=TRUE)
 				meta.data = H5Anno2df( x, 'obs')
 				annotation = H5Anno2df( x,'var')
-				if ( is.na(match("_index", colnames(annotation))) ){
-					rownames(m) = rownames(annotation)
-					colnames(m) = rownames(meta.data)
-					annotation[,'_index'] = rownames(m)
-					meta.data[,'_index']  = colnames(m)
-				}else{
-					rownames(m) = annotation[,'_index']
-					colnames(m) = meta.data[,'_index']
-				}
+
+				rownames(m) = annotation[,'_index']
+				colnames(m) = meta.data[,'_index']
 			}
 			m = m
 		}
@@ -219,13 +207,8 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		stop( "I could not obtain the expression data from the h5 file")
 	}
 	meta.data = H5Anno2df( x, 'obs')
-
 	annotation = H5Anno2df( x, 'var')
-	if ( is.na(match("_index", colnames(annotation))) ){
-		annotation[,'_index'] = rownames(m)
-		meta.data[,'_index']  = colnames(m)
-	}
-	
+
 	if ( is.null(embeddings) ) {
 		## extract all if embeddings == NULL
 		embeddings = names(x[['obsm']])[grep( '^X_', names(x[['obsm']]))]
@@ -401,6 +384,19 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 			}
 			obs = data.frame(lapply(names(x[[slotName]])[OK], function(n) { x[[paste(sep="/",slotName,n)]][] } ))
 			colnames( obs ) = names(x[[slotName]])[OK]
+
+			obs2 = data.frame(lapply(names(x[[slotName]])[!OK], function(n) { 
+				factor ( 
+					x[[paste(sep="/",slotName,n)]][['codes']][], 
+					labels= x[[paste(sep="/",slotName,n)]][['categories']][] 
+					)
+				 } 
+			))
+			if ( nrow( obs2) == nrow(obs) ){
+				colnames( obs2) = names(x[[slotName]])[!OK]
+				obs = cbind ( obs, obs2)
+			}
+
 			col_uniq= NULL
 			for( n in colnames(obs) ) {
 				if ( all(obs[,n] =="") ){
@@ -462,6 +458,10 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 					}
 				}
 			}
-			
+
+			if ( is.na(match("_index", colnames(obs))) ){
+				obs$'_index' = rownames(obs)
+			}
+
 			obs
 		} )
