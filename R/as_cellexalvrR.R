@@ -177,7 +177,6 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		j = j [-length(j)]
 		m = Matrix::sparseMatrix( i = i+1, j=j, x=x)
 
-		browser()
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
 
@@ -385,7 +384,10 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 			obs = data.frame(lapply(names(x[[slotName]])[OK], function(n) { x[[paste(sep="/",slotName,n)]][] } ))
 			colnames( obs ) = names(x[[slotName]])[OK]
 
-			obs2 = data.frame(lapply(names(x[[slotName]])[!OK], function(n) { 
+			obs2 = data.frame(lapply(names(x[[slotName]])[!OK], function(n) {
+				if ( n == "__categories"){
+					return (NULL)
+				}
 				factor ( 
 					x[[paste(sep="/",slotName,n)]][['codes']][], 
 					labels= x[[paste(sep="/",slotName,n)]][['categories']][] 
