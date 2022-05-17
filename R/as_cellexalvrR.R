@@ -384,6 +384,8 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 			obs = data.frame(lapply(names(x[[slotName]])[OK], function(n) { x[[paste(sep="/",slotName,n)]][] } ))
 			colnames( obs ) = names(x[[slotName]])[OK]
 
+			obs2 = data.frame()
+			try( {
 			obs2 = data.frame(lapply(names(x[[slotName]])[!OK], function(n) {
 				if ( n == "__categories"){
 					return (NULL)
@@ -394,6 +396,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 					)
 				 } 
 			))
+			})
 			if ( nrow( obs2) == nrow(obs) ){
 				colnames( obs2) = names(x[[slotName]])[!OK]
 				obs = cbind ( obs, obs2)

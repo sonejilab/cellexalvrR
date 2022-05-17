@@ -31,7 +31,7 @@
 #if ( ! isGeneric('getDifferentials') ){
 setGeneric('getDifferentials', ## Name
 			function (x,cellidfile,	deg.method='wilcox', num.sig=250, Log=TRUE, 
-				logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, 
+				logfc.threshold = .5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, 
 				text = NULL, bulkStats = TRUE, nameAdd=NULL ) { 
 				standardGeneric('getDifferentials') 
 			}
