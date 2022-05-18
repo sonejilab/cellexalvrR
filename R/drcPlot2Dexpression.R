@@ -63,6 +63,7 @@ setMethod('drcPlot2Dexpression', signature = c ('cellexalvrR', 'character', 'cha
 	grDevices::png( file= DRC1, width=1000, height=1000)
 	col = gplots::bluered(length(brks))
 	toPlot = data.frame(x=cellexalObj@drc[[drc]][,1], y=cellexalObj@drc[[drc]][,2], id=gr )
+	toPlot = toPlot[order(toPlot[,3]),]
 	p= prettyPlot2D( toPlot, col , FALSE )
 	print(p)
 	

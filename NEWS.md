@@ -1,3 +1,7 @@
+# 1.1.0
+
+Add a plumber based web API to cellexalvrR
+
 # 1.0.1
 
 Groupings can contain strings and do not need to be numeric as before.
