@@ -9,10 +9,11 @@
 #' @param col the p value column to plot the -log10 histogram
 #' @param text an optional additional text shown after the heading
 #' @param nameAdd add this to the group name for the ToppGene output file. This allows for e.g. a sub analysis of a main clustering and some concatenation of the ToppGene files.
+#' @param showIDs plot the IDs on the drc plots. This will get problems if it is many IDs (default TRUE)
 #' @title make the stats table available in the log system
 #' @export
 setGeneric('logStatResult', ## Name
-	function ( x, method, data, col=NULL, text=NULL, nameAdd=NULL ) { ## Argumente der generischen Funktion
+	function ( x, method, data, col=NULL, text=NULL, nameAdd=NULL, showIDs = TRUE ) { ## Argumente der generischen Funktion
 		standardGeneric('logStatResult') ## der Aufruf von standardGeneric sorgt für das Dispatching
 	}
 )
@@ -21,7 +22,7 @@ setGeneric('logStatResult', ## Name
 
 #' @rdname logStatResult
 setMethod('logStatResult', signature = c ('cellexalvrR'),
-	definition = function ( x, method, data, col=NULL, text=NULL, nameAdd=NULL ) {
+	definition = function ( x, method, data, col=NULL, text=NULL, nameAdd=NULL, showIDs = TRUE ) {
 	if (! is.null( x@usedObj$sessionName)) {
 
 		## export the data into a file and add a small download link into the report
@@ -107,9 +108,9 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		figures2 = NULL
 
 		if ( length(grep('Time.group', x@usedObj$lastGroup)) > 0 ){
-			figures = drcFiles2HTMLlinear(x, gInfo, showIDs = FALSE )
+			figures = drcFiles2HTMLlinear(x, gInfo, showIDs = showIDs )
 		}else {
-			figures = drcFiles2HTML(x, gInfo, showIDs = TRUE )
+			figures = drcFiles2HTML(x, gInfo, showIDs = showIDs )
 		}
 		if ( length( gInfo@drc) > 1 ){
 			## I do not support more than two here to ignore if it is more

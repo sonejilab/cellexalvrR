@@ -75,7 +75,9 @@ function( name ) {
 function( cellidfile, num.sig = 250, logfc.threshold = 0.5, minPct = 0.2 ) {
 
 	file = rawToChar(cellidfile[[1]], multiple = FALSE)
-	write( file, )
+	ofile = filename(c("Selection", "txt" ), Data$store@outpath)
+	write( file, ofile )
+	return (paste ("not implemented but check", ofile) )
 
 	Data$store = getDifferentials( Data$store, cellidfile=cellidfile, num.sig = num.sig,  logfc.threshold = logfc.threshold, minPct = minPct )
 	return( jsonlite::toJSON( Data$store@usedObj$deg.genes ) )
@@ -84,8 +86,17 @@ function( cellidfile, num.sig = 250, logfc.threshold = 0.5, minPct = 0.2 ) {
 
 #* returns a list of genes that are differentially expressed
 #* @param cellidfile:[file]
-#* @param name
+#* @param name the gene name to correlate the data to
+#* @param is.smarker gene or marker? defaulkt false 
+#* @param cpp use the cpp pearson correlation (FASTER) default true
 #* @post /cor2gene
+function(name, ){
+
+	output = filename(c("Correlation", name, "txt" ), Data$store@usedObj$sessionPath)
+	Data$store = get.genes.cor.to(Data$store, gname=name, output=output, is.smarker=F, cpp=T)
+
+}
+
 
 
 #* Shut the server down
