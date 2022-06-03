@@ -53,7 +53,16 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 
 	#gInfo@grouping = as.numeric(as.factor(gInfo@grouping))
 	if ( ! gInfo@drc[1] %in% names(cellexalObj@drc) ){
-		stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc[1], "not in list", paste( collapse=", ", names(cellexalObj@drc))))
+		## there is the possibility that they selected on three index values!
+		## lets try this:
+		indexNames = unlist(stringr::str_split( gInfo@drc[1], " - "))[1:3]
+		if ( length( which(is.na( match( indexNames, colnames(cellexalObj@index))))) == 0 ){
+			cellexalObj@drc[[ gInfo@drc[1] ]] = cellexalObj@index[, indexNames]
+		}
+		else {
+			stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc[1], 
+				"not in list", paste( collapse=", ", names(cellexalObj@drc))))
+		}
 	}
 
 	#x@usedObj$samples[,group] = factor( x@usedObj$samples[,group] )

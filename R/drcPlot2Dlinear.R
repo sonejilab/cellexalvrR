@@ -38,7 +38,14 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 			dir.create(file.path( sessionPath , 'png')  )
 		}
 		if ( ! gInfo@drc[1] %in% names(cellexalObj@drc) ){
-			stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc[1], "not in list", paste( collapse=", ", names(cellexalObj@drc))))
+			indexNames = unlist(stringr::str_split( gInfo@drc[1], " - "))[1:3]
+			if ( length( which(is.na( match( indexNames, colnames(cellexalObj@index))))) == 0 ){
+				cellexalObj@drc[[ gInfo@drc[1] ]] = cellexalObj@index[, indexNames]
+			}
+			else {
+				stop( paste("group info does not match to cellexalObj data content: drc named", gInfo@drc[1], 
+					"not in list", paste( collapse=", ", names(cellexalObj@drc))))
+			}
 		}
 		
 		drc = cellexalObj@drc[[gInfo@drc[1]]]

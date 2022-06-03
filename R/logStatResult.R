@@ -138,7 +138,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 					" contains the statistical results for ",
 				    "<a href='",file.path( ".", x@usedObj$sessionName, basename(sesionFile)),"' download>"," this selection file</a>", ".","\n\n",
 				    "You can use <a href='",file.path( ".", x@usedObj$sessionName, 'tables',toppGF),"' download>this file</a> to create a pathway analysis using "
-				    ,"<a href='https://toppcluster.cchmc.org/', target='_blank'>the ToppCluster web tool</a>. "
+				    ,"<a href='https://toppcluster.cchmc.org/'>the ToppCluster web tool</a>. "
 				    ),
 				""
 		)

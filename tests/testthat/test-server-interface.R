@@ -1,5 +1,7 @@
 context('server VR interface')
 
+skip('Test outdated')
+
 if ( .Platform$OS.type != 'unix' ) {
 	skip('Test only work on unix platform')
 }
