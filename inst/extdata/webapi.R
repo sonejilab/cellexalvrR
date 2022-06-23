@@ -7,6 +7,7 @@ library(R6)
 Data <- R6Class("CellexalvrR_WebAPI",
   public = list(
     store = cellexalObj,
+    connections = list(),
     initialize = function() {
     }
   )
@@ -90,14 +91,28 @@ function( cellidfile, num.sig = 250, logfc.threshold = 0.5, minPct = 0.2 ) {
 #* @param is.smarker gene or marker? defaulkt false 
 #* @param cpp use the cpp pearson correlation (FASTER) default true
 #* @post /cor2gene
-function(name, ){
+function(name ){
 
 	output = filename(c("Correlation", name, "txt" ), Data$store@usedObj$sessionPath)
 	Data$store = get.genes.cor.to(Data$store, gname=name, output=output, is.smarker=F, cpp=T)
 
 }
 
-
+#* Get all drcs
+#* @get /get_coords
+function(){
+	ret = lapply( Data$store@drc, function(x) { 
+		x= cbind( 
+			CellID = rownames(x), 
+			'x' = x[,1], 
+			'y' = x[,2], 
+			'z' = x[,3] 
+			); 
+		t(x[1:2,]) 
+	} )
+	ret = c( list(names = names(Data$store@drc)), ret)
+	return( jsonlite::toJSON( ret ))
+}
 
 #* Shut the server down
 #* @get /shutdown
@@ -113,7 +128,7 @@ function(){
 #* Return "hello world"
 #* @get /hello
 function(){
-  paste( "hello world\n", toString(Data$store) )
+  return( "hello" )
 }
 
 #* Return "hello world"
