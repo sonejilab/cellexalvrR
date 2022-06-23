@@ -22,7 +22,7 @@ setMethod('logText', signature = c ('cellexalvrR'),
 	if ( is.null(text)){
 		return ( cellexalObj )
 	}
-	cellexalObj = storeLogContents( cellexalObj, content, type="TextOnly")
+	cellexalObj = storeLogContents( cellexalObj, text, type="TextOnly")
 	id = length(cellexalObj@usedObj$sessionRmdFiles)
 	cellexalObj = renderFile( cellexalObj, id, type="TextOnly" )
 	
