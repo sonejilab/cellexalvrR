@@ -48,6 +48,9 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
+			if ( nrow( x@data) <= 1000 ){
+				logfc.threshold = minPct = 0
+			}
 
 			
 			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'

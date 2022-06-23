@@ -11,11 +11,34 @@ setMethod('check', signature = c ('cellexalvrR'),
 	if ( silent ) {
     	options(warn = -1)
 	}
-	cn = colnames(x@data)
-	rn = rownames(x@data)
+	cn = as.vector(colnames(x@data))
+	rn = as.vector(rownames(x@data))
 
 	OK = FALSE
 	error = NULL;
+
+	## VR does not allow space or better whitespace in the cell names
+    if ( all.equal( cn, unlist(stringr::str_replace_all( cn, "\\s\\s*", "_" )) ) == FALSE ){
+    	cn = unlist(stringr::str_replace_all( cn, "\\s\\s*", "_" )) 
+		colnames(x@data) = cn
+		for( n in names( x@drc ) ){
+			## save call
+			rownames(x@drc[[n]]) = unlist(stringr::str_replace_all( rownames(x@drc[[n]]), "\\s\\s*", "_" ))
+		}
+		if ( ncol( x@index) > 0 ){
+			rownames( x@index ) = unlist(stringr::str_replace_all( rownames( x@index ), "\\s\\s*", "_" ))
+		}
+		message("cell names contained white space - use the returned object!")
+    }
+
+    if ( all.equal( rn, unlist(stringr::str_replace_all( rn, "\\s\\s*", "_" )) ) == FALSE ){
+    	rn = unlist(stringr::str_replace_all( rn, "\\s\\s*", "_" )) 
+		rownames(x@data) = rn
+		if ( ncol( x@index) > 0 ){
+			colnames( x@index ) = rn
+		}
+		message("gene names contained white space - use the returned object!")
+    }
 
 	# meta.gene
 	if ( ! is(x@meta.gene, 'matrix') ) {
@@ -128,6 +151,16 @@ setMethod('check', signature = c ('cellexalvrR'),
 			error = c(error , 
 					paste("groupSelectedFrom",g,"is no cellexalGrouping"))
 		}
+	}
+
+	if ( ncol(x@meta.cell) == 1 ) {
+		x@meta.cell = cbind( x@meta.cell, 'save' = rep(1, nrow(x@meta.cell)))
+		message("meta.cell matrix contained only one column - fixed - use the returned object!")
+	}
+
+	if ( ncol(x@meta.gene) == 1 ) {
+		x@meta.gene = cbind( x@meta.gene, 'save' = rep(1, nrow(x@meta.gene)))
+		message("meta.gene matrix contained only one column - fixed - use the returned object!")
 	}
 	
 	if ( !is.null(error) ){
