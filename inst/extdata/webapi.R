@@ -68,20 +68,18 @@ function( name ) {
 }
 
 #* returns a list of genes that are differentially expressed
-#* @param cellidfile:[file]
-#* @param num.sig default 250
-#* @param logfc.threshold default = 0.5
-#* @param minPct default 0.2
+#* @param selection a json representation of the selectionxy.txt file
+#* @param num.sig numer of returned top genes (default 250)
+#* @param logfc.threshold min logFC to use the expression (log(2) =0.6931472)
+#* @param minPct min percentage of cells expressing in one group (default 0.1)
 #* @post /HeatmapList
-function( cellidfile, num.sig = 250, logfc.threshold = 0.5, minPct = 0.2 ) {
+function( selection, num.sig=250, logfc.threshold=log(2), minPct=0.1  ) {
 
-	file = rawToChar(cellidfile[[1]], multiple = FALSE)
-	ofile = filename(c("Selection", "txt" ), Data$store@outpath)
-	write( file, ofile )
-	return (paste ("not implemented but check", ofile) )
-
-	Data$store = getDifferentials( Data$store, cellidfile=cellidfile, num.sig = num.sig,  logfc.threshold = logfc.threshold, minPct = minPct )
+  new = jsonlite::fromJSON(selection)
+	write.table( new, file=file.path( Data$store@outpath,"TestSelection1.txt"), row.names=F, col.names=F, sep="\t", quote=F)
+	Data$store = getDifferentials( Data$store, cellidfile="TestSelection1.txt", num.sig = as.numeric(num.sig),  logfc.threshold = as.numeric(logfc.threshold), minPct = as.numeric(minPct) )
 	return( jsonlite::toJSON( Data$store@usedObj$deg.genes ) )
+
 }
 
 
