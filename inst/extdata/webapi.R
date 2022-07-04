@@ -16,7 +16,7 @@ Data <- R6Class("CellexalvrR_WebAPI",
 Data = Data$new()
 
 
-#* get expression values for one gene
+#* get expression values for one gene - will be added to the log - slow
 #* @param name the gene name to fetch the data for
 #* @post /GetCellValues
 function( name ) {
@@ -64,7 +64,7 @@ function( name ) {
 			drc = groupingInfo( Data$store, Data$store@usedObj$lastGroup)@drc
 	}
 
-	return( jsonlite::toJSON( list( ids = colnames(Data$store@data)[OK], values = as.character(ret[OK]) )))
+	return( jsonlite::toJSON( cbind( ids = colnames(Data$store@data)[OK], values = as.character(ret[OK]) )))
 }
 
 #* returns a list of genes that are differentially expressed
@@ -98,21 +98,46 @@ function(name ){
 
 }
 
-#* Get all drcs
-#* @get /get_coords
+#* Get drc names
+#* @get /GetDrcNames
 function(){
-	ret = lapply( Data$store@drc, function(x) { 
-		x= cbind( 
-			CellID = rownames(x), 
-			'x' = x[,1], 
-			'y' = x[,2], 
-			'z' = x[,3] 
-			); 
-		t(x[1:2,]) 
-	} )
-	ret = c( list(names = names(Data$store@drc)), ret)
-	return( jsonlite::toJSON( ret ))
+	names(Data$store@drc)
 }
+
+
+#* Get drc
+#* @param name the drc name to get
+#* @post /get_coords
+function(name){
+
+	if (! is.null( Data$store@drc[[name]])){
+		x = Data$store@drc[[name]]
+		if ( ncol(x) == 3 ){
+			x= cbind(
+				CellID = rownames(x), 
+				'x' = x[,1], 
+				'y' = x[,2], 
+				'z' = x[,3] 
+			);
+		}else {
+			x= cbind(
+				CellID = rownames(x), 
+				'x' = x[,1], 
+				'y' = x[,2], 
+				'z' = x[,3],
+				'x1' = x[,4],
+				'y1' = x[,5], 
+				'z1' = x[,6]
+			);
+		} 
+	}
+	else {
+		return(paste("drc",name,"does not exist here" ))
+	}
+	return( jsonlite::toJSON( x ))
+}
+
+
 
 #* Shut the server down
 #* @get /shutdown
