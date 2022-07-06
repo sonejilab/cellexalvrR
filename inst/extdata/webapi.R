@@ -76,11 +76,57 @@ function( name ) {
 function( selection, num.sig=250, logfc.threshold=log(2), minPct=0.1  ) {
 
   new = jsonlite::fromJSON(selection)
-	write.table( new, file=file.path( Data$store@outpath,"TestSelection1.txt"), row.names=F, col.names=F, sep="\t", quote=F)
-	Data$store = getDifferentials( Data$store, cellidfile="TestSelection1.txt", num.sig = as.numeric(num.sig),  logfc.threshold = as.numeric(logfc.threshold), minPct = as.numeric(minPct) )
+  fname = file.path( Data$store@outpath, 
+  	filename( c("selection","txt"), Data$store@outpath) )
+	write.table( new, file=fname, row.names=F, col.names=F, sep="\t", quote=F)
+	Data$store = getDifferentials( Data$store, cellidfile=fname, num.sig = as.numeric(num.sig),  logfc.threshold = as.numeric(logfc.threshold), minPct = as.numeric(minPct) )
 	return( jsonlite::toJSON( Data$store@usedObj$deg.genes ) )
 
 }
+
+#* returns a list of genes that are differentially expressed
+#* @param selection a json representation of the selectionxy.txt file
+#* @param cutoff.ggm the gmm cutoff (default 0.1)
+#* @param exprFract min percentage of cells expressing in one group (default 0.1)
+#* @param top.n.inter the number of top genes (default 130)
+#* @param method one of "rho.p","pcor"
+#* @post /corr2
+function (gname, is.smarker=FALSE ){
+	
+	#setMethod('get.genes.cor.to', signature = c ('cellexalvrR'),
+	#definition = function (cellexalObj, gname, output=NULL, is.smarker=F, cpp=T) {
+
+	tab = get.genes.cor.to( Data$store, gname = gname, 
+		is.smarker=as.logical(is.smarker), cpp=as.logical(T) )
+	return( jsonlite::toJSON( tab ) )
+
+} 
+
+#* returns a list of genes that are differentially expressed
+#* @param selection a json representation of the selectionxy.txt file
+#* @param cutoff.ggm the gmm cutoff (default 0.1)
+#* @param exprFract min percentage of cells expressing in one group (default 0.1)
+#* @param top.n.inter the number of top genes (default 130)
+#* @param method one of "rho.p","pcor"
+#* @post /TFnetwork
+function (cellidfile, cutoff.ggm=0.1, exprFract = 0.1, top.n.inter=130,method=c("rho.p","pcor")){
+	
+	outpath = file.path(Data$store@outpath, 'networks')
+	new = jsonlite::fromJSON(cellidfile)
+	fname = file.path( Data$store@outpath, 
+		filename( c("selection","txt"), Data$store@outpath))
+	write.table( new, file=fname, row.names=F, col.names=F, sep="\t", quote=F)
+	Data$store = make.cellexalvr.network( Data$store, fname, outpath = outpath,
+	 cutoff.ggm = as.numeric(cutoff.ggm), exprFract = as.numeric(exprFract), 
+	 top.n.inter = as.numeric(top.n.inter), method = method )
+	## this will populate the new network splot in the grouping. hope we get to that somehow...
+	grouping = groupingInfo( Data$store ) ## should give the right one - fingers crossed!
+	ret = grouping@network
+	ret[[1]] = as.matrix( ret[[1]] )
+	ret[[2]] = as.matrix( ret[[2]] )
+	return( jsonlite::toJSON( ret ) )
+
+} 
 
 
 #* returns a list of genes that are differentially expressed

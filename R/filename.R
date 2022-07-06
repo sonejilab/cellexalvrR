@@ -4,7 +4,7 @@
 #' @name filename
 #' @docType methods
 #' @description simple function to join by '.' and remove whitespace.
-#' @param str a string vector
+#' @param str a string vector like c('plot','png')
 #' @param path an optional path - if given the function returns a not existing file name
 #' @title create a filename without spaces from a list of strings
 #' @export 
