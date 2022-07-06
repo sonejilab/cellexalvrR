@@ -108,7 +108,7 @@ function (gname, is.smarker=FALSE ){
 function(req){
 
   png = stringr::str_replace(req$postBody, 'png=', '')
-  message( png )
+
 	path = file.path(Data$store@usedObj$sessionPath, 'png')
 	fname = filename( c("Screenshot", "png"), path )
 	fname = file.path(path, fname)
