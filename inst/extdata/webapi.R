@@ -102,6 +102,25 @@ function (gname, is.smarker=FALSE ){
 
 } 
 
+
+#* Store a screenshot in the log
+#* @post /LogScreenshot
+function(req){
+
+  png = stringr::str_replace(req$postBody, 'png=', '')
+  message( png )
+	path = file.path(Data$store@usedObj$sessionPath, 'png')
+	fname = filename( c("Screenshot", "png"), path )
+	fname = file.path(path, fname)
+
+  raw = base64enc::base64decode(what = png)
+  png::writePNG(png::readPNG(raw), fname)
+  
+  logFigure( Data$store, png= fname )
+
+  return ("finished")
+}
+
 #* returns a list of genes that are differentially expressed
 #* @param selection a json representation of the selectionxy.txt file
 #* @param cutoff.ggm the gmm cutoff (default 0.1)
