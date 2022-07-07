@@ -201,6 +201,21 @@ function(name){
 }
 
 
+#* Get meta.cell matrix
+#* @get /get_metacell
+function(){
+	# convert this explicitily to a matrix to support a potential later move to a data.frame
+	m = rbind( colnames( Data$store@meta.cell ), Data$store@meta.cell)
+	return( jsonlite::toJSON( as.matrix( m ) ))
+}
+
+#* Get meta.cell matrix
+#* @get /get_index
+function(){
+	# convert this explicitily to a matrix to support a potential later move to a data.frame
+	m = rbind( colnames( Data$store@index ), Data$store@index)
+	return( jsonlite::toJSON( as.matrix( m ) ))
+}
 
 #* Shut the server down
 #* @get /shutdown
