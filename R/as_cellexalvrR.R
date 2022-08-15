@@ -208,9 +208,15 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	meta.data = H5Anno2df( x, 'obs')
 	annotation = H5Anno2df( x, 'var')
 
+
+	key4drcs = "obsm"
+	if ( is.na( match( key4drcs ,names(file)) )  ){
+		key4drcs = "obs" # scarf sortes this info in the obs instead of obsm
+	}
+
 	if ( is.null(embeddings) ) {
 		## extract all if embeddings == NULL
-		embeddings = names(x[['obsm']])[grep( '^X_', names(x[['obsm']]))]
+		embeddings = names(x[[key4drcs]])[grep( '^X_', names(x[['obsm']]))]
 		embeddings = unlist(stringr::str_replace_all(embeddings, '^X_', '' ))
 	}
 	if ( length(embeddings) == 0 ) {
@@ -219,11 +225,11 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	}
 	else {
 		drcs = lapply(embeddings, function(n) {
-				locEmbDim = x[['obsm']][[paste(sep="_",'X',n)]][['dims']][1]
+				locEmbDim = x[[key4drcs]][[paste(sep="_",'X',n)]][['dims']][1]
 				if ( locEmbDim > embeddingDims ){
 					locEmbDim = embeddingDims
 				}
-				ret = t(x[['obsm']][[paste(sep="_",'X',n)]][1:locEmbDim,])
+				ret = t(x[[key4drcs]][[paste(sep="_",'X',n)]][1:locEmbDim,])
 				if ( locEmbDim == 2 ){
 					ret = cbind(ret, rep(0, nrow(ret)) )
 				}
@@ -262,6 +268,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	## save the original information
 	cellexalvrR@usedObj$samples = meta.data
 
+
 	if ( is.null(velocity) ) {
 		## that is OK - obviousel no veloctiy information to be imported
 	}
@@ -270,11 +277,11 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 			velo_n = paste( sep="_", 'velocity', n )
 
 			tryCatch({
-				locDims = nrow( x[['obsm']][[velo_n]][,])
+				locDims = nrow( x[[key4drcs]][[velo_n]][,])
 				cellexalvrR@drc[[n]] = 
 					cbind( 
 						cellexalvrR@drc[[n]], 
-						cellexalvrR@drc[[n]][,1:locDims] + t(x[['obsm']][[velo_n]][,] * scaleArrowTravel)
+						cellexalvrR@drc[[n]][,1:locDims] + t(x[[key4drcs]][[velo_n]][,] * scaleArrowTravel)
 					)
 				if ( locDims == 2 ){
 					cellexalvrR@drc[[n]] =
