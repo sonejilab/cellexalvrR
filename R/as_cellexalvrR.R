@@ -216,15 +216,21 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 
 	if ( is.null(embeddings) ) {
 		## extract all if embeddings == NULL
-		embeddings = names(x[[key4drcs]])[grep( '^X_', names(x[['obsm']]))]
+		embeddings = names(x[[key4drcs]])[grep( '^X_', names(x[[key4drcs]]))]
 		embeddings = unlist(stringr::str_replace_all(embeddings, '^X_', '' ))
 	}
+
+    embeddings = unique(unlist(stringr::str_replace_all(embeddings, '\\d+$', '')))
+
 	if ( length(embeddings) == 0 ) {
 			message("A CellexalVR session without 3D embeddings is not making sense! STOP?!")
 			drcs = list()
 	}
 	else {
-		drcs = lapply(embeddings, function(n) {
+		drc = NULL
+		if ( key4drcs == "obsm" ){
+			## the scanpy way - storing all data as objects
+			drcs = lapply(embeddings, function(n) {
 				locEmbDim = x[[key4drcs]][[paste(sep="_",'X',n)]][['dims']][1]
 				if ( locEmbDim > embeddingDims ){
 					locEmbDim = embeddingDims
@@ -236,9 +242,29 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 				rownames(ret) = meta.data[,'_index']
 				ret
 			} )
+		}
+		else {
+			## scarf way
+			drcs = lapply(embeddings, function(n) {
+				names = names(x[[key4drcs]])[ grep ( paste(sep="",n,'\\d+$'), names(x[[key4drcs]]) )]
+
+				locEmbDim = length( names )
+				if ( locEmbDim > embeddingDims ){
+					locEmbDim = embeddingDims
+				}
+				ret = data.frame( lapply(names, function(na){ x[[key4drcs]][[ na ]][] } ) )
+				if ( locEmbDim == 2 ){
+					ret = cbind(ret, rep(0, nrow(ret)) )
+				}
+				rownames(ret) = meta.data[,'_index']
+				ret
+			} )
+		}
+		
 
 		names(drcs) = embeddings
 	}
+
 	# ## the 'cellrank' pythion package results contain a lot more in the obsm slot.
 	# ## All of this could be displayed in VR - let's try this and check what we get there
 	# for (n in c('initial_states_memberships', 'schur_vectors_bwd', 'schur_vectors_fwd', 
