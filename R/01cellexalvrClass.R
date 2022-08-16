@@ -117,6 +117,7 @@ setClass("cellexalLinear",
 #' @slot error a string vector that contains all error messages
 #' @slot linarObj an optional slot to store a cellexalLinear object
 #' @slot heatmapBasename the filename basis for the heatmap related to this grouping
+#' @slot network a spot to save the networks from a TF network analysis
 #' @exportClass cellexalGrouping
 setClass("cellexalGrouping", 
 	slots=list(
@@ -129,6 +130,7 @@ setClass("cellexalGrouping",
 		col="character",
 		error="character",
 		linarObj="cellexalLinear",
-		heatmapBasename='character'
+		heatmapBasename='character',
+		network='list'
 		)
 )
