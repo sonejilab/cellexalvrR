@@ -211,7 +211,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 
 
 	key4drcs = "obsm"
-	if ( is.na( match( key4drcs ,names(file)) )  ){
+	if ( is.na( match( key4drcs ,names(x)) )  ){
 		key4drcs = "obs" # scarf sortes this info in the obs instead of obsm
 	}
 
