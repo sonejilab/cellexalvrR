@@ -151,7 +151,7 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 	file <- hdf5r::H5File$new(x, mode='r')
 
 	as_cellexalvrR(file, meta.cell.groups, meta.genes.groups, userGroups, outpath, 
-		specie,  embeddings , embeddingDims, velocity, scaleArrowTravel, minCell4gene  )
+		specie,  embeddings , embeddingDims, velocity, scaleArrowTravel, minCell4gene, FACS=FACS  )
 
 })
 
