@@ -32,5 +32,7 @@ The cellexalGrouping class represents exactly one multi group selection in VR.
 \item{\code{linarObj}}{an optional slot to store a cellexalLinear object}
 
 \item{\code{heatmapBasename}}{the filename basis for the heatmap related to this grouping}
+
+\item{\code{network}}{a spot to save the networks from a TF network analysis}
 }}
 

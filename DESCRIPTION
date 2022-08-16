@@ -1,6 +1,6 @@
 Package: cellexalvrR
 Title: Provides the backend calculations for CellexalVR
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(person("Stefan", "Lang", email = "stefan.lang@med.lu.se", role = c("aut")),
             person("Shamit", "Soneji", email = "shamit.soneji@med.lu.se", role = c("cre")))
 Description: This is the data analysis backend for the CellexalVR application.
