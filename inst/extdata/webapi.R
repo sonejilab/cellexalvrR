@@ -7,6 +7,7 @@ library(R6)
 Data <- R6Class("CellexalvrR_WebAPI",
   public = list(
     store = cellexalObj,
+    connections = list(),
     initialize = function() {
     }
   )
@@ -15,7 +16,7 @@ Data <- R6Class("CellexalvrR_WebAPI",
 Data = Data$new()
 
 
-#* get expression values for one gene
+#* get expression values for one gene - will be added to the log - slow
 #* @param name the gene name to fetch the data for
 #* @post /GetCellValues
 function( name ) {
@@ -63,25 +64,88 @@ function( name ) {
 			drc = groupingInfo( Data$store, Data$store@usedObj$lastGroup)@drc
 	}
 
-	return( jsonlite::toJSON( list( ids = colnames(Data$store@data)[OK], values = as.character(ret[OK]) )))
+	return( jsonlite::toJSON( cbind( ids = colnames(Data$store@data)[OK], values = as.character(ret[OK]) )))
 }
 
 #* returns a list of genes that are differentially expressed
-#* @param cellidfile:[file]
-#* @param num.sig default 250
-#* @param logfc.threshold default = 0.5
-#* @param minPct default 0.2
+#* @param selection a json representation of the selectionxy.txt file
+#* @param num.sig numer of returned top genes (default 250)
+#* @param logfc.threshold min logFC to use the expression (log(2) =0.6931472)
+#* @param minPct min percentage of cells expressing in one group (default 0.1)
 #* @post /HeatmapList
-function( cellidfile, num.sig = 250, logfc.threshold = 0.5, minPct = 0.2 ) {
+function( selection, num.sig=250, logfc.threshold=log(2), minPct=0.1  ) {
 
-	file = rawToChar(cellidfile[[1]], multiple = FALSE)
-	ofile = filename(c("Selection", "txt" ), Data$store@outpath)
-	write( file, ofile )
-	return (paste ("not implemented but check", ofile) )
-
-	Data$store = getDifferentials( Data$store, cellidfile=cellidfile, num.sig = num.sig,  logfc.threshold = logfc.threshold, minPct = minPct )
+  new = jsonlite::fromJSON(selection)
+  fname = file.path( Data$store@outpath, 
+  	filename( c("selection","txt"), Data$store@outpath) )
+	write.table( new, file=fname, row.names=F, col.names=F, sep="\t", quote=F)
+	Data$store = getDifferentials( Data$store, cellidfile=fname, num.sig = as.numeric(num.sig),  logfc.threshold = as.numeric(logfc.threshold), minPct = as.numeric(minPct) )
 	return( jsonlite::toJSON( Data$store@usedObj$deg.genes ) )
+
 }
+
+#* returns a list of genes that are differentially expressed
+#* @param selection a json representation of the selectionxy.txt file
+#* @param cutoff.ggm the gmm cutoff (default 0.1)
+#* @param exprFract min percentage of cells expressing in one group (default 0.1)
+#* @param top.n.inter the number of top genes (default 130)
+#* @param method one of "rho.p","pcor"
+#* @post /corr2
+function (gname, is.smarker=FALSE ){
+	
+	#setMethod('get.genes.cor.to', signature = c ('cellexalvrR'),
+	#definition = function (cellexalObj, gname, output=NULL, is.smarker=F, cpp=T) {
+
+	tab = get.genes.cor.to( Data$store, gname = gname, 
+		is.smarker=as.logical(is.smarker), cpp=as.logical(T) )
+	return( jsonlite::toJSON( tab ) )
+
+} 
+
+
+#* Store a screenshot in the log
+#* @post /LogScreenshot
+function(req){
+
+  png = stringr::str_replace(req$postBody, 'png=', '')
+
+	path = file.path(Data$store@usedObj$sessionPath, 'png')
+	fname = filename( c("Screenshot", "png"), path )
+	fname = file.path(path, fname)
+
+  raw = base64enc::base64decode(what = png)
+  png::writePNG(png::readPNG(raw), fname)
+  
+  logFigure( Data$store, png= fname )
+
+  return ("finished")
+}
+
+#* returns a list of genes that are differentially expressed
+#* @param selection a json representation of the selectionxy.txt file
+#* @param cutoff.ggm the gmm cutoff (default 0.1)
+#* @param exprFract min percentage of cells expressing in one group (default 0.1)
+#* @param top.n.inter the number of top genes (default 130)
+#* @param method one of "rho.p","pcor"
+#* @post /TFnetwork
+function (cellidfile, cutoff.ggm=0.1, exprFract = 0.1, top.n.inter=130,method=c("rho.p","pcor")){
+	
+	outpath = file.path(Data$store@outpath, 'networks')
+	new = jsonlite::fromJSON(cellidfile)
+	fname = file.path( Data$store@outpath, 
+		filename( c("selection","txt"), Data$store@outpath))
+	write.table( new, file=fname, row.names=F, col.names=F, sep="\t", quote=F)
+	Data$store = make.cellexalvr.network( Data$store, fname, outpath = outpath,
+	 cutoff.ggm = as.numeric(cutoff.ggm), exprFract = as.numeric(exprFract), 
+	 top.n.inter = as.numeric(top.n.inter), method = method )
+	## this will populate the new network splot in the grouping. hope we get to that somehow...
+	grouping = groupingInfo( Data$store ) ## should give the right one - fingers crossed!
+	ret = grouping@network
+	ret[[1]] = as.matrix( ret[[1]] )
+	ret[[2]] = as.matrix( ret[[2]] )
+	return( jsonlite::toJSON( ret ) )
+
+} 
 
 
 #* returns a list of genes that are differentially expressed
@@ -90,14 +154,68 @@ function( cellidfile, num.sig = 250, logfc.threshold = 0.5, minPct = 0.2 ) {
 #* @param is.smarker gene or marker? defaulkt false 
 #* @param cpp use the cpp pearson correlation (FASTER) default true
 #* @post /cor2gene
-function(name, ){
+function(name ){
 
 	output = filename(c("Correlation", name, "txt" ), Data$store@usedObj$sessionPath)
 	Data$store = get.genes.cor.to(Data$store, gname=name, output=output, is.smarker=F, cpp=T)
 
 }
 
+#* Get drc names
+#* @get /GetDrcNames
+function(){
+	names(Data$store@drc)
+}
 
+
+#* Get drc
+#* @param name the drc name to get
+#* @post /get_coords
+function(name){
+
+	if (! is.null( Data$store@drc[[name]])){
+		x = Data$store@drc[[name]]
+		if ( ncol(x) == 3 ){
+			x= cbind(
+				CellID = rownames(x), 
+				'x' = x[,1], 
+				'y' = x[,2], 
+				'z' = x[,3] 
+			);
+		}else {
+			x= cbind(
+				CellID = rownames(x), 
+				'x' = x[,1], 
+				'y' = x[,2], 
+				'z' = x[,3],
+				'x1' = x[,4],
+				'y1' = x[,5], 
+				'z1' = x[,6]
+			);
+		} 
+	}
+	else {
+		return(paste("drc",name,"does not exist here" ))
+	}
+	return( jsonlite::toJSON( x ))
+}
+
+
+#* Get meta.cell matrix
+#* @get /get_metacell
+function(){
+	# convert this explicitily to a matrix to support a potential later move to a data.frame
+	m = rbind( colnames( Data$store@meta.cell ), Data$store@meta.cell)
+	return( jsonlite::toJSON( as.matrix( m ) ))
+}
+
+#* Get meta.cell matrix
+#* @get /get_index
+function(){
+	# convert this explicitily to a matrix to support a potential later move to a data.frame
+	m = rbind( colnames( Data$store@index ), Data$store@index)
+	return( jsonlite::toJSON( as.matrix( m ) ))
+}
 
 #* Shut the server down
 #* @get /shutdown
@@ -113,7 +231,7 @@ function(){
 #* Return "hello world"
 #* @get /hello
 function(){
-  paste( "hello world\n", toString(Data$store) )
+  return( "hello" )
 }
 
 #* Return "hello world"
