@@ -351,7 +351,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 
 	## and one last one - populate index with the numeric values in the cell annotation table
 	if ( FACS ){
-		cellexalvrR@index = as.matrix( Matrix::t( cellexalvrR@data ) )
+		cellexalvrR@index =  as.matrix( t(cellexalvrR@data ) )
 	}
 	
 	#cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
