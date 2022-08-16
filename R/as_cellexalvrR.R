@@ -136,9 +136,10 @@ setMethod('as_cellexalvrR', signature = c ('Seurat'),
 #' @param velocity import velocity information (default = 'scvelo')
 #' @param scaleArrowTravel scale the velovity arrow for VR (default 20)
 #' @param minCell4gene savety feature for andata import required for CellexalVR (default 10)
+#' @param FACS should all data be copied into the index slot, too ( default FALSE)
 setMethod('as_cellexalvrR', signature = c ('character'),
 	definition = function (x,   meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(), 
-		specie, embeddings = NULL, embeddingDims=3, velocity ='scvelo', scaleArrowTravel=20, minCell4gene = 10 ){
+		specie, embeddings = NULL, embeddingDims=3, velocity ='scvelo', scaleArrowTravel=20, minCell4gene = 10, FACS=FALSE ){
 
 	if (!require("hdf5r", quietly = TRUE ) == T ) {
 		stop("package 'hdf5r' needed for this function to work. Please install it.",
@@ -159,7 +160,7 @@ setMethod('as_cellexalvrR', signature = c ('character'),
 #' @rdname as_cellexalvrR
 setMethod('as_cellexalvrR', signature = c ('H5File'),
 	definition = function (x,  meta.cell.groups=NULL, meta.genes.groups = NULL, userGroups=NULL, outpath=getwd(),
-	 specie, embeddings = NULL, embeddingDims=3, velocity ='scvelo', scaleArrowTravel=20, minCell4gene=10) {
+	 specie, embeddings = NULL, embeddingDims=3, velocity ='scvelo', scaleArrowTravel=20, minCell4gene=10, FACS=FALSE) {
 
 		
 	## parse the data into a sparse matrix
@@ -316,8 +317,12 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	}
 
 	## and one last one - populate index with the numeric values in the cell annotation table
-	cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
-	cellexalvrR@index = cellexalvrR@index[, which(!is.na(as.numeric(cellexalvrR@index[1,] )))]
+	if ( FACS ){
+		cellexalvrR@index = as.matrix( Matrix::t( cellexalvrR@data ) )
+	}
+	
+	#cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
+	#cellexalvrR@index = cellexalvrR@index[, which(!is.na(as.numeric(cellexalvrR@index[1,] )))]
 	mode(cellexalvrR@index) = 'numeric'
 	cellexalvrR
 } )
