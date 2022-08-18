@@ -84,6 +84,6 @@ for ( f in ofiles ){
 }
 
 
-for ( f in c( "AA_1_Networks.nwk", "AA_2_Networks.nwk", "AA_3_Networks.nwk") ){
+for ( f in c( "Networks.1.nwk", "Networks.2.nwk", "Networks.3.nwk") ){
 	expect_true( file.exists( file.path( opath,'logNetworkTest', f) ), label =paste("file", f))
 }
