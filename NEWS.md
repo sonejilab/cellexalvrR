@@ -1,3 +1,11 @@
+# 1.1.2
+
+In FACS data all gene names are cleaned up and whitespace dashes and colons are replaced by one undersore.
+
+# 1.1.1
+
+as_cellexalvrR function accepts now FACS=TRUE data from h5ad files (scarf results).
+
 # 1.1.0
 
 Add a plumber based web API to cellexalvrR

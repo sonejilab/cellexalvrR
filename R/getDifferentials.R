@@ -275,6 +275,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				hc <- stats::hclust(stats::as.dist( 1- stats::cor(tab, method='pearson') ),method = 'ward.D2')
 				deg.genes = c(rownames(loc@data)[hc$order], bad.genes)
+				deg.genes = deg.genes[which(!is.na(deg.genes))]
 			}
 
 			if ( length(deg.genes) == 0){

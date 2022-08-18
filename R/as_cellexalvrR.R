@@ -351,6 +351,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 
 	## and one last one - populate index with the numeric values in the cell annotation table
 	if ( FACS ){
+		rownames( cellexalvrR@data) = stringr::str_replace_all( rownames(cellexalvrR@data), "[ :-]+", "_")
 		cellexalvrR@index =  as.matrix( t(cellexalvrR@data ) )
 	}
 	

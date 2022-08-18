@@ -2,8 +2,6 @@
 #' The abilites of this server are defined in the inst/extdata/webapi.R script.
 #' @name initWebAPI
 #' @docType methods
-#' @description  Reads a VR cell selection file and creates a user.grouping column with the information
-#' @description  storing the user defined grouping for later use
 #' @param cellexalObj, cellexalvr object
 #' @param port the port for this service default to 8000
 #' @title start the web API as plumber server.
