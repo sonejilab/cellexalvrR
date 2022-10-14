@@ -24,7 +24,7 @@ Imports:
 	bookdown,
 	DelayedMatrixStats,
 	digest,
-	FastWilcoxTest (>= 0.1.16),
+	FastWilcoxTest (>= 0.2.0),
 	GeneNet,
 	ggplot2,
 	gplots,
