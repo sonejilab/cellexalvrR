@@ -355,6 +355,45 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		rownames( cellexalvrR@data) = stringr::str_replace_all( rownames(cellexalvrR@data), "[ :-]+", "_")
 		cellexalvrR@index =  as.matrix( t(cellexalvrR@data ) )
 	}
+
+	if (! is.na(match ('spatial', names(x[['uns']]))) ){
+        print( "Squidpy spatial data detected - converting to spacial cellexalvrR object" )
+        positions = t(matrix (x[['obsm/spatial']]$read_low_level(), nrow=x[['obsm/spatial']][['dims']][1]))
+        rownames(positions) = colnames(cellexalvrR@data)
+        cellexalvrR@usedObj$spatial = list()
+        
+        for (name in names(x[['uns/spatial']])) {
+            
+            print ( paste("converting hires image ", name, ".", sep="") ) 
+            col = FastWilcoxTest::rgb2hex( t(matrix(x[['uns/spatial']][[name]][['images']][['hires']]$read_low_level(), nrow=3 )) )
+            colors = unique(col)
+            col = factor( col, levels = colors)
+            colors = unlist(lapply ( colors, function(d) { 
+                new= NULL; 
+                try({ new= col2rgb(d) }); 
+                if ( is.null(new)){ 
+                    "#000000"
+                } else {
+                    d
+                } } ))
+            
+            
+            dims = x[['uns/spatial']][[name]][['images']][['hires']][['dims']][c(2,3)]
+            col = matrix( ncol=dims[2], nrow=dims[1], as.numeric(col) )
+            
+            #png ( "DoesThatMakeSense.png", width=2000, height=2000)
+            #image( col, col=colors)
+            #dev.off()
+            
+            ## The positions on the figures:
+            cellexalvrR@usedObj$spatial[[name]] = list(
+                "names" = name,
+                "png" = col,
+                'color' = colors,
+                "positions" = positions[ grep(name, rownames(positions)),]
+            )
+        }
+    }
 	
 	#cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
 	#cellexalvrR@index = cellexalvrR@index[, which(!is.na(as.numeric(cellexalvrR@index[1,] )))]

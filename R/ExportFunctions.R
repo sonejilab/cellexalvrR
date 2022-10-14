@@ -32,6 +32,14 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	old_names = colnames(x@data)
 	good_names = stringr::str_replace_all( colnames(x@data),'\\s+', '_')
 
+	if (! is.null(x@usedObj$spatial) ){
+		print ( "spatial data detected")
+		if ( length( grep('_pc$', path)) == 0 ){
+			print ("path needs to end on _pc - fixed")
+			path = paste(sep="_", path, 'pc')
+		}
+	}
+
 	if ( forceDB ) {
 		 if ( dir.exists(path) ){
 		 	unlink(  file.path(path,'*') , recursive=TRUE)
@@ -180,6 +188,19 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 
     	options(warn = oldw)
 
+	}
+
+
+	if (! is.null(x@usedObj$spatial) ){
+		lapply ( x@usedObj$spatial , function(x) {
+			print(paste("creating slide info for image", d$name))
+			png ( file.path(path, paste(sep=".", d$name,"png")), width=ncol(x$png), height=nrow(x$png) )
+			image( x$png, col=x$col)
+			dev.off()
+
+			write.table( x$positions, file=file.path(path, paste(sep="", d$name,"coords.csv"), sep=",",quote=F))
+			
+			})
 	}
 	invisible(x)
 
