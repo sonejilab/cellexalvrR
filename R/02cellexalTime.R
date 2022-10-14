@@ -916,6 +916,8 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = ps
 	}
 	## the stats have already been run and all is OK.
+
+	cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[which(!is.na(cellexalObj@usedObj$deg.genes))]
 	
 	cellexalObj= logStatResult ( cellexalObj, method ='Linear', data=cellexalObj@usedObj$sigGeneLists$lin[[x@gname]], col='p.value'	 )
 

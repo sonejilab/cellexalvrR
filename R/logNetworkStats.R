@@ -64,7 +64,7 @@ setMethod("logNetworkStats", signature = c("cellexalvrR"),
     for ( i in 1:length(res)) {
         fn = stringr::str_replace( files[1], paste(cellexalObj@usedObj$sessionPath,'/',sep=""), '')
         fn = unlist(str_split(fn,'\\.'))
-        fn = filename( fn, cellexalObj@usedObj$sessionPath)
+        fn = filename( basename(fn), cellexalObj@usedObj$sessionPath)
         fname = file.path( cellexalObj@usedObj$sessionPath, fn)
         write.table( res[[i]], file= fname, sep="\t", quote=F, row.names=F)
         res[[i]] = paste(sep="", "<a href='./", file.path( cellexalObj@usedObj$sessionName,  fn ),

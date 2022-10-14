@@ -84,7 +84,8 @@ for ( ofile in ofiles){
 	expect_true(file.exists( ofile), label=ofile  )
 }
 
-time= t@usedObj$timelines[['lastEntry']]
+time= t@groupSelectedFrom[[2]]@linarObj
+
 o = order(time@dat$time)
 d = utils::read.delim(SelectionFile, header=F )
 
