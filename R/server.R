@@ -58,7 +58,7 @@ setMethod('server', signature = c ('character'),
 		masterPID = ps::ps_handle( pid = as.integer(masterPID) )
 	}
 
-	if ( debug ){
+	#if ( debug ){
 		# package version needs to be exported
 		pv_file    = paste( file, 'cellexalvrR.version', sep='.')
 		file.create(pv_file)
@@ -66,7 +66,7 @@ setMethod('server', signature = c ('character'),
 		## redirect append output to output file
 		## Error is captured by the VR application and this is important to leave it like that.
 		if ( ! asFunction ) { sink(outFile) }
-	}
+	#}
 
 
 	cellexalObj@outpath =  dirname(file)
@@ -122,11 +122,12 @@ setMethod('server', signature = c ('character'),
         	}
 			file.create(lockfile)
 		
-			cmd = readLines( scriptfile)
+			cmd = readLines( scriptfile )
 			cmd = stringr::str_replace_all( paste( collapse=" " ,cmd), '\\s+', ' ')
        		cat ( c("", cmd,""), file= outFile, sep="\n\r", append=TRUE )
         	message( paste("VR cmd:", cmd) ) ## will go into the R_log.txt
         	try ( {source( scriptfile, local=FALSE ) } )
+        	cat ( c("finished!"), file= outFile, sep="\n\r", append=TRUE )
         	file.remove(scriptfile)
         	file.remove(lockfile)
        	}
@@ -166,7 +167,9 @@ setMethod('server', signature = c ('character'),
 }
 )
 
-
+checkBrackets = function(str) {
+	
+}
 
 
 ##' @name newScreenshots

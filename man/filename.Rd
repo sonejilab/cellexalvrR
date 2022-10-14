@@ -14,7 +14,7 @@ filename(str, path)
 \S4method{filename}{character,character}(str, path)
 }
 \arguments{
-\item{str}{a string vector}
+\item{str}{a string vector like c('plot','png')}
 
 \item{path}{an optional path - if given the function returns a not existing file name}
 }

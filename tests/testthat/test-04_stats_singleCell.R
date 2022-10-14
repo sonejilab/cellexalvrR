@@ -1,5 +1,7 @@
 context('stat functions singleCells')
 
+
+message("You are testing THIS file")
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
@@ -29,9 +31,8 @@ grouping <- file.path(prefix, 'data/selection0.txt')
 
 gene2 = getDifferentials(x, grouping, 'wilcox', num.sig=100, Log=FALSE, logfc.threshold = .1, minPct=0.1, bulkStats=FALSE )
 
-expect_true( length( gene2@usedObj$deg.genes) == 102, info = paste("wrong gene number c++ wilcox", length( gene2) ) )
-#logStatResult ( gene2, gene2@usedObj$sigGeneLists$Cpp[[gene2@usedObj$lastGroup]],
-#method= 'wilcox', 'p.value')
+expect_true( length(gene2@usedObj$deg.genes) == 102, info = paste("wrong gene number c++ wilcox", length(gene2) ) )
+
 ofile=  file.path( x@outpath, 'AB_Stats_statTestSingleC.html' )
 expect_true( file.exists( ofile), label = ofile)
 
@@ -82,16 +83,17 @@ which(!is.na(
 	)),
 ]
 
-toCheck = toCheck[which(toCheck$p.value > 1e-16),] ## the intern wilcox test doe not get 'better' p values.
 
 checkThis = function(id){
 	cluster = toCheck[id,'cluster']
 	gene = gene2@data[toCheck[id,'gene'],]
 	A = which( gene2@userGroups[,'User.group.1'] == cluster )
 	Bbad = c( which( is.na ( gene2@userGroups[,'User.group.1'] )  ), A)
-	B = (1:nrow(gene2@data))[-Bbad]
+	B = (1:ncol(gene2@data))[-Bbad]
 
-	expect_equal( toCheck[id,"p.value"], wilcox.test( gene[A], gene[B])$p.value, label=paste("Wilcox result gene", toCheck[id,"gene"]))
+	expect_equal( toCheck[id,"p.value"], wilcox.test( gene[A], gene[B], exact=FALSE)$p.value, label=paste("Wilcox result gene", toCheck[id,"gene"]))
+	browser()
 }
+
 
 t = lapply( 1:nrow(toCheck), checkThis )

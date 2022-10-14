@@ -332,3 +332,33 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 }
 
 )
+
+
+#' @name writeNetworks
+#' @docType methods
+#' @description writeNetworks the cellexalGrouping
+#' @param x the cellexalGrouping
+#' @param path the path to write the files to
+#' @title export the network information to a list of files
+#' @export
+setGeneric('writeNetworks', ## Name
+function ( x, path=NULL ) { 
+	standardGeneric('writeNetworks')
+}
+)
+
+#' @rdname writeNetworks
+setMethod('writeNetworks', signature = c ( 'cellexalGrouping'),
+	definition = function ( x, path ) {
+		if ( ! dir.exists( path )){
+			dir.create( path )
+		}
+		if ( length( x@network ) == 0){
+			stop("the networks have not been stored correctly!")
+		}
+		networkF = filename( c("Networks","nwk"), path)
+		utils::write.table(x@network$"Networks",file.path( path, networkF ),row.names=F,col.names=T,quote=F,sep="\t",eol="\r\n")
+		centroidsF = filename( c("NwkCentroids","cnt"), path)
+        utils::write.table(x@network$"NwkCentroids",file.path( path,centroidsF),row.names=F,col.names=F,quote=F,sep="\t",eol="\r\n")
+        return (c( file.path(path, networkF), file.path( path,centroidsF) ))
+})

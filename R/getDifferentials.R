@@ -19,6 +19,7 @@
 #' @param text an optional additional text to show in the log
 #' @param bulkStats apply stats to pseudo bulk samples instead of cells? (default TRUE)
 #' @param nameAdd one string to add to the clustion id in both the stats table and the ToppGene table.
+#' @param showIDs plot the IDs on the drc plots. This will get problems if it is many IDs (default TRUE)
 #' @keywords DEGs
 #' @title main Statistics function for cellexalvrR
 #' @examples 
@@ -31,8 +32,8 @@
 #if ( ! isGeneric('getDifferentials') ){
 setGeneric('getDifferentials', ## Name
 			function (x,cellidfile,	deg.method='wilcox', num.sig=250, Log=TRUE, 
-				logfc.threshold = 1, minPct=0.1, onlyPos=TRUE, report4genes= NULL, 
-				text = NULL, bulkStats = TRUE, nameAdd=NULL ) { 
+				logfc.threshold = .5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, 
+				text = NULL, bulkStats = TRUE, nameAdd=NULL, showIDs=TRUE ) { 
 				standardGeneric('getDifferentials') 
 			}
 	) 
@@ -43,10 +44,13 @@ setGeneric('getDifferentials', ## Name
 setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 		definition = function (x,cellidfile, deg.method='wilcox', num.sig=250, Log=TRUE, 
 			logfc.threshold = 0.5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, 
-			text = NULL, bulkStats = TRUE, nameAdd=NULL ) {
+			text = NULL, bulkStats = TRUE, nameAdd=NULL, showIDs=TRUE ) {
 			
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
+			if ( nrow( x@data) <= 1000 ){
+				logfc.threshold = minPct = 0
+			}
 
 			
 			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'
@@ -200,7 +204,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
 				try ( {
-					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text )
+					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text, showIDs=showIDs)
 					## And get additional info about the genes
 
 
@@ -271,6 +275,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				hc <- stats::hclust(stats::as.dist( 1- stats::cor(tab, method='pearson') ),method = 'ward.D2')
 				deg.genes = c(rownames(loc@data)[hc$order], bad.genes)
+				deg.genes = deg.genes[which(!is.na(deg.genes))]
 			}
 
 			if ( length(deg.genes) == 0){

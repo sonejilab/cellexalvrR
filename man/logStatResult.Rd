@@ -6,9 +6,25 @@
 \alias{logStatResult,cellexalvrR-method}
 \title{make the stats table available in the log system}
 \usage{
-logStatResult(x, method, data, col = NULL, text = NULL, nameAdd = NULL)
+logStatResult(
+  x,
+  method,
+  data,
+  col = NULL,
+  text = NULL,
+  nameAdd = NULL,
+  showIDs = TRUE
+)
 
-\S4method{logStatResult}{cellexalvrR}(x, method, data, col = NULL, text = NULL, nameAdd = NULL)
+\S4method{logStatResult}{cellexalvrR}(
+  x,
+  method,
+  data,
+  col = NULL,
+  text = NULL,
+  nameAdd = NULL,
+  showIDs = TRUE
+)
 }
 \arguments{
 \item{x}{the cellexalvrR object}
@@ -22,6 +38,8 @@ logStatResult(x, method, data, col = NULL, text = NULL, nameAdd = NULL)
 \item{text}{an optional additional text shown after the heading}
 
 \item{nameAdd}{add this to the group name for the ToppGene output file. This allows for e.g. a sub analysis of a main clustering and some concatenation of the ToppGene files.}
+
+\item{showIDs}{plot the IDs on the drc plots. This will get problems if it is many IDs (default TRUE)}
 }
 \description{
 Create a log file part including a stats data download link (coma separted table file)

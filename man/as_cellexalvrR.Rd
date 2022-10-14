@@ -49,7 +49,8 @@ as_cellexalvrR(
   embeddingDims = 3,
   velocity = "scvelo",
   scaleArrowTravel = 20,
-  minCell4gene = 10
+  minCell4gene = 10,
+  FACS = FALSE
 )
 
 \S4method{as_cellexalvrR}{H5File}(
@@ -63,7 +64,8 @@ as_cellexalvrR(
   embeddingDims = 3,
   velocity = "scvelo",
   scaleArrowTravel = 20,
-  minCell4gene = 10
+  minCell4gene = 10,
+  FACS = FALSE
 )
 }
 \arguments{
@@ -92,6 +94,8 @@ as_cellexalvrR(
 \item{scaleArrowTravel}{scale the velovity arrow for VR (default 20)}
 
 \item{minCell4gene}{savety feature for andata import required for CellexalVR (default 10)}
+
+\item{FACS}{should all data be copied into the index slot, too ( default FALSE)}
 }
 \description{
 convert a supported data set into a cellexalvrR obejct

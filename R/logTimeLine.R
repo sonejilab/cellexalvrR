@@ -1,4 +1,4 @@
-531#' logTimeLine will create a section in the log document including 
+#' logTimeLine will create a section in the log document including 
 #' (1) the DRC the grouping was selected from (colored 2D)
 #' (2) the heatmap itself
 #' (3) a GO analysis of the genes displayed in the heatmap (using ontologyLogPage()) #function definition in file 'ontologyLogPage.R'

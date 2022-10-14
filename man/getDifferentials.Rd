@@ -13,13 +13,14 @@ getDifferentials(
   deg.method = "wilcox",
   num.sig = 250,
   Log = TRUE,
-  logfc.threshold = 1,
-  minPct = 0.1,
+  logfc.threshold = 0.5,
+  minPct = 0.2,
   onlyPos = TRUE,
   report4genes = NULL,
   text = NULL,
   bulkStats = TRUE,
-  nameAdd = NULL
+  nameAdd = NULL,
+  showIDs = TRUE
 )
 
 \S4method{getDifferentials}{cellexalvrR,character}(
@@ -34,7 +35,8 @@ getDifferentials(
   report4genes = NULL,
   text = NULL,
   bulkStats = TRUE,
-  nameAdd = NULL
+  nameAdd = NULL,
+  showIDs = TRUE
 )
 
 \S4method{getDifferentials}{character,ANY}(
@@ -72,6 +74,8 @@ getDifferentials(
 \item{bulkStats}{apply stats to pseudo bulk samples instead of cells? (default TRUE)}
 
 \item{nameAdd}{one string to add to the clustion id in both the stats table and the ToppGene table.}
+
+\item{showIDs}{plot the IDs on the drc plots. This will get problems if it is many IDs (default TRUE)}
 }
 \value{
 the cellexalvrr object with the stats table stored in x@usedObj$sigGeneLists$Cpp[[x@usedObj$lastGroup]]
