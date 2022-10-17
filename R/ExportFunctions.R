@@ -29,7 +29,7 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	definition = function (x,path, forceDB=FALSE ) {
 
 	## check that the cell names (all rownames) contain no spaces!!
-	if ( length(path) > 2 ){ ## './' !!
+	if ( nchar(path) > 2 ){ ## './' !!
 		path = stringr::str_replace( path, "/$","")
 	}
 	old_names = colnames(x@data)
@@ -198,7 +198,7 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 		lapply ( x@usedObj$spatial , function(d) {
 			print(paste("creating slide info for image", d$name))
 			png ( file= file.path(path, paste(sep=".", d$name,"png")), width=ncol(d$png), height=nrow(d$png) )
-			image( OpenImageR::flipImage(d$png, mode="horizontal"), col=d$col, xaxt='n', yaxt='n')
+			image( d$png, mode="horizontal", col=d$col, xaxt='n', yaxt='n')
 			dev.off()
 			tab = cbind( rownames(d$positions), d$positions)
 			colnames(tab) = c('', 'imagerow', 'imagecol')
