@@ -390,7 +390,8 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
                 "names" = name,
                 "png" = col,
                 'color' = colors,
-                "positions" = positions[ grep(name, rownames(positions)),]
+                "positions" = positions[ grep(name, rownames(positions)),] * 
+                	x[['uns/spatial']][[name]][['scalefactors/tissue_hires_scalef']][]
             )
         }
     }
