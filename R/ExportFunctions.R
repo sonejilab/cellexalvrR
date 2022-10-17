@@ -29,6 +29,9 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	definition = function (x,path, forceDB=FALSE ) {
 
 	## check that the cell names (all rownames) contain no spaces!!
+	if ( length(path) > 2 ){ ## './' !!
+		path = stringr::str_replace( path, "/$","")
+	}
 	old_names = colnames(x@data)
 	good_names = stringr::str_replace_all( colnames(x@data),'\\s+', '_')
 
