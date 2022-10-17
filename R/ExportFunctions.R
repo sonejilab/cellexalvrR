@@ -195,11 +195,11 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 		lapply ( x@usedObj$spatial , function(x) {
 			print(paste("creating slide info for image", d$name))
 			png ( file.path(path, paste(sep=".", d$name,"png")), width=ncol(x$png), height=nrow(x$png) )
-			image( x$png, col=x$col)
+			image( OpenImageR::flipImage(x$png, mode="horizontal"), col=x$col, xaxt='n', yaxt='n')
 			dev.off()
 
 			write.table( x$positions, file=file.path(path, paste(sep="", d$name,"coords.csv"), sep=",",quote=F))
-			
+
 			})
 	}
 	invisible(x)

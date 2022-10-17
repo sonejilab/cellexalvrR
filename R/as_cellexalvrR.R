@@ -372,7 +372,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
                 new= NULL; 
                 try({ new= col2rgb(d) }); 
                 if ( is.null(new)){ 
-                    "#000000"
+                    "#FFFFFF"
                 } else {
                     d
                 } } ))
