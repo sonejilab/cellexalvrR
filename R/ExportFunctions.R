@@ -200,8 +200,9 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 			png ( file= file.path(path, paste(sep=".", d$name,"png")), width=ncol(d$png), height=nrow(d$png) )
 			image( OpenImageR::flipImage(d$png, mode="horizontal"), col=d$col, xaxt='n', yaxt='n')
 			dev.off()
-
-			write.table( d$positions, file=file.path(path, paste(sep="", d$name,"coords.csv")), sep=",",quote=F)
+			tab = cbind( rownames(d$positions), d$positions)
+			colnames(tab) = c('', 'imagerow', 'imagecol')
+			write.table( tab, file=file.path(path, paste(sep="", d$name,"coords.csv")), sep=",",quote=F, row.names=F)
 
 			})
 	}
