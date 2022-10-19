@@ -36,7 +36,6 @@ Imports:
 	markdown,
 	Matrix.utils,
 	methods,
-	OpenImageR,
 	org.Hs.eg.db,
 	org.Mm.eg.db,
 	phytools,

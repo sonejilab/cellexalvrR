@@ -199,7 +199,8 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 			print(paste("creating slide info for image", d$name))
 			png ( file= file.path(path, paste(sep=".", d$name,"png")), width=ncol(d$png), height=nrow(d$png) )
 			par(mar=c(0,0,0,0)) ## turn off all margins
-			image( OpenImageR::rotateFixed(d$png,90), col=d$col, xaxt='n', yaxt='n')
+			#image( OpenImageR::rotateFixed(d$png,90), col=d$col, xaxt='n', yaxt='n')
+			image( d$png, col=d$col, xaxt='n', yaxt='n')
 			dev.off()
 			tab = cbind( rownames(d$positions), d$positions)
 			colnames(tab) = c('', 'imagerow', 'imagecol')
