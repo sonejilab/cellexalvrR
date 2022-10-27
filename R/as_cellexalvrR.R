@@ -356,6 +356,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		cellexalvrR@index =  as.matrix( t(cellexalvrR@data ) )
 	}
 
+	if ( ! is.na(match ('uns', names(x))) ){
 	if (! is.na(match ('spatial', names(x[['uns']]))) ){
         print( "Squidpy spatial data detected - converting to spacial cellexalvrR object" )
         positions = t(matrix (x[['obsm/spatial']]$read_low_level(), nrow=x[['obsm/spatial']][['dims']][1]))
@@ -394,6 +395,7 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
                 	x[['uns/spatial']][[name]][['scalefactors/tissue_hires_scalef']][]
             )
         }
+    }
     }
 	
 	#cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
