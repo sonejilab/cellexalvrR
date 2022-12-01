@@ -132,11 +132,18 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	colnames(t1) = colnames(t2)
 	#rownames(t1) = rownames(t2)
-	if ( ! isTRUE( all.equal( t1, t2) ) ){
-		message("CRITICAL ERROR: drc models are not the same - check in getDifferentials and likely reducteTo or reorderSamples")
-		if(interactive()) { browser() }
-		stop( "The drc models are not the same!")
-	}
+# 	if ( ! isTRUE( all.equal( t1, t2) ) ){
+# 		message("CRITICAL ERROR: drc models are not the same - if this is 'intentional' fixit by
+  # x@dat[,'a'] = t2[,1]
+  # x@dat[,'b'] = t2[,2]
+  # x@dat[,'c'] = t2[,3]
+  # t1 = t2
+# 			")
+# 		if(interactive()) { browser() }
+# 		if ( ! isTRUE( all.equal( t1, t2) ) ){
+# 			stop( "The drc models are not the same!")
+# 		}
+# 	}
 
 	if ( length(which(is.na(m)))>0){
 		stop("ERROR: This linearSelection describes cells that are not in the cellexalvrR object!")
@@ -454,7 +461,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 			time = getLinearSelection(cellexalObj, time)
 		}
 		if ( parent != time@parentSelection){
-			stop("the other object is not from the same parent selection - stop")
+			#stop("the other object is not from the same parent selection - stop")
 		}
 		if ( class(time) == "cellexalGrouping" ){
 			time = time@linarObj
@@ -493,8 +500,8 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 	text = "## Comparison between the gene clusters of linearSelection"
 
 	for ( i in 1:length(times)){
-	 	header = paste(sep="", header, "<th>",altGroupNames[i],"</th>")
-	 	body   = paste(sep="", body  , "<td>![](",
+	 	header = paste(sep="",collapse="", header, "<th>",altGroupNames[i],"</th>")
+	 	body   = paste(sep="",collapse="", body  , "<td>![](",
 	 		R.utils::getRelativePath( times[[i]]@geneClusters[[times[[i]]@gname]]$figure, cellexalObj@outpath),
 	 		")</td>"
 	 		)
@@ -503,7 +510,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 	 	}else if(i == length(times)){
 	 		text=paste(text, "and", altGroupNames[i], "\n\n")
 	 	}else {
-	 		text=paste(sep="",text, ", ", altGroupNames[i])
+	 		text=paste(sep="",collapse="",text, ", ", altGroupNames[i])
 	 	}
 	}
 
@@ -563,9 +570,9 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
    		for (i in 1:length(times) ){
    			groupID = df[genes[1], i]
    			circles = c( circles, R.utils::getRelativePath( 
-   				paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,groupID,'svg'), 
+   				paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,
+   					groupID,'svg'), 
    				cellexalObj@outpath) )
-   			#text = paste( sep="",text, altGroupNames[i]," ", "<img src='",circles[i], "' height='15'/>")
 
    		}
 
@@ -578,12 +585,12 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
  		## and now the heatmaps for this set of genes.
  		for (i in 1:length(times) ){
  			groupID = df[genes[1], i]
- 			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
+ 			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, length(genes), "heatmap" )
 			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
 			
 			groupCol = paste( times[[i]]@gname, 'groupColors','png', sep=".")
 
- 			text = paste( text, sep=" ", "\n\n#### Expression in", 
+ 			text = paste( text, sep=" ",collapse="", "\n\n#### Expression in", 
 					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
 					paste("![](",correctPath(groupCol, cellexalObj ),")\n"),
 					plotHeatmap_rmd( 
@@ -592,6 +599,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 						ofile = of2,
 						cellexalObj = cellexalObj
 					), "\n\n")
+ 			#print(paste("DEBUG:",of,"genes n=", length(genes)) )
  		}
    		return ( paste(text, '\n', sep="") );
    	})))
