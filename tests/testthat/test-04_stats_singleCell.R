@@ -92,7 +92,7 @@ checkThis = function(id){
 	B = (1:ncol(gene2@data))[-Bbad]
 
 	expect_equal( toCheck[id,"p.value"], wilcox.test( gene[A], gene[B], exact=FALSE)$p.value, label=paste("Wilcox result gene", toCheck[id,"gene"]))
-	browser()
+	#browser()
 }
 
 
