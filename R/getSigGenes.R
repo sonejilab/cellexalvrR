@@ -33,11 +33,19 @@ setMethod('getSigGenes', signature = c ('matrix'),
 #' @rdname getSigGenes
 setMethod('getSigGenes', signature = c ('data.frame'),
 		definition = function( tab, count=500, nameAdd=NULL ){
-			
-			info = split( tab$gene, tab$cluster )
-			ret = data.frame( 
-				genes= unlist(lapply( info, function(x){ c = count; if (c > length(x)){c = length(x)}; return(x[1:c])  })),
-				group= paste(sep="", nameAdd , unlist(lapply( names(info), function(x){ c = count; if (c > length(info[[x]])){c = length(info[[x]])}; return( rep(x, c) )  })) )
-			)
+			ret = NULL
+			if ( ! is.na(match ('cor', colnames(tab))) ){
+				tmp = tab[ rev(order(tab[,'cor'])),]
+				ret1 = tmp[,'Gene Name'][1:100]
+				tmp = tab[ order(tab[,'cor']),]
+				ret1 = c( ret1, tmp[,'Gene Name'][1:100] )
+				ret = data.frame( genes = ret1, group = c(rep("up",100), rep("down",100)))
+			}else {
+				info = split( tab$gene, tab$cluster )
+				ret = data.frame( 
+					genes= unlist(lapply( info, function(x){ c = count; if (c > length(x)){c = length(x)}; return(x[1:c])  })),
+					group= paste(sep="", nameAdd , unlist(lapply( names(info), function(x){ c = count; if (c > length(info[[x]])){c = length(info[[x]])}; return( rep(x, c) )  })) )
+				)
+			}
 			return (ret)
 } )
