@@ -85,7 +85,7 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 			}
 		}
 		## gene names are now adjusted to fit the specie of "this"
-		tab = table( rownames(this@data), rownames(other@data) )
+		tab = table( c(rownames(this@data), rownames(other@data) ))
 		genes = names(tab[which(tab == 2)])
 		this = reduceTo( this, genes, what='row' )
 		other= reduceTo( other,genes, what='row' )
