@@ -13,7 +13,7 @@
 #' @title create two 2D drc plots for the report
 #' @export 
 setGeneric('merge', ## Name
-	function ( this, other ) { 
+	function ( this, other,addA= "", addB="other" ) { 
 		standardGeneric('merge')
 	}
 )
@@ -93,11 +93,9 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 		this = rename_cols( this, addA )
 		other = rename_cols( other, addB )
 
-		new=Matrix.utils::merge(this@data, other@data, 
-			rownames(this@data), rownames(other@data) )
 		# construct the return value
 		ret = new('cellexalvrR')
-		ret@data = Matrix.utils::merge(this@data, other@data, 
+		ret@data = Matrix.utils::merge.Matrix(this@data, other@data, 
 			rownames(this@data), rownames(other@data) )
 		ret@data = ret@data[rownames(this@data),]
 
@@ -123,7 +121,7 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 		if (  is.null( other@usedObj$samples$sname )){
 			other@usedObj$samples$sname = rep(addB, ncol(other@data))
 		}
-		tab = table ( c( colnames(this@usedObj$samples), colnames(otehr@usedObj$samples) ) )
+		tab = table ( c( colnames(this@usedObj$samples), colnames(other@usedObj$samples) ) )
 		common = names(tab[which(tab == 2)])
 		ret@usedObj$samples = rbind(this@usedObj$samples[,common], other@usedObj$samples[,common] )
 		warning( paste( sep="\n",
@@ -131,7 +129,7 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 			"Easiest should be from the @usedObj$samples data.frame in the returned celleclvrR object.",
 			"retValue@meta.cell = make.cell.meta.from.df( retValue@usedObj$samples, c('your columns') )" ) )
 		ret@meta.cell = make.cell.meta.from.df( ret@usedObj$samples, c('sname'))
-		
+
 		return ( ret )
 	}
 )

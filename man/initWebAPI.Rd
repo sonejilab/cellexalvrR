@@ -16,11 +16,6 @@ initWebAPI(cellexalObj, port = 8000)
 \item{port}{the port for this service default to 8000}
 }
 \description{
-Reads a VR cell selection file and creates a user.grouping column with the information
-
-storing the user defined grouping for later use
-}
-\details{
 Create a R plumber based server for this cellexalvrR object.
 The abilites of this server are defined in the inst/extdata/webapi.R script.
 }
