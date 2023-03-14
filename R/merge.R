@@ -97,7 +97,7 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 		ret = new('cellexalvrR')
 		ret@specie = this@specie
 		ret@data = Matrix.utils::merge.Matrix(this@data, other@data, 
-			rownames(this@data), rownames(other@data) )
+			rownames(this@data), rownames(other@data), fill.x=TRUE, fill.y=TRUE )
 		ret@data = ret@data[rownames(this@data),]
 
 		ret@drc = this@drc
