@@ -68,8 +68,8 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 			if ( this@specie == 'mouse' ){
 				translating_tab = mouse2human( rownames(this@data) )
 				tab = table( unlist( lapply( c(this, other), mouse_genes ) ) )
-				translating_tab = translating_tab[ match(genes,translating_tab[,'mouseGene']), ]
 				genes = names( tab[which(tab==2)] )
+				translating_tab = translating_tab[ match(genes,translating_tab[,'mouseGene']), ]
 				this = reduceTo( this, translating_tab[,'mouseGene'], what='row' )
 				other= reduceTo( other,translating_tab[,'humanGene'], what='row' )
 				rownames(other@data) = rownames(this@data)
@@ -77,8 +77,8 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 			else {
 				translating_tab = mouse2human( rownames(other@data) )
 				tab = table( unlist( lapply( c(this, other), human_genes ) ) )
-				translating_tab = translating_tab[ match(genes,translating_tab[,'humanGene']), ]
 				genes = names( tab[which(tab==2)] )
+				translating_tab = translating_tab[ match(genes,translating_tab[,'humanGene']), ]
 				this = reduceTo( this, translating_tab[,'humanGene'], what='row' )
 				other= reduceTo( other,translating_tab[,'mouseGene'], what='row' )
 				rownames(other@data) = rownames(this@data)
@@ -95,6 +95,7 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 
 		# construct the return value
 		ret = new('cellexalvrR')
+		ret@specie = this@specie
 		ret@data = Matrix.utils::merge.Matrix(this@data, other@data, 
 			rownames(this@data), rownames(other@data) )
 		ret@data = ret@data[rownames(this@data),]
