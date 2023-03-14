@@ -1,0 +1,137 @@
+#' merge merges two data sets
+#' 
+#' Will convert the names using homologene is the species are not compatible and will
+#' return the names compatible with this@specie. Only the inner join will be returned!
+#' 
+#' @name merge
+#' @docType methods
+#' @description create two 2D drc plots for the report
+#' @param this the cellexal object
+#' @param other the other cellexalvrR object
+#' @param addA a name added to this cell names (default '')
+#' @param addB a name added to other cell names (default 'other')
+#' @title create two 2D drc plots for the report
+#' @export 
+setGeneric('merge', ## Name
+	function ( this, other ) { 
+		standardGeneric('merge')
+	}
+)
+
+
+
+
+
+#' @rdname merge
+setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
+	definition = function ( this, other, addA= "", addB="other" ){
+		rename_cols = function(x, add) {
+			x@meta.cell = cbind( x@meta.cell, colnames(x@data))
+			colnames(x@meta.cell)[length(colnames(x@meta.cell))] = "origName"
+			colnames(x@data) = paste( colnames(x@data), add, sep="_")
+			rownames(x@meta.cell) = colnames(x@data)
+			for (d in names(x@drc)) {
+			    ok = match( x@meta.cell[,'origName'], rownames(x@drc[[d]]) )
+			    rownames(x@drc[[d]]) = rownames(x@meta.cell)[ok[which(!is.na(ok))]]
+			}
+			return (x)
+		}
+
+		if (this@specie != other@specie ){
+			if (!require("homologene", quietly = TRUE ) == T ) {
+				stop("package 'homologene' needed for this function to work. Please install it.",
+					call. = FALSE)
+			}
+
+			human_genes = function(x){
+			        mapping_genes =  c(translating_tab[,1]) # mouse
+			        OK = match( rownames(x@data), mapping_genes )
+			        if (length(which(!is.na(OK))) > 10 ){ ## OK that were mouse genes
+			                return( translating_tab[ OK[which(!is.na(OK))], 2] )
+			        }
+			        mapping_genes = c(translating_tab[,2]) # human
+			        OK =  match( rownames(x@data), mapping_genes )
+			        return( translating_tab[ OK[which(!is.na(OK))], 2] )
+			}
+
+			mouse_genes = function(x){
+			        mapping_genes =  c(translating_tab[,1]) # mouse
+			        OK = match( rownames(x@data), mapping_genes )
+			        if (length(which(!is.na(OK))) > 10 ){ ## OK that were mouse genes
+			                return( translating_tab[ OK[which(!is.na(OK))], 1] )
+			        }
+			        mapping_genes = c(translating_tab[,2]) # human
+			        OK =  match( rownames(x@data), mapping_genes )
+			        return( translating_tab[ OK[which(!is.na(OK))], 1] )
+			}
+
+			if ( this@specie == 'mouse' ){
+				translating_tab = mouse2human( rownames(this@data) )
+				tab = table( unlist( lapply( c(this, other), mouse_genes ) ) )
+				translating_tab = translating_tab[ match(genes,translating_tab[,'mouseGene']), ]
+				genes = names( tab[which(tab==2)] )
+				this = reduceTo( this, translating_tab[,'mouseGene'], what='row' )
+				other= reduceTo( other,translating_tab[,'humanGene'], what='row' )
+				rownames(other@data) = rownames(this@data)
+			}
+			else {
+				translating_tab = mouse2human( rownames(other@data) )
+				tab = table( unlist( lapply( c(this, other), human_genes ) ) )
+				translating_tab = translating_tab[ match(genes,translating_tab[,'humanGene']), ]
+				genes = names( tab[which(tab==2)] )
+				this = reduceTo( this, translating_tab[,'humanGene'], what='row' )
+				other= reduceTo( other,translating_tab[,'mouseGene'], what='row' )
+				rownames(other@data) = rownames(this@data)
+			}
+		}
+		## gene names are now adjusted to fit the specie of "this"
+		tab = table( rownames(this@data), rownames(other@data) )
+		genes = names(tab[which(tab == 2)])
+		this = reduceTo( this, genes, what='row' )
+		other= reduceTo( other,genes, what='row' )
+		## renaming the col names
+		this = rename_cols( this, addA )
+		other = rename_cols( other, addB )
+
+		new=Matrix.utils::merge(this@data, other@data, 
+			rownames(this@data), rownames(other@data) )
+		# construct the return value
+		ret = new('cellexalvrR')
+		ret@data = Matrix.utils::merge(this@data, other@data, 
+			rownames(this@data), rownames(other@data) )
+		ret@data = ret@data[rownames(this@data),]
+
+		ret@drc = this@drc
+		ret = GrabDRCs( ret, other, addB )
+
+		## and then the sample table - that will be horrible!
+		if ( is.null( this@usedObj$samples ) ){
+			if ( addA == ""){
+				addA = "this"
+			}
+			this@usedObj$samples = data.frame( "index" = colnames(this@data), sname= rep(addA, ncol(this@data)))
+		}
+		if (  is.null( this@usedObj$samples$sname )){
+			this@usedObj$samples$sname = rep(addA, ncol(this@data))
+		}
+		if ( is.null( other@usedObj$samples ) ){
+			if ( addB == ""){
+				addB = "other"
+			}
+			other@usedObj$samples = data.frame( "index" = colnames(other@data), sname= rep(addB, ncol(other@data)))
+		}
+		if (  is.null( other@usedObj$samples$sname )){
+			other@usedObj$samples$sname = rep(addB, ncol(other@data))
+		}
+		tab = table ( c( colnames(this@usedObj$samples), colnames(otehr@usedObj$samples) ) )
+		common = names(tab[which(tab == 2)])
+		ret@usedObj$samples = rbind(this@usedObj$samples[,common], other@usedObj$samples[,common] )
+		warning( paste( sep="\n",
+			"please make sure the meta.cell data contains what you expect and adjust if necessary." ,
+			"Easiest should be from the @usedObj$samples data.frame in the returned celleclvrR object.",
+			"retValue@meta.cell = make.cell.meta.from.df( retValue@usedObj$samples, c('your columns') )" ) )
+		ret@meta.cell = make.cell.meta.from.df( ret@usedObj$samples, c('sname'))
+		
+		return ( ret )
+	}
+)
