@@ -67,20 +67,24 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 
 			if ( this@specie == 'mouse' ){
 				translating_tab = mouse2human( rownames(this@data) )
+				translating_tab = translating_tab[ which(!is.na(match( translating_tab[,'humanGene'], rownames(other@data)))),]
 				tab = table( unlist( lapply( c(this, other), mouse_genes ) ) )
 				genes = names( tab[which(tab==2)] )
 				translating_tab = translating_tab[ match(genes,translating_tab[,'mouseGene']), ]
 				this = reduceTo( this, translating_tab[,'mouseGene'], what='row' )
-				other= reduceTo( other,translating_tab[,'humanGene'], what='row' )
+				ok = match(rownames(this@data), translating_tab[,'mouseGene'])
+				other= reduceTo( other,translating_tab[ok,'humanGene'], what='row' )
 				rownames(other@data) = rownames(this@data)
 			}
 			else {
 				translating_tab = mouse2human( rownames(other@data) )
+				translating_tab = translating_tab[ which(!is.na(match( translating_tab[,'mouseGene'], rownames(other@data)))),]
 				tab = table( unlist( lapply( c(this, other), human_genes ) ) )
 				genes = names( tab[which(tab==2)] )
 				translating_tab = translating_tab[ match(genes,translating_tab[,'humanGene']), ]
 				this = reduceTo( this, translating_tab[,'humanGene'], what='row' )
-				other= reduceTo( other,translating_tab[,'mouseGene'], what='row' )
+				ok = match(rownames(this@data), translating_tab[,'humanGene'])
+				other= reduceTo( other,translating_tab[ok,'mouseGene'], what='row' )
 				rownames(other@data) = rownames(this@data)
 			}
 		}
