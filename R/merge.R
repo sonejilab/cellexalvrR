@@ -102,15 +102,15 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 		ret@data = Matrix.utils::merge.Matrix(this@data, other@data, 
 			rownames(this@data), rownames(other@data), fill.x=TRUE, fill.y=TRUE )
 		ret@data = ret@data[rownames(this@data),]
-
-		ret@drc = this@drc
+		if ( addA == ""){
+			addA = "this"
+		}
+		ret = GrabDRCs( ret, this, addA )
 		ret = GrabDRCs( ret, other, addB )
 
 		## and then the sample table - that will be horrible!
 		if ( is.null( this@usedObj$samples ) ){
-			if ( addA == ""){
-				addA = "this"
-			}
+			
 			this@usedObj$samples = data.frame( "index" = colnames(this@data), sname= rep(addA, ncol(this@data)))
 		}
 		if (  is.null( this@usedObj$samples$sname )){
