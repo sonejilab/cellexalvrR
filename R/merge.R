@@ -103,17 +103,14 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 			rownames(this@data), rownames(other@data), fill.x=TRUE, fill.y=TRUE )
 		ret@data = ret@data[rownames(this@data),]
 		ret@meta.cell = as.matrix( data.frame("index" = colnames(ret@data), save=rep ("s", ncol(ret@data)) ) )
-		browser()
-		if ( addA == "" ){
+
+		if ( addA == ""){
 			ret@drc = this@drc
+			addA = "this"
 		}else {
 			ret = GrabDRCs( ret, this, addA )
 		}
 		ret = GrabDRCs( ret, other, addB )
-
-		if ( addA == ""){
-			addA = "this"
-		}
 
 		## and then the sample table - that will be horrible!
 		if ( is.null( this@usedObj$samples ) ){
