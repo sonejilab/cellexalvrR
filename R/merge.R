@@ -26,13 +26,13 @@ setGeneric('merge', ## Name
 setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 	definition = function ( this, other, addA= "", addB="other" ){
 		rename_cols = function(x, add) {
-			x@meta.cell = cbind( x@meta.cell, colnames(x@data))
-			colnames(x@meta.cell)[length(colnames(x@meta.cell))] = "origName"
-			colnames(x@data) = paste( colnames(x@data), add, sep="_")
+			translate = data.frame( orig = colnames(x@data), 
+				new = paste( colnames(x@data), add, sep="_") )
+			colnames(x@data) = translate[,2]
 			rownames(x@meta.cell) = colnames(x@data)
 			for (d in names(x@drc)) {
-			    ok = match( x@meta.cell[,'origName'], rownames(x@drc[[d]]) )
-			    rownames(x@drc[[d]]) = rownames(x@meta.cell)[ok[which(!is.na(ok))]]
+			    ok = match( rownames(x@drc[[d]]), translate[,1]  )
+			    rownames(x@drc[[d]]) = translate[ok[which(!is.na(ok))],2]
 			}
 			return (x)
 		}
@@ -102,11 +102,18 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 		ret@data = Matrix.utils::merge.Matrix(this@data, other@data, 
 			rownames(this@data), rownames(other@data), fill.x=TRUE, fill.y=TRUE )
 		ret@data = ret@data[rownames(this@data),]
+		ret@meta.cell = as.matrix( data.frame("index" = colnames(ret@data), save=rep ("s", ncol(ret@data)) ) )
+		browser()
+		if ( addA == "" ){
+			ret@drc = this@drc
+		}else {
+			ret = GrabDRCs( ret, this, addA )
+		}
+		ret = GrabDRCs( ret, other, addB )
+
 		if ( addA == ""){
 			addA = "this"
 		}
-		ret = GrabDRCs( ret, this, addA )
-		ret = GrabDRCs( ret, other, addB )
 
 		## and then the sample table - that will be horrible!
 		if ( is.null( this@usedObj$samples ) ){
