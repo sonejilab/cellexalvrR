@@ -31,6 +31,7 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 			colnames(x@data) = paste( colnames(x@data), add, sep="_")
 			rownames(x@meta.cell) = colnames(x@data)
 			for (d in names(x@drc)) {
+			    browser()
 			    ok = match( x@meta.cell[,'origName'], rownames(x@drc[[d]]) )
 			    rownames(x@drc[[d]]) = rownames(x@meta.cell)[ok[which(!is.na(ok))]]
 			}
@@ -102,10 +103,14 @@ setMethod('merge', signature = c ('cellexalvrR', 'cellexalvrR'),
 		ret@data = Matrix.utils::merge.Matrix(this@data, other@data, 
 			rownames(this@data), rownames(other@data), fill.x=TRUE, fill.y=TRUE )
 		ret@data = ret@data[rownames(this@data),]
+		ret@meta.cell = as.matrix( data.frame("index" = colnames(ret@data), save=rep ("s", ncol(ret@data)) ) )
+
 		if ( addA == ""){
+			ret@drc = this@drc
 			addA = "this"
+		}else {
+			ret = GrabDRCs( ret, this, addA )
 		}
-		ret = GrabDRCs( ret, this, addA )
 		ret = GrabDRCs( ret, other, addB )
 
 		## and then the sample table - that will be horrible!
