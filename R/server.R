@@ -55,7 +55,9 @@ setMethod('server', signature = c ('character'),
 	outFile = file(paste( file,  Sys.getpid(), 'output', sep=".") )
 	
 	if (! is.null(masterPID)) {
-		masterPID = ps::ps_handle( pid = as.integer(masterPID) )
+		try({
+			masterPID = ps::ps_handle( pid = as.integer(masterPID) )
+		})
 	}
 
 	#if ( debug ){

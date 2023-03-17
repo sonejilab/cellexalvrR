@@ -28,7 +28,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, stats, genes=NULL, info, png, timeInfo, GOIs=NULL, text=NULL ) {
 	## here I need to create a page of the final log
 
-	if ( VRmode() ){
+	if ( interactive() ){
 		warning("In VR mode the detailed linearSelection report is deactivated.")
 		content = paste(collapse="\n", sep="\n","",
 			"##", "TimeLine control from Saved Selection ", 

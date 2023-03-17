@@ -42,24 +42,27 @@ setMethod('sessionPath', signature = c ('cellexalvrR'),
 		#warning('debug: mainServer.pid exists')
 		pid = scan( file.path( cellexalObj@outpath, 'mainServer.pid'), quiet = TRUE )
 		#warning (paste("debug: I got the pid", pid))
-		masterPID = ps::ps_handle( pid = as.integer(pid) )
-		if ( ps::ps_is_running( masterPID ) ) {
-			#warning ("debug: and the process is active")
-			if ( file.exists(file.path(cellexalObj@outpath,'mainServer.sessionName') )){
-				sessionName = 
-					scan( file.path(cellexalObj@outpath,'mainServer.sessionName'), what=character(), quiet = TRUE )
-			
-				#warning(paste(sep="",
-				#	"debug:  server is running and using session '",
-				#	sessionName, 
-				#	"' I will also add to that session!" ) 
-				#)
-				removeOld = FALSE
+		masterPID = tryCatch(
+			{
+				ps::ps_handle( pid = as.integer(pid) )
+			},
+			error = function(cond){
+				unlink( file.path( cellexalObj@outpath, 'mainServer.pid') )
+				NULL
 			}
-		}else {
-			unlink( file.path( cellexalObj@outpath, 'mainServer.pid') )
+		)
+		if ( ! is.null(masterPID)){
+			if ( ps::ps_is_running( masterPID ) ) {
+				#warning ("debug: and the process is active")
+				if ( file.exists(file.path(cellexalObj@outpath,'mainServer.sessionName') )){
+					sessionName = 
+						scan( file.path(cellexalObj@outpath,'mainServer.sessionName'), what=character(), quiet = TRUE )
+					removeOld = FALSE
+				}
+			}else {
+				unlink( file.path( cellexalObj@outpath, 'mainServer.pid') )
+			}
 		}
-
 	}
 
 	if ( ! is.null(sessionName) ){

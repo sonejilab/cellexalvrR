@@ -1082,7 +1082,7 @@ setMethod('exportSelection', signature = c ('cellexalLinear'),
 
 	f2 = paste( sep=".",fname,'points')
 
-	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
+	d = cbind( rownames(dat), dat$a, dat$b, dat$c  )
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
 
 	invisible(x)
