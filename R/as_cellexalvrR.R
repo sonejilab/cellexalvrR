@@ -432,7 +432,7 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 				factor ( 
 					x[[paste(sep="/",slotName,n)]][['codes']][], 
 					labels= x[[paste(sep="/",slotName,n)]][['categories']][] 
-					)
+						)
 				 } 
 			))
 			})
