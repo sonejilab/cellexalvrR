@@ -472,11 +472,16 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 				if ( n == "__categories"){
 					return (NULL)
 				}
-				factor ( 
-					x[[paste(sep="/",slotName,n)]][['codes']][], 
-					labels= x[[paste(sep="/",slotName,n)]][['categories']][] 
-					)
-				 } 
+                levelNames = x[[paste(sep="/",slotName,n)]][['categories']][]
+                if ( min(x[[paste(sep="/",slotName,n)]][['codes']][]) == -1 ){ ## them would be the NA in R
+					# Just add one more category - not perfect, but better than breaking
+					levelNames = c( 'NA', levelNames)
+					factor( levelNames[x[[paste(sep="/",slotName,n)]][['codes']][]+2] ) 
+				}
+				else {
+					factor( levelNames[x[[paste(sep="/",slotName,n)]][['codes']][]+1] )
+				}
+                }
 			))
 			})
 			if ( nrow( obs2) == nrow(obs) ){
