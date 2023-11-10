@@ -182,6 +182,14 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
 
+		if ( nrow(m) == nrow(annotation) -1 ) {
+			# The last gene had no expression and therefore was lost in the transit
+			annotation = annotation[-nrow(annotation),]
+		}
+		if ( ncol(m) == nrow(annotation) -1 ) {
+			# The last cell had no expression and therefore was lost in the transit
+			meta.data = meta.data[-nrow(meta.data),]
+		}
 		rownames(m) = annotation[,'_index']
 		colnames(m) = meta.data[,'_index']
 
@@ -209,7 +217,14 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	}
 	meta.data = H5Anno2df( x, 'obs')
 	annotation = H5Anno2df( x, 'var')
-
+	if ( nrow(m) == nrow(annotation) -1 ) {
+		# The last gene had no expression and therefore was lost in the transit
+		annotation = annotation[-nrow(annotation),]
+	}
+	if ( ncol(m) == nrow(annotation) -1 ) {
+		# The last cell had no expression and therefore was lost in the transit
+		meta.data = meta.data[-nrow(meta.data),]
+	}
 
 	key4drcs = "obsm"
 	if ( is.na( match( key4drcs ,names(x)) )  ){
