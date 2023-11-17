@@ -44,7 +44,7 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		dir.create( path, recursive=TRUE)
 	}
 
-
+	
 	## now I need to cellexalLinear object:
 	ti = x@usedObj$linearSelections[[info@gname]]
 	
@@ -69,9 +69,10 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		}
 		toPlot = compactTimeZscore( ti, rownames(x@data), x )
 	}
-
+	browser()
 	error = NULL
 	#print('simplePlotHeatmaps creating loes summary gene expressions')
+	browser()
 	if ( nrow(toPlot) != 1000 ){
 		rownames(toPlot) = rownames(ti@dat)
 	}

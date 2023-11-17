@@ -57,6 +57,30 @@ setMethod('check', signature = c ('cellexalGrouping'),
 )
 
 
+#' @rdname subset
+setMethod('subset', signature = c ('cellexalGrouping'),
+definition = function ( x, cells) {
+	m = match( names(x@grouping), cells )
+	m = m[which(is.na(m))] # we need to get rid of data!
+
+	x@grouping[m] = NA
+	x@order[m] = NA
+
+	existing_files <- list.files(pattern = "^selection\\d+\\.txt$")
+	new = NULL
+	if (length(existing_files) == 0) {
+		new="selection0.txt"
+	}else{
+		numbers <- as.integer(gsub("[^0-9]", "", existing_files))
+		new=paste(sep="","selection",max(numbers) + 1,".txt")
+	}
+	exportSelection( x, new)
+	x@selectionFile = new
+
+	invisible(x)
+} )
+
+
 #' @rdname pseudoBulk
 setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {

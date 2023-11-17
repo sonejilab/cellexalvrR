@@ -21,7 +21,7 @@ definition = function ( x ) {
 		    paste( sep=",", collaspe=" ",names( x@geneClusters ))
 		)
 	}
-
+	txt = paste(txt, "\n")
 	txt
 }
 )
@@ -92,37 +92,57 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	}
 	id= (ncol(cellexalObj@userGroups) /2) + 1
-
-	x@gname = paste( "Time.group", id, sep="." ) 
 	if ( is.null( cellexalObj@usedObj$linearSelections )){
 		cellexalObj@usedObj$linearSelections= list()
-	}else{
-		## Is this linearSelection a copy of an other?
-		done=0
-		for ( n in names(cellexalObj@usedObj$linearSelections)){
-			if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
-				x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
-				cellexalObj@usedObj$linearSelections[[n]] = x
-				cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
-				cellexalObj@usedObj$linearSelections[['lastEntry']] = x
-				done=1
-			}
-		}
-		if ( done ){
-			return( invisible( cellexalObj) )
+	}
+
+	if (! is.na( match (x@gname, names(cellexalObj@usedObj$linearSelections) )) ){
+		x@gname = paste( "Time.group", id, sep="." ) 
+	}
+
+	## Is this linearSelection a copy of an other?
+	done=FALSE
+	for ( n in names(cellexalObj@usedObj$linearSelections)){
+		if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
+			x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
+			cellexalObj@usedObj$linearSelections[[n]] = x
+			cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
+			cellexalObj@usedObj$linearSelections[['lastEntry']] = x
+			done=TRUE
 		}
 	}
+	if ( done ){
+		return( invisible( cellexalObj) )
+	}
+
+	# Now we have made sure we have a new clustering
+	# Likely this will create a problem with the upstream cluster as that is likely too large now.
+	gname = paste( "User.group", id, sep="." )
+	cellexalObj@userGroups[,gname] = NA
+	m = match( rownames(x@dat), colnames(cellexalObj@data) )
+	cellexalObj@userGroups[m,gname] = cellexalObj@userGroups[m,x@parentSelection]
+	cellexalObj@userGroups[,paste( gname,'order')] = NA
+	cellexalObj@userGroups[m,paste( gname,'order')] = cellexalObj@userGroups[m,paste(x@parentSelection, 'order')]
+
+	info = groupingInfo(cellexalObj, upstreamSelection )
+	info = subset( info, rownames(x@dat) )
+	cellexalObj@usedObj$SelectionFiles[[gname]] = info
+
+	x@parentSelection = gname 
+	# Now we have a new parent selection for this time!
+
 	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
 	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
+	cellexalObj@usedObj$linearSelections[[ gname ]]= x
 	## I need to create a new one named 
-	info = groupingInfo(cellexalObj, upstreamSelection )
-
-	info@selectionFile = basename(paste( sep=".", cellexalObj@usedObj$SelectionFiles[[ upstreamSelection ]], 'time'))
 	info@linarObj = x
+	info@gname = gname
 
-	info@gname = x@gname
-
+	cellexalObj@groupSelectedFrom[[ gname ]] = info
 	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
+
+	
+
 
 	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
 
@@ -387,7 +407,10 @@ definition = function ( x, deg.genes, cellexalObj ) {
 	 			function(x) { t=table(x); names(t)[which(t==max(t))[1]]})) 
 	 	)
 	}
-	cbind( toPlot, t(B))
+	tmp = cbind( toPlot, t(B))
+	browser()
+	rownames(tmp) = rownames(B)
+	tmp
 })
 
 
@@ -454,7 +477,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 			time = getLinearSelection(cellexalObj, time)
 		}
 		if ( parent != time@parentSelection){
-			stop("the other object is not from the same parent selection - stop")
+			warning("the other object is not from the same parent selection - stop?!")
 		}
 		if ( class(time) == "cellexalGrouping" ){
 			time = time@linarObj
@@ -914,10 +937,14 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		}
 		cellexalObj = addSelection( x, cellexalObj)
 		cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = ps
+		to_aim = round(num.sig /2);
+		cellexalObj@usedObj$deg.genes = rownames(ps)[c(1:to_aim,(nrow(ps)-to_aim):nrow(ps))]
 	}
 	## the stats have already been run and all is OK.
-
-	cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[which(!is.na(cellexalObj@usedObj$deg.genes))]
+	to_aim = round(num.sig /2);
+	ps = cellexalObj@usedObj$sigGeneLists$lin[[x@gname]]
+	cellexalObj@usedObj$deg.genes = rownames(ps)[c(1:to_aim,(nrow(ps)-to_aim):nrow(ps))]
+	#cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[which(!is.na(cellexalObj@usedObj$deg.genes))]
 	
 	cellexalObj= logStatResult ( cellexalObj, method ='Linear', data=cellexalObj@usedObj$sigGeneLists$lin[[x@gname]], col='p.value'	 )
 
@@ -931,7 +958,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 #' In short the drc model of the selected genes is clustered using kmeans
 #' and the first and last selected cell is used to determine the start and end points of the
 #' anlysis in the drc model.
-#' Subsequently slignshot is used to calculate the pseudo time over the selection.
+#' Subsequently slingshot is used to calculate the pseudo time over the selection.
 #' This function will create the same linearSelection if the same cells are used as input.
 #' @name createTime
 #' @docType methods
@@ -1618,6 +1645,8 @@ function ( x, cellexalObj, deg.genes=NULL ) {
 setMethod('linearAnalysisSubset', signature = c ('cellexalLinear'),
 definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
+	cellexalObj = addSelection( x, cellexalObj, x@parentSelection)
+
 	loc = reduceTo( cellexalObj,what='col', to= rownames(x@dat) )
 	loc = createStats( x, loc )
 
@@ -1627,7 +1656,6 @@ definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
 	cellexalObj@usedObj$deg.genes = deg.genes
 	
-	cellexalObj = addSelection( x, cellexalObj, x@parentSelection)
 	if ( is.null(cellexalObj@usedObj$sigGeneLists$lin) ) {
 		cellexalObj@usedObj$sigGeneLists$lin = list()
 	}
