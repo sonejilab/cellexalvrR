@@ -1603,6 +1603,24 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 	}
 )
 
+
+#' describesTheseCells - check if this object describes these cells
+#'
+#' @name subset
+#' @docType methods
+#' @description describesTheseCells - check if this object describes these cells
+#' @param x the object
+#' @param cells the cell names to subset the object to
+#' @title a simple check that does what ist is called for
+#' @export 
+#' @rdname describesTheseCells
+setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
+definition = function ( x, cells ) {
+	a = unique( c(rownames(x@dat), cells ))
+	length(a) == nrow(x@dat) && length(a) == length(cells)	
+}
+
+
 #' Subset a cellexalLinear object based on a list of cells.
 #'
 #' @name subset
