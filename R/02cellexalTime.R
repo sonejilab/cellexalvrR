@@ -1606,7 +1606,7 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 
 #' describesTheseCells - check if this object describes these cells
 #'
-#' @name subset
+#' @name describesTheseCells
 #' @docType methods
 #' @description describesTheseCells - check if this object describes these cells
 #' @param x the object
