@@ -1617,7 +1617,7 @@ setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
 definition = function ( x, cells ) {
 	a = unique( c(rownames(x@dat), cells ))
 	length(a) == nrow(x@dat) && length(a) == length(cells)	
-}
+})
 
 
 #' Subset a cellexalLinear object based on a list of cells.
