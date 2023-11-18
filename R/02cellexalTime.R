@@ -1613,7 +1613,6 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 #' @param cells the cell names to subset the object to
 #' @title a simple check that does what ist is called for
 #' @export 
-#' @rdname describesTheseCells
 setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
 definition = function ( x, cells ) {
 	a = unique( c(rownames(x@dat), cells ))
