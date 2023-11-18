@@ -84,12 +84,12 @@ setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	if ( is.null(upstreamSelection)){
-		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)@gname
+		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)
 		if ( class(upstreamSelection)[1] == "cellexalvrR"){
 			cellexalObj = upstreamSelection
 			upstreamSelection <- groupingInfo( cellexalObj, cellidfile )
 		}
-
+		upstreamSelection = upstreamSelection@gname
 	}
 	id= (ncol(cellexalObj@userGroups) /2) + 1
 	if ( is.null( cellexalObj@usedObj$linearSelections )){
