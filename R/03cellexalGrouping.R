@@ -77,6 +77,9 @@ definition = function ( x, cells) {
 	exportSelection( x, new)
 	x@selectionFile = new
 
+	id= (ncol(cellexalObj@userGroups) /2) + 1
+	x@gname = paste( "User.group", id, sep="." )
+
 	invisible(x)
 } )
 

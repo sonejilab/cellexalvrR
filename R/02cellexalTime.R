@@ -117,7 +117,6 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	# Now we have made sure we have a new clustering
 	# Likely this will create a problem with the upstream cluster as that is likely too large now.
-	gname = paste( "User.group", id, sep="." )
 	cellexalObj@userGroups[,gname] = NA
 	m = match( rownames(x@dat), colnames(cellexalObj@data) )
 	cellexalObj@userGroups[m,gname] = cellexalObj@userGroups[m,x@parentSelection]
@@ -125,23 +124,18 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 	cellexalObj@userGroups[m,paste( gname,'order')] = cellexalObj@userGroups[m,paste(x@parentSelection, 'order')]
 
 	info = groupingInfo(cellexalObj, upstreamSelection )
-	info = subset( info, rownames(x@dat) )
-	cellexalObj@usedObj$SelectionFiles[[gname]] = info
+	# this also creates a new name for the group, but we need to add that new goup to the cellexal object!
+	newParent = subset( info, rownames(x@dat) )
+	newParent@linarObj = x
+	cellexalObj@usedObj$SelectionFiles[[newParent@gname]] = newParent
 
-	x@parentSelection = gname 
 	# Now we have a new parent selection for this time!
-
+	x@parentSelection = newParent@gname
+	exportSelection( x, paste(sep="", x@selectionFile, ".time"))
+	
 	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
 	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
-	cellexalObj@usedObj$linearSelections[[ gname ]]= x
-	## I need to create a new one named 
-	info@linarObj = x
-	info@gname = gname
 
-	cellexalObj@groupSelectedFrom[[ gname ]] = info
-	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
-
-	
 
 
 	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
@@ -395,6 +389,7 @@ definition = function ( x, deg.genes, cellexalObj ) {
 	rownames(B) = rownames(cellexalObj@data)
 	ok = which(! is.na(match(  colnames(B), x@gname)))
 	B = B[,ok]
+	browser()
 	n = nrow(x@dat)
 	toPlot = data.frame(time= x@dat[,'time'], col = x@dat[,'col'] )
 	if (n > 1000) {
@@ -406,6 +401,7 @@ definition = function ( x, deg.genes, cellexalObj ) {
 	 		col= unlist(lapply( split( as.vector(x@dat[,'col']), ids ), 
 	 			function(x) { t=table(x); names(t)[which(t==max(t))[1]]})) 
 	 	)
+
 	}
 	tmp = cbind( toPlot, t(B))
 	browser()
