@@ -58,7 +58,7 @@ setMethod('check', signature = c ('cellexalGrouping'),
 
 
 #' @rdname describesTheseCells
-setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
+setMethod('describesTheseCells', signature = c ('cellexalGrouping'),
 definition = function ( x, cells ) {
 	m = match( names(x@grouping), cells )
 	good =  m[which(! is.na(m))]

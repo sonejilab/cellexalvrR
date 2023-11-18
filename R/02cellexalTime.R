@@ -85,14 +85,23 @@ function ( x, cellexalObj, upstreamSelection=NULL  ) {
 setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
+	parentSelection = NULL
 	if ( is.null(upstreamSelection)){
-		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)
-		if ( class(upstreamSelection)[1] == "cellexalvrR"){
-			cellexalObj = upstreamSelection
-			upstreamSelection <- groupingInfo( cellexalObj, cellidfile )
+		parentSelection = groupingInfo(cellexalObj , x@parentSelection)
+		if ( class(parentSelection)[1] == "cellexalvrR"){
+			warning(paste("The parent selection",x@parentSelection,"has not been found in the data"))
+			cellexalObj = parentSelection
+			cellexalObj@groupSelectedFrom[[x@parentSelection]]@drc = x@drc
+			parentSelection <- groupingInfo( cellexalObj, x@parentSelection )
+
 		}
-		upstreamSelection = upstreamSelection@gname
+	}else {
+		parentSelection = groupingInfo(cellexalObj , upstreamSelection)
+		if ( class(parentSelection)[1] == "cellexalvrR"){
+			stop(paste("Parent selection",upstreamSelection,"does not exist in the cellexal object!"))
+		}
 	}
+
 	id= (ncol(cellexalObj@userGroups) /2) + 1
 	if ( is.null( cellexalObj@usedObj$linearSelections )){
 		cellexalObj@usedObj$linearSelections= list()
@@ -120,8 +129,10 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 	# Now we have made sure we have a new clustering
 	# Likely this will create a problem with the upstream cluster as that is likely too large now.
 	# this also creates a new name for the group, but we need to add that new goup to the cellexal object!
-	parentSelection = groupingInfo(cellexalObj, upstreamSelection )
-
+	if (  class(upstreamSelection)[1] == "cellexalvrR" && interactive() ){
+		message("The groupingInfo(cellexalObj, upstreamSelection ) functionn call has given me a cellexalvrR object - not a groupin!")
+		browser()
+	}
 	if ( ! describesTheseCells(parentSelection, rownames(x@dat) )){
 		print("Assuming the original timeline has been subsetted?")
 
