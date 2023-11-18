@@ -57,7 +57,7 @@ setMethod('check', signature = c ('cellexalGrouping'),
 )
 
 
-#' @rdname addSelection
+#' @rdname describesTheseCells
 setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
 definition = function ( x, cells ) {
 	m = match( names(x@grouping), cells )
