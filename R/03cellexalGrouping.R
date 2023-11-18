@@ -65,7 +65,7 @@ definition = function ( x, cells ) {
 	bad = m[which(is.na(m))]
 	length(which( is.na( x@grouping[good] ))) == 0 && 
 		length(which(! is.na( x@grouping[bad] ))) == 0
-}
+ } )
 
 
 #' @rdname subset

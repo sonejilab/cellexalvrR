@@ -24,6 +24,6 @@ linearSelection for this selection.
 In short the drc model of the selected genes is clustered using kmeans
 and the first and last selected cell is used to determine the start and end points of the
 anlysis in the drc model.
-Subsequently slignshot is used to calculate the pseudo time over the selection.
+Subsequently slingshot is used to calculate the pseudo time over the selection.
 This function will create the same linearSelection if the same cells are used as input.
 }

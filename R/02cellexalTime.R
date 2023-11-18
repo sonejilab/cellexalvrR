@@ -1616,7 +1616,7 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 
 setGeneric('describesTheseCells', ## Name
 	function ( x, cells ) { 
-		standardGeneric('pseudoBulk')
+		standardGeneric('describesTheseCells')
 	}
 )
 
@@ -1637,7 +1637,7 @@ definition = function ( x, cells ) {
 #' @param cells the cell names to subset the object to
 #' @title subset a cellexalLinear object
 #' @export 
-setMethod('subset', signature = c ('cellexalLinear', 'character', 'cellexalvrR'),
+setMethod('subset', signature = c ('cellexalLinear'),
 definition = function ( x, cells) {
 	m = match( cells, rownames(x@dat) )
 	m = m[which(!is.na(m))]
