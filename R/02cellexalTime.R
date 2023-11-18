@@ -117,21 +117,25 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
 	# Now we have made sure we have a new clustering
 	# Likely this will create a problem with the upstream cluster as that is likely too large now.
-	cellexalObj@userGroups[,gname] = NA
-	m = match( rownames(x@dat), colnames(cellexalObj@data) )
-	cellexalObj@userGroups[m,gname] = cellexalObj@userGroups[m,x@parentSelection]
-	cellexalObj@userGroups[,paste( gname,'order')] = NA
-	cellexalObj@userGroups[m,paste( gname,'order')] = cellexalObj@userGroups[m,paste(x@parentSelection, 'order')]
-
-	info = groupingInfo(cellexalObj, upstreamSelection )
 	# this also creates a new name for the group, but we need to add that new goup to the cellexal object!
+	info = groupingInfo(cellexalObj, upstreamSelection )
 	newParent = subset( info, rownames(x@dat) )
-	newParent@linarObj = x
-	cellexalObj@usedObj$SelectionFiles[[newParent@gname]] = newParent
-
-	# Now we have a new parent selection for this time!
 	x@parentSelection = newParent@gname
-	exportSelection( x, paste(sep="", x@selectionFile, ".time"))
+	newParent@linarObj = x
+
+	# fix the userGroups entry for the partent
+	cellexalObj@userGroups[,newParent@gname] = NA
+	m = match( rownames(x@dat), colnames(cellexalObj@data) )
+	cellexalObj@userGroups[m,newParent@gname] = cellexalObj@userGroups[m,x@parentSelection]
+	cellexalObj@userGroups[,paste( newParent@gname,'order')] = NA
+	cellexalObj@userGroups[m,paste( newParent@gname,'order')] = cellexalObj@userGroups[m,paste(x@parentSelection, 'order')]
+
+	# register the parten with the cellexalObj
+	cellexalObj@usedObj$SelectionFiles[[newParent@gname]] = newParent
+	cellexalObj@usedObj$SelectionFiles[[x@gname]]  = newParent
+	# Now we have a new parent selection for this time!
+
+	exportSelection( x, paste(sep="", newParent@selectionFile, ".time"))
 	
 	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
 	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
