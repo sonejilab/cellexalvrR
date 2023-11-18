@@ -59,6 +59,8 @@ definition = function ( object ) {
 }
 )
 
+
+
 #' Method to copy a selection from cellexalObj to cellexalObj.
 #' This function makes sure that the linear grouping is fitting into the object.
 #' @name addSelection
@@ -118,24 +120,31 @@ definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 	# Now we have made sure we have a new clustering
 	# Likely this will create a problem with the upstream cluster as that is likely too large now.
 	# this also creates a new name for the group, but we need to add that new goup to the cellexal object!
-	info = groupingInfo(cellexalObj, upstreamSelection )
-	newParent = subset( info, rownames(x@dat) )
-	x@parentSelection = newParent@gname
-	newParent@linarObj = x
+	parentSelection = groupingInfo(cellexalObj, upstreamSelection )
 
-	# fix the userGroups entry for the partent
-	cellexalObj@userGroups[,newParent@gname] = NA
-	m = match( rownames(x@dat), colnames(cellexalObj@data) )
-	cellexalObj@userGroups[m,newParent@gname] = cellexalObj@userGroups[m,x@parentSelection]
-	cellexalObj@userGroups[,paste( newParent@gname,'order')] = NA
-	cellexalObj@userGroups[m,paste( newParent@gname,'order')] = cellexalObj@userGroups[m,paste(x@parentSelection, 'order')]
+	if ( ! describesTheseCells(parentSelection, rownames(x@dat) )){
+		print("Assuming the original timeline has been subsetted?")
 
-	# register the parten with the cellexalObj
-	cellexalObj@usedObj$SelectionFiles[[newParent@gname]] = newParent
-	cellexalObj@usedObj$SelectionFiles[[x@gname]]  = newParent
+		newParent = subset( parentSelection, rownames(x@dat) )
+		x@parentSelection = newParent@gname
+		newParent@linarObj = x
+
+
+		# fix the userGroups entry for the partent
+		cellexalObj@userGroups[,newParent@gname] = NA
+		m = match( rownames(x@dat), colnames(cellexalObj@data) )
+		cellexalObj@userGroups[m,newParent@gname] = cellexalObj@userGroups[m,x@parentSelection]
+		cellexalObj@userGroups[,paste( newParent@gname,'order')] = NA
+		cellexalObj@userGroups[m,paste( newParent@gname,'order')] = cellexalObj@userGroups[m,paste(x@parentSelection, 'order')]
+
+		# register the parten with the cellexalObj
+		cellexalObj@usedObj$SelectionFiles[[newParent@gname]] = newParent
+		cellexalObj@usedObj$SelectionFiles[[x@gname]]  = newParent
+		parentSelection = newParent
+	}
 	# Now we have a new parent selection for this time!
 
-	exportSelection( x, paste(sep="", newParent@selectionFile, ".time"))
+	exportSelection( x, paste(sep="", parentSelection@selectionFile, ".time"))
 	
 	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
 	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
@@ -352,7 +361,8 @@ definition = function (  cellexalObj ) {
 	invisible(cellexalObj)
 })
 
- 
+
+
 #' This function should be run on the main cellexalObj including all data.
 #' It will create (for a subset of genes) a z-scored dataset and will then 
 #' sum up the expression in the linear orientation to represent 1000 'cells' in the linearSelection.
@@ -1602,7 +1612,7 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 #' @param cells the cell names to subset the object to
 #' @title subset a cellexalLinear object
 #' @export 
-setMethod('subset', signature = c ('cellexalLinear'),
+setMethod('subset', signature = c ('cellexalLinear', 'character', 'cellexalvrR'),
 definition = function ( x, cells) {
 	m = match( cells, rownames(x@dat) )
 	m = m[which(!is.na(m))]
@@ -1613,7 +1623,7 @@ definition = function ( x, cells) {
 	}
 	x@dat = x@dat[order(x@dat$time),]
 	x@id = digest::digest( x@dat, algo="md5")
-	invisible(x)
+	x
 } )
 
 

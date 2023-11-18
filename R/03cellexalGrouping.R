@@ -57,6 +57,17 @@ setMethod('check', signature = c ('cellexalGrouping'),
 )
 
 
+#' @rdname addSelection
+setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
+definition = function ( x, cells ) {
+	m = match( names(x@grouping), cells )
+	good =  m[which(! is.na(m))]
+	bad = m[which(is.na(m))]
+	length(which( is.na( x@grouping[good] ))) == 0 && 
+		length(which(! is.na( x@grouping[bad] ))) == 0
+}
+
+
 #' @rdname subset
 setMethod('subset', signature = c ('cellexalGrouping'),
 definition = function ( x, cells) {
