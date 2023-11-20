@@ -1114,7 +1114,7 @@ definition = function ( x, parentSelection=NULL ) {
 
 #' @rdname exportSelection
 setMethod('exportSelection', signature = c ('cellexalLinear'),
-	definition = function (x, fname) {
+	definition = function (x, fname) {?
 
 	dat = x@dat[order(x@dat$time),]
 	d = cbind( rownames(dat), as.vector(dat$col), rep( x@drc[1] , nrow(dat) ), as.numeric( dat$col )  )
