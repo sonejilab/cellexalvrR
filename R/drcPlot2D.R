@@ -24,6 +24,13 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'character'),
 		drcPlots2D( cellexalObj, gInfo,  showIDs = showIDs )
 })
 
+#' @rdname drcPlots2D
+setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalLinear'),
+	definition = function ( cellexalObj, gInfo,  showIDs = TRUE ) {
+		gInfo = userGrouping( cellexalObj, gInfo@parentSelection)
+		drcPlots2D( cellexalObj, gInfo,  showIDs = showIDs )
+	}
+)
 
 #' @rdname drcPlots2D
 setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
@@ -216,6 +223,9 @@ correctPath = function( f, cellexalObj ) {
 drcFiles2HTML = function( cellexalObj, gInfo, showIDs=TRUE, addOn = NULL ) {
 	## gInfo is a list with names grouping, drc, col and order
 	# create a file containing the grouping info (and thereby color) and the drc info - do not create doubles
+	if ( class(gInfo)[1] == "cellexalLinear"){
+		gInfo = groupingInfo( cellexalObj, gInfo@parentSelection)
+	}
 	if ( nrow(gInfo@linarObj@dat) > 0 ) {
 		return( drcFiles2HTMLlinear( cellexalObj, gInfo@linarObj, showIDs= showIDs, addOn =addOn ) )
 	}	

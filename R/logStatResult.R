@@ -46,27 +46,19 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## get the VR order:
 		gInfo = groupingInfo(x)
 
-
-		
 		tableHTML = HTMLtable(gInfo)
-		if ( ! empty(gInfo@linarObj) ){
-			tableHTML = HTMLtable(gInfo@linarObj)
-		}
 		gname = gInfo@gname
 
 		if ( !is.na( match( paste(gname, "pseudoBulk"), names(x@groupSelectedFrom)))){
 			pseudoB_group = groupingInfo( x, paste(gname, "pseudoBulk") )
-			if ( ! empty(pseudoB_group@linarObj) ){
-				tab = table( pseudoB_group@linarObj@dat$col)
+
+			if ( class(pseudoB_group)[1] == "cellexalLinear"){
+				tab = table( pseudoB_group@dat$col )
 			}else {
 				tab = table(as.numeric(pseudoB_group@grouping))
 			}
-			if ( ! empty(gInfo@linarObj) ){
-				tmp = gInfo@linarObj
-			}else {
-				tmp = gInfo
-			}
-			tableHTML = HTMLtable(tmp,  
+
+			tableHTML = HTMLtable(gInfo,  
 				list ( 
 					'pseudo bulk samples [n]' = tab 
 				) )
@@ -79,7 +71,12 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			selF = filename(paste(sep=".", "TimeSelection", gInfo@gname, 'txt'))
 			sesionFile = file.path(x@usedObj$sessionPath, selF )
 			if ( ! file.exists( sesionFile )){
-				exportSelection( gInfo@linarObj, sesionFile )
+				if ( class(gInfo)[1] == "cellexalLinear"){
+					exportSelection( gInfo, sesionFile )
+				}else {
+					exportSelection( gInfo@linarObj, sesionFile )
+				}
+				
 			}
 		}else {
 			if ( is.null(x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] )){

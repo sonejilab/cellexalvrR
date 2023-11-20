@@ -24,6 +24,9 @@ setGeneric('toGSEA', ## Name
 setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'character'),
 	definition = function (x, ofile, gname ) {
 		gname = groupingInfo( x, gname )
+		if ( class(gname)[1] == "cellexalLinear"){
+			return( toGSEA( x, ofile, gname@parentSelection ) )
+		}
 		return( toGSEA( x, ofile, gname ) )
 	}
 )
