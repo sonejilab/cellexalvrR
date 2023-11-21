@@ -679,13 +679,13 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
  			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
 			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
 			
-			groupCol = NULL
- 			if ( use_first ){
- 				groupCol = paste( names(times[[i]]@geneClusters)[1], 'groupColors','png', sep=".") 
- 			}
- 			else {
+			# groupCol = NULL
+ 			# if ( use_first ){
+ 			# 	groupCol = paste( names(times[[i]]@geneClusters)[1], 'groupColors','png', sep=".") 
+ 			# }
+ 			# else {
 				groupCol = paste( times[[i]]@gname, 'groupColors','png', sep=".")
-			}
+			#}
 
 			tmp = NULL
 			if ( use_first ){
