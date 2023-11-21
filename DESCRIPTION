@@ -56,7 +56,8 @@ Imports:
 	wesanderson,
 	zip
 Remotes: 
-	sonejilab/FastWilcoxTest
+	sonejilab/FastWilcoxTest,
+	tpq/propr
 Enhances:
 	Seurat
 License: GPL-3
