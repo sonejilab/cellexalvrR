@@ -505,9 +505,6 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 		if ( is.character(time) ){
 			time = getLinearSelection(cellexalObj, time)
 		}
-		if ( parent != time@parentSelection){
-			warning("the other object is not from the same parent selection - stop?!")
-		}
 		if ( class(time) == "cellexalGrouping" ){
 			time = time@linarObj
 		}
@@ -544,14 +541,42 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 		}
 	}
 
+	genes = as.vector(unlist(x@geneClusters[[x@gname]]['clusters'][['clusters']]))
+	use_first = FALSE
+	if ( is.null(genes) && length(names(x@geneClusters))  ==1 ){
+		genes = as.vector(unlist(x@geneClusters[[1]]['clusters'][['clusters']]))
+		use_first = TRUE
+		for (obj in unlist(times)){
+   			#print("I am checking the genes described in this object:")
+   			#print(obj)
+   			obj.genes = as.vector(unlist(obj@geneClusters[[1]]['clusters'][['clusters']]))
+   			if ( ! all(table( c(genes, obj.genes)) == 2) ){
+   				warning("I need the same genes to be analzed in all times")
+   				genes = NULL
+   				use_first = FALSE
+   			}
+   		}
+   	}
+   	if ( is.null(genes) ) {
+   		stop("Sorry I do not get which genes I should look into - please restart this and create onyl one time report here")
+   	}
+
 	header= ""
 	body= ""
 	text = "## Comparison between the gene clusters of linearSelection"
 
 	for ( i in 1:length(times)){
+		figfile = NULL
+		if (use_first){
+			figfile = R.utils::getRelativePath( times[[i]]@geneClusters[[1]]$figure, cellexalObj@outpath)
+		}
+		else {
+			figfile = R.utils::getRelativePath( times[[i]]@geneClusters[[times[[i]]@gname]]$figure, cellexalObj@outpath)
+		}
+
 	 	header = paste(sep="", header, "<th>",altGroupNames[i],"</th>")
 	 	body   = paste(sep="", body  , "<td>![](",
-	 		R.utils::getRelativePath( times[[i]]@geneClusters[[times[[i]]@gname]]$figure, cellexalObj@outpath),
+	 		figfile,
 	 		")</td>"
 	 		)
 	 	if ( i ==1 ){
@@ -584,20 +609,22 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
    # }
 
    
-   genes = as.vector(unlist(x@geneClusters[[x@gname]]['clusters'][['clusters']]))
    df = matrix (ncol=length(altGroupNames), nrow=length(genes))
    rownames(df) = genes
    colnames(df) = unlist( lapply(times, function(time){time@gname}))
    df = data.frame(df)
    for ( time in times ){
    	clusters = time@geneClusters[[time@gname]]['clusters'][['clusters']]
+   	if (is.null(clusters) ){
+   		# I can do that as I have checked that before!
+   		clusters = time@geneClusters[[1]]['clusters'][['clusters']]
+   	}
    	 for ( i in 1:length(clusters)) {
    	 	for( gn in clusters[[i]] ){
    	 		df[gn, time@gname ] = i
    	 	}
    	 }
    }
-   
    if ( length(which(is.na(df[]))) > 0 ){
    	stop( "Please analyze the timelines using the same list of genes all the time")
    }
@@ -618,9 +645,23 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 
    		for (i in 1:length(times) ){
    			groupID = df[genes[1], i]
-   			circles = c( circles, R.utils::getRelativePath( 
-   				paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,groupID,'svg'), 
-   				cellexalObj@outpath) )
+   			fname = NULL
+   			if (use_first){
+   				fname = R.utils::getRelativePath(
+   					paste( sep=".",times[[i]]@geneClusters[[1]]$figure,groupID,'svg')
+   					, cellexalObj@outpath)
+   			}else {
+   				fname = R.utils::getRelativePath(
+   					paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,groupID,'svg')
+   					, cellexalObj@outpath)
+   			}
+   			if ( ! file.exists(fname) ) {
+   				warning("The expected group color circle file could not be found!")
+   				if ( interactive() ){
+   					browser()
+   				}
+   			}
+   			circles = c( circles, fname )
    			#text = paste( sep="",text, altGroupNames[i]," ", "<img src='",circles[i], "' height='15'/>")
 
    		}
@@ -634,16 +675,29 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
  		## and now the heatmaps for this set of genes.
  		for (i in 1:length(times) ){
  			groupID = df[genes[1], i]
+ 			
  			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
 			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
 			
-			groupCol = paste( times[[i]]@gname, 'groupColors','png', sep=".")
+			groupCol = NULL
+ 			if ( use_first ){
+ 				groupCol = paste( names(times[[i]]@geneClusters)[1], 'groupColors','png', sep=".") 
+ 			}
+ 			else {
+				groupCol = paste( times[[i]]@gname, 'groupColors','png', sep=".")
+			}
 
+			tmp = NULL
+			if ( use_first ){
+				tmp = t(times[[i]]@geneClusters[[1]]$matrix[,genes])
+			}else {
+				tmp =t(times[[i]]@geneClusters[[times[[i]]@gname]]$matrix[,genes])
+			}
  			text = paste( text, sep=" ", "\n\n#### Expression in", 
 					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
 					paste("![](",correctPath(groupCol, cellexalObj ),")\n"),
 					plotHeatmap_rmd( 
-						x=t(times[[i]]@geneClusters[[times[[i]]@gname]]$matrix[,genes]), 
+						x=tmp, 
 						color=color[i] ,
 						ofile = of2,
 						cellexalObj = cellexalObj
@@ -803,8 +857,12 @@ definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 		#print( "finish" )
 	} )	
 	#message("I need to store the grouping and the analysis in the cellexalObj")
-	browser()
+	#browser()
+	# This slot gets only updated for automatic clusters - not the subsets.
+	# I am missing something!
+	#names(cellexalObj@usedObj$linearSelections[[x@gname]]@geneClusters)
 	cellexalObj = addSelection( x, cellexalObj )
+	# this seams to work now!
 	#	print ( paste("4: createReport: The dims of the cellexalObj:", paste(collapse=", ", dim(cellexalObj@data))))
 
 	invisible( cellexalObj )

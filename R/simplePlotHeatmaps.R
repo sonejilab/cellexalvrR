@@ -44,18 +44,12 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		dir.create( path, recursive=TRUE)
 	}
 
-	
 	## now I need to cellexalLinear object:
 	ti = x@usedObj$linearSelections[[info@gname]]
 	
 	if ( is.null( ti ) ){
 		## oops - we got a parentSelection?
-		## best guess
-		# if ( x@usedObj$linearSelections[["lastEntry"]]@parentSelection == info@gname){
-		# 	ti = x@usedObj$linearSelections[["lastEntry"]]
-		# 	info = groupingInfo(  x, ti@gname)
-		# }
-		to = groupingInfo( x, info@linarObj )
+		ti = groupingInfo( x, info@linarObj )
 	}
 	if ( is.null( ti ) ){
 		stop(paste( "The time for the selection", info@gname, "could not be found") )
