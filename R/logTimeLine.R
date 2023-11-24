@@ -27,27 +27,26 @@ setGeneric('logTimeLine', ## Name
 setMethod('logTimeLine', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, stats, genes=NULL, info, png, timeInfo, GOIs=NULL, text=NULL ) {
 	## here I need to create a page of the final log
-
-	if ( interactive() ){
-		warning("In VR mode the detailed linearSelection report is deactivated.")
-		content = paste(collapse="\n", sep="\n","",
-			"##", "TimeLine control from Saved Selection ", 
-			sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup ) ,"",
-			paste("This TimeLine is available in the R object as group",
-				timeInfo@gname ) ,""
-			)
-		content =  paste( collapse="\n", sep="\n", "In VR the time consuming in detail linearSelection analysis is deactivated - to get the detailed analysis you need to run this script directly in R:",
-			"```",
-			"library(cellexalvrR)",
-			"load(<the cellexalObj.RData in the Data folder>)",
-			"cellexalObj = sessionPath(cellexalObj, 'MyCommandLineSession')",
-			"getDifferentials( cellexalObj, <you selection file>)",
-			"cellexalObj = renderReport(cellexalObj)",
-			"```",
-			"You obviousely need the selection file linked in the statistics section above and the cellexalObj.RData file from the Data folder."
-			)		
-	}
-	else {
+	#if ( interactive() ){
+	# 	warning("In VR mode the detailed linearSelection report is deactivated.")
+	# 	content = paste(collapse="\n", sep="\n","",
+	# 		"##", "TimeLine control from Saved Selection ", 
+	# 		sessionCounter( cellexalObj, cellexalObj@usedObj$lastGroup ) ,"",
+	# 		paste("This TimeLine is available in the R object as group",
+	# 			timeInfo@gname ) ,""
+	# 		)
+	# 	content =  paste( collapse="\n", sep="\n", "In VR the time consuming in detail linearSelection analysis is deactivated - to get the detailed analysis you need to run this script directly in R:",
+	# 		"```",
+	# 		"library(cellexalvrR)",
+	# 		"load(<the cellexalObj.RData in the Data folder>)",
+	# 		"cellexalObj = sessionPath(cellexalObj, 'MyCommandLineSession')",
+	# 		"getDifferentials( cellexalObj, <you selection file>)",
+	# 		"cellexalObj = renderReport(cellexalObj)",
+	# 		"```",
+	# 		"You obviousely need the selection file linked in the statistics section above and the cellexalObj.RData file from the Data folder."
+	# 		)		
+	# }
+	#else {
 		cellexalObj = sessionPath( cellexalObj ) #function definition in file 'sessionPath.R'
 		sessionPath = cellexalObj@usedObj$sessionPath
 		cellexalObj = sessionRegisterGrouping( cellexalObj, cellexalObj@usedObj$lastGroup ) #function definition in file 'sessionRegisterGrouping.R'
@@ -126,7 +125,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 			paste(collapse = "\n", sep="\n",drcFiles2HTMLlinear(cellexalObj, info, "time line")) #function definition in file 'drcPlot2Dtime.R'
 
 			)
-	}
+	#}
 
 	cellexalObj = storeLogContents( cellexalObj, content, type="OneGroupTime")
 	id = length(cellexalObj@usedObj$sessionRmdFiles)

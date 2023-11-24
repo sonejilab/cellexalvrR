@@ -82,11 +82,11 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 
 	res = new('cellexalLinear', dat= data.frame(drc), drc=info@drc)
 	info = groupingInfo(loc, grouping )
-	res = createTime( res, info )
+	timeObj = createTime( res, info )
 
 	## add the time as group:
 	#the VR program dependeds on it
-	x = addSelection( res, x, grouping )
+	x = addSelection( x, timeObj )
 	## does the time look ok when copied to the cellexal object?
 	#fnames = drcPlots2Dlinear( x, groupingInfo(x, colnames(x@userGroups)[ncol(x@userGroups) -1]) )
 	#system( paste('display', fnames[1]))
@@ -94,7 +94,7 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 	## create the .time selection file for cellexalVR
 	f= file.path( x@outpath, basename(info@selectionFile)) 
 	f= paste(sep=".", f, 'time')
-	exportSelection( res, f )
+	exportSelection( timeObj, f )
 
 	if ( file.exists( x@usedObj$sessionPath ) ) {
 		file.copy( f, x@usedObj$sessionPath)

@@ -79,20 +79,20 @@ expect_true( file.exists( ofile), label= ofile )
 ## check the html file for duplicated entries (sections).
 
 collect = list( 
-	'Time.group.2 TimeLine control' = 0,
-	'as group Time.group.2' = 0,
-	'Time.group.2.Linear.csv' = 0,
+	#'User.group.1 TimeLine control' = 0,
+	#'as group User.group.1' = 0,
+	'User.group.1.Linear.csv' = 0,
 	'Session Log for Session oneBulk' = 0,
 	'2D DRC DDRtree dim 2,3' = 0,
 	'pseudo bulk samples .n.' = 0
 )
 
 expt = list( 
-	'Time.group.2 TimeLine control' = 2, # one in the text and one in the TOC
-	'as group Time.group.2' = 1,
-	'Time.group.2.Linear.csv' = 1,
+	#'User.group.1 TimeLine control' = 2, # one in the text and one in the TOC
+	#'as group User.group.1' = 1,
+	'User.group.1.Linear.csv' = 1,
 	'Session Log for Session oneBulk' = 2, # one in the text and one in the TOC
-	'2D DRC DDRtree dim 2,3' = 4, # this figure is shown twice..
+	'2D DRC DDRtree dim 2,3' = 2, # this figure is shown twice..
 	'pseudo bulk samples .n.' = 1
 )
 expt[[x@outpath]] = 0
@@ -106,4 +106,5 @@ context('linearSelection check if data is correct')
 ##################################################
 
 x = check( x ) 
+
 expect_true( x@usedObj$checkPassed, label = x@usedObj$checkError )

@@ -24,6 +24,9 @@ setGeneric('toGSEA', ## Name
 setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'character'),
 	definition = function (x, ofile, gname ) {
 		gname = groupingInfo( x, gname )
+		if ( class(gname)[1] == "cellexalLinear"){
+			return( toGSEA( x, ofile, gname@parentSelection ) )
+		}
 		return( toGSEA( x, ofile, gname ) )
 	}
 )
@@ -34,7 +37,7 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping
 	definition = function (x, ofile, gname ) {
 
 		ofile=stringr::str_replace_all( ofile, '..RData', '')
-		print( paste("do I have an outfile here?:", ofile))
+		#print( paste("do I have an outfile here?:", ofile))
 		ofile = file.path( dirname(ofile), filename( c(  basename(ofile), "gct" ), dirname(ofile) ))
 		
 		loc = reduceTo( x, what = 'col', to=names( gname@grouping[which ( ! is.na( gname@grouping)) ] ) )

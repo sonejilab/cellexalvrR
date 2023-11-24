@@ -3,28 +3,20 @@
 \docType{methods}
 \name{createReport}
 \alias{createReport}
-\alias{createReport,character,cellexalvrR,character-method}
-\alias{createReport,cellexalLinear,cellexalvrR,character-method}
-\alias{createReport,cellexalLinear,cellexalvrR,cellexalLinear-method}
-\alias{createReport,cellexalLinear,cellexalvrR,cellexalGrouping-method}
+\alias{createReport,character,cellexalvrR-method}
+\alias{createReport,cellexalLinear,cellexalvrR-method}
 \title{create a report for one cellexalLinear object (interactive mode only)}
 \usage{
-createReport(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
+createReport(x, cellexalObj, deg.genes = NULL, num.sig = 250)
 
-\S4method{createReport}{character,cellexalvrR,character}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
+\S4method{createReport}{character,cellexalvrR}(x, cellexalObj, deg.genes = NULL, num.sig = 250)
 
-\S4method{createReport}{cellexalLinear,cellexalvrR,character}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
-
-\S4method{createReport}{cellexalLinear,cellexalvrR,cellexalLinear}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
-
-\S4method{createReport}{cellexalLinear,cellexalvrR,cellexalGrouping}(x, cellexalObj, info, deg.genes = NULL, num.sig = 250)
+\S4method{createReport}{cellexalLinear,cellexalvrR}(x, cellexalObj, deg.genes = NULL, num.sig = 250)
 }
 \arguments{
 \item{x}{the cellexalLinear object or a linear grouping name}
 
 \item{cellexalObj}{the object to get the data from}
-
-\item{info}{a cellexalGrouping or grouping name}
 
 \item{deg.genes}{a list of genes to create the report for}
 

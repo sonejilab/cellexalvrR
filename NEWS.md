@@ -1,3 +1,7 @@
+# 1.2.0
+
+CellexalvrR now supports squidpy spacial analyses.
+
 # 1.1.2
 
 In FACS data all gene names are cleaned up and whitespace dashes and colons are replaced by one undersore.

@@ -44,17 +44,12 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		dir.create( path, recursive=TRUE)
 	}
 
-
 	## now I need to cellexalLinear object:
 	ti = x@usedObj$linearSelections[[info@gname]]
 	
 	if ( is.null( ti ) ){
 		## oops - we got a parentSelection?
-		## best guess
-		if ( x@usedObj$linearSelections[["lastEntry"]]@parentSelection == info@gname){
-			ti = x@usedObj$linearSelections[["lastEntry"]]
-			info = groupingInfo(  x, ti@gname)
-		}
+		ti = groupingInfo( x, info@linarObj )
 	}
 	if ( is.null( ti ) ){
 		stop(paste( "The time for the selection", info@gname, "could not be found") )
@@ -69,14 +64,17 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		}
 		toPlot = compactTimeZscore( ti, rownames(x@data), x )
 	}
-
 	error = NULL
 	#print('simplePlotHeatmaps creating loes summary gene expressions')
 	if ( nrow(toPlot) != 1000 ){
 		rownames(toPlot) = rownames(ti@dat)
 	}
 
-	gr = clusterGenes( t(toPlot[, -c(1,2) ]), info = info, geneclusters = x@usedObj$gene_clusters  ) 
+	if ( class(info)[1] == "cellexalLinear"){
+		message("THis here should definitely be a cellexalGrouping and not a linear selection!")
+		info = groupingInfo( x, info@parentSelection )
+	}
+	gr = clusterGenes( t(toPlot[, -c(1,2) ]), info = info, geneclusters = x@usedObj$gene_clusters, cellexalObj=x  ) 
 	clusterC = rainbow( max(gr$geneClusters) )
 	pngs = NULL
 	#create the separate simple Heatmap PNGs:
@@ -182,6 +180,7 @@ setMethod('clusterGenes', signature = c ('cellexalLinear'),
 			cellexalObj = reduceTo( cellexalObj, what='rwo', to = deg.genes )
 		}
 		if ( ! is.null(info) ) {
+			browser()
 			cellexalObj= reduceTo( cellexalObj, what='col', 
 				colnames(cellexalObj@data)[which(! is.na( cellexalObj@userGroups[, info@gname]))] )
 			cellexalObj = reorderSamples( cellexalObj, info@gname)
@@ -247,7 +246,10 @@ setMethod('clusterGenes', signature = c ('matrix'),
 		gn = stats::kmeans(pca,centers= optimum)$cluster
 		names(gn) = rownames(x)
 		geneTrajectories = list(MaxInCluster = list())
-		
+		if ( class(info)[1] == "cellexalLinear") {
+			message("Library Error - this here MUST be a cellexalGrouping")
+			browser()
+		}
 		if ( ! is.null(info@linarObj ) ) {
 
 			cT = collapseTime( info@linarObj, to =ncol(x) )
@@ -257,6 +259,7 @@ setMethod('clusterGenes', signature = c ('matrix'),
 
 			defaultW <- getOption("warn")
 			options(warn = -1)
+
 			for( i in unique(gn) ) {
 				genes = names(gn)[which(gn == i)]
 				groupname = paste("P",i, sep="")
@@ -265,7 +268,7 @@ setMethod('clusterGenes', signature = c ('matrix'),
 
 				geneTrajectories[[groupname]] = tryCatch( { 
 					stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=.005) )
-				}, error=function(err){ 
+				}, error=function(err){
 					message("loess failed with span .005")
 					} )
 				
@@ -278,9 +281,12 @@ setMethod('clusterGenes', signature = c ('matrix'),
 				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
 					geneTrajectories[[groupname]] = tryCatch({
 						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=1) )
-						}, error=function(err){message("loess failed with span .2") })	
+						}, error=function(err){message("loess failed with span 1") })	
 				}
-
+				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 && interactive() ){
+					message("The loess has failed three times - likely an error on the package - ckeack that!")
+					browser()
+				}
 				inClusters = sapply( split( geneTrajectories[[groupname]], cT@dat$col), max, na.rm=T )
 
 				geneTrajectories[['MaxInCluster']][[groupname]] = 

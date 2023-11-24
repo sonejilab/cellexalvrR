@@ -67,7 +67,7 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 			## if it is already a Time.group we look at, we are fine!
 			linearSelection = cellexalObj@usedObj$linearSelections[[gInfo@gname]]
 		}
-		if ( is.null( linearSelection) ) {
+		if ( is.null( linearSelection) && class(gInfo) == "cellexalGrouping") {
 			## if it is already a Time.group we look at, we are fine!
 			linearSelection = gInfo@linarObj
 		}

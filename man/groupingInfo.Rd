@@ -4,12 +4,15 @@
 \name{groupingInfo}
 \alias{groupingInfo}
 \alias{groupingInfo,cellexalvrR,list-method}
+\alias{groupingInfo,cellexalvrR,cellexalLinear-method}
 \alias{groupingInfo,cellexalvrR,ANY-method}
 \title{get information on a sample grouping}
 \usage{
 groupingInfo(cellexalObj, gname = NULL)
 
 \S4method{groupingInfo}{cellexalvrR,list}(cellexalObj, gname = NULL)
+
+\S4method{groupingInfo}{cellexalvrR,cellexalLinear}(cellexalObj, gname = NULL)
 
 \S4method{groupingInfo}{cellexalvrR,ANY}(cellexalObj, gname = NULL)
 }

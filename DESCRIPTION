@@ -1,6 +1,6 @@
 Package: cellexalvrR
 Title: Provides the backend calculations for CellexalVR
-Version: 1.1.2
+Version: 1.2.0
 Authors@R: c(person("Stefan", "Lang", email = "stefan.lang@med.lu.se", role = c("aut")),
             person("Shamit", "Soneji", email = "shamit.soneji@med.lu.se", role = c("cre")))
 Description: This is the data analysis backend for the CellexalVR application.
@@ -24,7 +24,7 @@ Imports:
 	bookdown,
 	DelayedMatrixStats,
 	digest,
-	FastWilcoxTest (>= 0.1.16),
+	FastWilcoxTest (>= 0.2.0),
 	GeneNet,
 	ggplot2,
 	gplots,
@@ -57,6 +57,7 @@ Imports:
 Remotes: 
 	sonejilab/FastWilcoxTest,
 	stela2502/Matrix.utils
+	tpq/propr
 Enhances:
 	Seurat
 License: GPL-3

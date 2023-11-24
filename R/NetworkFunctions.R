@@ -61,7 +61,7 @@ setMethod('make.cellexalvr.network', signature = c ('cellexalvrR'),
 		}
 
 
-    stop( "the used propr package is not available any more - not implemented" )
+    #stop( "the used propr package is not available any more - not implemented" )
 	datadir <- cellexalObj@outpath
     #data <- cellexalObj@data
 	cellexalObj <- userGrouping(cellexalObj, cellidfile) #function definition in file 'userGrouping.R'
@@ -135,9 +135,8 @@ setMethod('make.cellexalvr.network', signature = c ('cellexalvrR'),
                 message("less than two genes expressed in the group - next")
                 next
             }
-            browser()
-            cor.mat
-            #cor.mat <- propr::perb(as.matrix(t(sub.d)))@matrix
+            
+            cor.mat <- propr::perb(as.matrix(t(sub.d)))@matrix
             cor.mat.flt <- cormat2df(cor.mat) #function definition in file 'NetworkFunctions.R'
             cor.mat.ord <-  cor.mat.flt[rev(order(cor.mat.flt[,3])),]
             

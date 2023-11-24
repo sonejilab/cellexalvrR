@@ -21,10 +21,8 @@ linearAnalysisSubset(x, cellexalObj, deg.genes = NULL)
 create a time report for a subset of cells only
 }
 \details{
-To run this method efficiently it is recommended to first subset the drc the selection is based on.
-Next it is recommended to add this drc subset to the cellexal object and use the subset function to also subset the linearSelection.
-This way one can assure that the timepoints can be compared across the analyses.
-This function will run the statistics and create a report for the new subset.
-
-This function is highly experimental and not meant to be used from within VR!
+This method runs a normal analysis as getDifferentials would also run,
+so in a way this functionality is totally redundant.
+Subsetting a timeline is now handled by the subsetTime() function.
+For a detailed description please check the linearSelections Vignett.
 }

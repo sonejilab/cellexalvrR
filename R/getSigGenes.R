@@ -34,13 +34,14 @@ setMethod('getSigGenes', signature = c ('matrix'),
 setMethod('getSigGenes', signature = c ('data.frame'),
 		definition = function( tab, count=500, nameAdd=NULL ){
 			ret = NULL
-			if ( ! is.na(match ('cor', colnames(tab))) ){
-				tmp = tab[ rev(order(tab[,'cor'])),]
-				ret1 = tmp[,'Gene Name'][1:100]
-				tmp = tab[ order(tab[,'cor']),]
-				ret1 = c( ret1, tmp[,'Gene Name'][1:100] )
-				ret = data.frame( genes = ret1, group = c(rep("up",100), rep("down",100)))
-			}else {
+			if ( ! is.na( match ('cor', colnames(tab)))){
+				# crap a linear selection!
+				ret = data.frame( 
+					genes = c( rownames(tab)[1:round(count/2)], rownames(tab)[ (nrow(tab)-round(count/2)+1):nrow(tab)] ),
+					group = c( rep('down', round(count/2)), rep('up', round(count/2)))
+					)
+			}
+			else {
 				info = split( tab$gene, tab$cluster )
 				ret = data.frame( 
 					genes= unlist(lapply( info, function(x){ c = count; if (c > length(x)){c = length(x)}; return(x[1:c])  })),

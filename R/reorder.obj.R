@@ -28,6 +28,14 @@ setMethod('reorderSamples', signature = c ('cellexalvrR'),
 		ids = order( dataObj@meta.cell[,column])
 	}else if (! is.na( match ( column, colnames(dataObj@userGroups)) ) ){
 		ids = order( dataObj@userGroups[,column])
+	}else if (! is.na( match( column, names( dataObj@usedObj$linearSelections))) ){
+		#print("I try to reorder based on a timeline - WHY?!")
+		if ( describesTheseCells(dataObj@usedObj$linearSelections[[column]] , colnames(dataObj@data))){
+			ids = match( 
+				names(dataObj@usedObj$linearSelections[[column]]),
+				colnames(dataObj@data)
+				)
+		}
 	}else if ( ! is.null(dataObj@usedObj$samples ) ){
 		## just copy that into the userGroups...
 		tmp = data.frame( factor(dataObj@usedObj$samples[,column]), 1:ncol(dataObj@data))
@@ -43,7 +51,8 @@ setMethod('reorderSamples', signature = c ('cellexalvrR'),
 	}
 
 	if ( is.null(ids)) {
-		stop(paste("column", column, "neither round in meta.cells nor usergroups nor usedObj@samples tables")) 
+		browser()
+		stop(paste("column", column, "neither found in meta.cells nor usergroups nor usedObj@samples tables")) 
 	}
 	dataObj@data <- dataObj@data[ , ids]
 	if ( ncol(dataObj@data) == nrow(dataObj@meta.cell) ) {

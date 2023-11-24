@@ -54,10 +54,10 @@ subset2 = rownames(linearSelection@dat)[seq(2,nrow(linearSelection@dat),2)]
 linearSubset1 = subset( linearSelection, subset1)
 linearSubset2 = subset( linearSelection, subset2)
 
-cellexalObj = addSelection( linearSubset1, cellexalObj )
+cellexalObj = addSelection( cellexalObj, linearSubset1 )
 linearSubset1 = cellexalObj@usedObj$linearSelections[[1]]
 
-cellexalObj = addSelection( linearSubset2, cellexalObj )
+cellexalObj = addSelection( cellexalObj, linearSubset2 )
 linearSubset2 = cellexalObj@usedObj$linearSelections[[1]]
 
 ## run the analysis for the two partial linear selections

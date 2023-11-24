@@ -94,15 +94,20 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								x@groupSelectedFrom[[na]]@order = x@groupSelectedFrom[[na]]@order[OK]
 								x@groupSelectedFrom[[na]]@grouping = x@groupSelectedFrom[[na]]@grouping[OK]
 								if ( ! empty(x@groupSelectedFrom[[na]]@linarObj)  ){
-									x@groupSelectedFrom[[na]]@linarObj = 
-									   subset( x@groupSelectedFrom[[na]]@linarObj, colnames(x@data) )
+									tmp = subset( x@groupSelectedFrom[[na]]@linarObj, colnames(x@data) )
+									if ( ! is.null(tmp)){
+										x@groupSelectedFrom[[na]]@linarObj = tmp
+									}
 								}
 							}
 							
 						}
 						for( na in names(x@userGroups$linearSelections) ) {
 							if ( length( which (is.na(match( rownames(x@userGroups$linearSelections[[na]]), colnames(x@data)) ))) > 0 ){
-								x@userGroups$linearSelections[[na]] = subset( x@userGroups$linearSelections[[na]], colnames(x@data) )
+								tmp = subset( x@userGroups$linearSelections[[na]], colnames(x@data) )
+								if ( ! is.null(tmp)){
+									x@userGroups$linearSelections[[na]] = tmp
+								}
 							}
 						}
 												

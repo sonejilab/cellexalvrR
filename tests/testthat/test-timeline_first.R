@@ -76,6 +76,7 @@ for ( ofile in ofiles){
 if ( file.exists( SelectionFile)){
 	unlink( SelectionFile )
 }
+
 t = getDifferentials( t,'User.group.1', deg.method= 'wilcox' , Log=FALSE)
 
 
@@ -84,7 +85,7 @@ for ( ofile in ofiles){
 	expect_true(file.exists( ofile), label=ofile  )
 }
 
-time= t@groupSelectedFrom[[2]]@linarObj
+time= t@groupSelectedFrom[[1]]@linarObj
 
 o = order(time@dat$time)
 d = utils::read.delim(SelectionFile, header=F )

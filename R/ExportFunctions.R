@@ -29,8 +29,19 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 	definition = function (x,path, forceDB=FALSE ) {
 
 	## check that the cell names (all rownames) contain no spaces!!
+	if ( nchar(path) > 2 ){ ## './' !!
+		path = stringr::str_replace( path, "/$","")
+	}
 	old_names = colnames(x@data)
 	good_names = stringr::str_replace_all( colnames(x@data),'\\s+', '_')
+
+	if (! is.null(x@usedObj$spatial) ){
+		print ( "spatial data detected")
+		if ( length( grep('_pc$', path)) == 0 ){
+			print ("path needs to end on _pc - fixed")
+			path = paste(sep="_", path, 'pc')
+		}
+	}
 
 	if ( forceDB ) {
 		 if ( dir.exists(path) ){
@@ -180,6 +191,22 @@ setMethod('export2cellexalvr', signature = c ('cellexalvrR'),
 
     	options(warn = oldw)
 
+	}
+
+
+	if (! is.null(x@usedObj$spatial) ){
+		lapply ( x@usedObj$spatial , function(d) {
+			print(paste("creating slide info for image", d$name))
+			png ( file= file.path(path, paste(sep=".", d$name,"png")), width=ncol(d$png), height=nrow(d$png) )
+			par(mar=c(0,0,0,0)) ## turn off all margins
+			#image( OpenImageR::rotateFixed(d$png,90), col=d$col, xaxt='n', yaxt='n')
+			image( d$png, col=d$col, xaxt='n', yaxt='n')
+			dev.off()
+			tab = cbind( rownames(d$positions), d$positions)
+			colnames(tab) = c('', 'imagerow', 'imagecol')
+			write.table( tab, file=file.path(path, paste(sep="", d$name,"coords.csv")), sep=",",quote=F, row.names=F)
+
+			})
 	}
 	invisible(x)
 

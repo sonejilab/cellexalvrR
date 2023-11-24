@@ -14,6 +14,7 @@ setMethod('show', signature = c ('cellexalGrouping'),
 		if ( length( object@heatmapBasename) != 0){
 			cat( paste( "The heatmap basname is",object@heatmapBasename,"\n" ))
 		}
+		cat(paste("with a total of", length(which(!is.na(object@grouping))),"cells selected" ))
 		cat('\n')
 	}
 )
@@ -55,6 +56,59 @@ setMethod('check', signature = c ('cellexalGrouping'),
 		invisible(x)
 	}
 )
+
+
+#' @rdname describesTheseCells
+setMethod('describesTheseCells', signature = c ('cellexalGrouping'),
+definition = function ( x, cells ) {
+	good =  which(! is.na(x@grouping))
+	#message("This should not be true here?!")
+	length(which( is.na( x@grouping[cells] ))) == 0 && 
+		length(good) == length(cells)	
+ } )
+
+
+setMethod("names", signature(x = "cellexalGrouping"), function(x) {
+  return(names(x@grouping)[which(!is.na(x@grouping))])
+})
+
+#' @rdname subset
+setMethod('subset', signature = c ('cellexalGrouping'),
+definition = function ( x, cells) {
+
+	oldCount = length(which(!is.na(x@grouping)))
+
+	m = match( cells, names(x) )
+	if ( length( which(is.na(m))) > 0 ) {
+		stop("I do not have data on all cell you want!")
+	}
+
+	m = match( names(x@grouping), cells )
+	to_remove = which(is.na(m)) # we need to get rid of data!
+	if ( length(to_remove) == length (x@grouping) ){
+		warning("The new selection would be of size 0?!")
+		return ( NULL )
+	}
+	x@grouping[to_remove] = NA
+	x@order[to_remove] = NA
+	newCount = length(which(!is.na(x@grouping)))
+	if ( oldCount == newCount ){
+		print("You selected the same cells - again?!")
+		return (x)
+	}
+
+	id = length( cellexalObj@groupSelectedFrom ) +1
+	if ( x@gname == paste( "User.group", id, sep="." ) ){
+		id = id +1
+	}
+	#id= (ncol(cellexalObj@userGroups) /2) + 1
+
+	x@gname = paste( "User.group", id, sep="." )
+	# give it a new selection file so that this can be regenerated later on.
+	x@selectionFile = paste(sep="","selection",id,".txt")
+
+	invisible(x)
+} )
 
 
 #' @rdname pseudoBulk

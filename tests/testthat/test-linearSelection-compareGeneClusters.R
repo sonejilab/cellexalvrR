@@ -52,41 +52,36 @@ x = userGrouping( x, file.path(prefix, 'data', 'SelectionHSPC_time.txt' ))
 
 x = getDifferentials( x,cellidfile='User.group.1', deg.method= 'wilcox' , Log=TRUE)
 
-expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2" ),
+expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "User.group.1" ),
  label="correct time names")
 
 ## get the original linearSelection:
-bossLinearSelection = x@usedObj$linearSelections[[1]] ## latest
-subset1 = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(1,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
-linearSubset1 = subset( x@usedObj$linearSelections[["lastEntry"]], subset1)
-subset2 = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(2,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
-linearSubset2 = subset( x@usedObj$linearSelections[["lastEntry"]], subset2)
 
-deg.genes = x@usedObj$deg.genes
+linearSubset1 = x@usedObj$linearSelections[[1]]
 
-x= addSelection( linearSubset1, x )
-linearSubset1 =  x@usedObj$linearSelections[[1]]
-x= createStats( linearSubset1, x)
-deg.genes = c( deg.genes, x@usedObj$deg.genes)
+set.seed(  247 )
+subset1 = rownames( linearSubset1@dat)[seq(1,nrow( linearSubset1@dat),400)]
+set.seed(  742 )
+subset2 = rownames( linearSubset1@dat)[seq(2,nrow( linearSubset1@dat),400)]
 
-x= addSelection( linearSubset2, x )
-linearSubset2 =  x@usedObj$linearSelections[[1]]
-x= createStats( linearSubset2, x)
-deg.genes = c( deg.genes, x@usedObj$deg.genes)
+x= subsetTime(x, oldName = "User.group.1", newName = "SubsetA", cells=subset1 )
+x= subsetTime(x, oldName = "User.group.1", newName = "SubsetB", cells= subset2 )
 
-deg.genes=unique(deg.genes)
+x= createStats( linearSubset1@gname, x)
+deg.genes.1 = x@usedObj$deg.genes
 
-ret = createReport(linearSubset1, x, groupingInfo( x,linearSubset1@gname ), deg.genes=deg.genes )
-x = ret$cellexalObj
-linearSubset1 = ret$linearSelection
+x= createStats( "SubsetA", x)
+deg.genes.A = x@usedObj$deg.genes
 
-ret = createReport(linearSubset2, x, groupingInfo( x,linearSubset2@gname ), deg.genes=deg.genes )
-x = ret$cellexalObj
-linearSubset2 = ret$linearSelection
+x= createStats( "SubsetB", x)
+deg.genes.B = x@usedObj$deg.genes
 
+deg.genes = unique( c(deg.genes.1, deg.genes.A, deg.genes.B) )
 
-x = compareGeneClusters ( linearSubset1@gname, linearSubset2@gname, x, altGroupNames=c("A", "B" ) )
+x = createReport("SubsetA", x, , deg.genes=deg.genes )
+x = createReport("SubsetB", x, , deg.genes=deg.genes )
 
+x = compareGeneClusters ( "SubsetA", "SubsetB", x, altGroupNames=c("A", "B" ) )
 
 ## depending if on linux or windows I get different outfiles ?!
 
@@ -157,7 +152,7 @@ expect= list(
   'Click to expand gene list' = 18
 )
 
-#browser()
+browser()
 #rbind( expect, collect)
 
 expect_equal( collect, expect, label="html internals")

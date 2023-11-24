@@ -178,9 +178,18 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		j = j [-length(j)]
 		m = Matrix::sparseMatrix( i = i+1, j=j, x=x)
 
+		#browser()
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
 
+		if ( nrow(m) == nrow(annotation) -1 ) {
+			# The last gene had no expression and therefore was lost in the transit
+			annotation = annotation[-nrow(annotation),]
+		}
+		if ( ncol(m) == nrow(annotation) -1 ) {
+			# The last cell had no expression and therefore was lost in the transit
+			meta.data = meta.data[-nrow(meta.data),]
+		}
 		rownames(m) = annotation[,'_index']
 		colnames(m) = meta.data[,'_index']
 
@@ -208,6 +217,19 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 	}
 	meta.data = H5Anno2df( x, 'obs')
 	annotation = H5Anno2df( x, 'var')
+	if ( nrow(m) == nrow(annotation) -1 ) {
+		# The last gene had no expression and therefore was lost in the transit
+		annotation = annotation[-nrow(annotation),]
+	}
+	if ( ncol(m) == nrow(annotation) -1 ) {
+		# The last cell had no expression and therefore was lost in the transit
+		meta.data = meta.data[-nrow(meta.data),]
+	}
+
+	key4drcs = "obsm"
+	if ( is.na( match( key4drcs ,names(x)) )  ){
+		key4drcs = "obs" # scarf sortes this info in the obs instead of obsm
+	}
 
 
 	key4drcs = "obsm"
@@ -354,6 +376,48 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		rownames( cellexalvrR@data) = stringr::str_replace_all( rownames(cellexalvrR@data), "[ :-]+", "_")
 		cellexalvrR@index =  as.matrix( t(cellexalvrR@data ) )
 	}
+
+	if ( ! is.na(match ('uns', names(x))) ){
+	if (! is.na(match ('spatial', names(x[['uns']]))) ){
+        print( "Squidpy spatial data detected - converting to spacial cellexalvrR object" )
+        positions = t(matrix (x[['obsm/spatial']]$read_low_level(), nrow=x[['obsm/spatial']][['dims']][1]))
+        rownames(positions) = colnames(cellexalvrR@data)
+        cellexalvrR@usedObj$spatial = list()
+        
+        for (name in names(x[['uns/spatial']])) {
+            
+            print ( paste("converting hires image ", name, ".", sep="") ) 
+            col = FastWilcoxTest::rgb2hex( t(matrix(x[['uns/spatial']][[name]][['images']][['hires']]$read_low_level(), nrow=3 )) )
+            colors = unique(col)
+            col = factor( col, levels = colors)
+            colors = unlist(lapply ( colors, function(d) { 
+                new= NULL; 
+                try({ new= col2rgb(d) }); 
+                if ( is.null(new)){ 
+                    "#FFFFFF"
+                } else {
+                    d
+                } } ))
+            
+            
+            dims = x[['uns/spatial']][[name]][['images']][['hires']][['dims']][c(2,3)]
+            col = matrix( ncol=dims[2], nrow=dims[1], as.numeric(col) )
+            
+            #png ( "DoesThatMakeSense.png", width=2000, height=2000)
+            #image( col, col=colors)
+            #dev.off()
+            
+            ## The positions on the figures:
+            cellexalvrR@usedObj$spatial[[name]] = list(
+                "names" = name,
+                "png" = col,
+                'color' = colors,
+                "positions" = positions[ grep(name, rownames(positions)),] * 
+                	x[['uns/spatial']][[name]][['scalefactors/tissue_hires_scalef']][]
+            )
+        }
+    }
+    }
 	
 	#cellexalvrR@index = as.matrix( cellexalvrR@usedObj$samples )
 	#cellexalvrR@index = cellexalvrR@index[, which(!is.na(as.numeric(cellexalvrR@index[1,] )))]
@@ -429,11 +493,16 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 				if ( n == "__categories"){
 					return (NULL)
 				}
-				factor ( 
-					x[[paste(sep="/",slotName,n)]][['codes']][], 
-					labels= x[[paste(sep="/",slotName,n)]][['categories']][] 
-						)
-				 } 
+                levelNames = x[[paste(sep="/",slotName,n)]][['categories']][]
+                if ( min(x[[paste(sep="/",slotName,n)]][['codes']][]) == -1 ){ ## them would be the NA in R
+					# Just add one more category - not perfect, but better than breaking
+					levelNames = c( 'NA', levelNames)
+					factor( levelNames[x[[paste(sep="/",slotName,n)]][['codes']][]+2] ) 
+				}
+				else {
+					factor( levelNames[x[[paste(sep="/",slotName,n)]][['codes']][]+1] )
+				}
+                }
 			))
 			})
 			if ( nrow( obs2) == nrow(obs) ){

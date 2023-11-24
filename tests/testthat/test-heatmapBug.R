@@ -83,23 +83,23 @@ source( 'function.R' )
 collect = list(
 
 	"a href='./test/selection10.txt' download" = 0,
-	"a href='./test/tables/Time.group.2.Linear.csv' download" = 0,
-	"a href='./test/tables/User.group.3.Cpp.csv' download" = 0,
-	"a href='./test/TimeSelection.Time.group.2.txt' download" = 0,
-	"a href='./test/tables/Time.group.2.toppClusterInput.csv' download" = 0,
-	'Time.group.2' = 0,
-	'User.group.3' = 0
+	"a href='./test/tables/User.group.1.Linear.csv' download" = 0,
+	"a href='./test/tables/User.group.2.Cpp.csv' download" = 0,
+	"a href='./test/TimeSelection.User.group.1.txt' download" = 0,
+	"a href='./test/tables/User.group.2.toppClusterInput.csv' download" = 0,
+	'User.group.1' = 0,
+	'User.group.2' = 0
 )
 
 expect = list(
 
 	"a href='./test/selection10.txt' download" = 1,
-	"a href='./test/tables/Time.group.2.Linear.csv' download" = 1,
-	"a href='./test/tables/User.group.3.Cpp.csv' download" = 1,
-	"a href='./test/TimeSelection.Time.group.2.txt' download" = 1,
-	"a href='./test/tables/Time.group.2.toppClusterInput.csv' download" = 1,
-	'Time.group.2' = 32,
-	'User.group.3' = 14
+	"a href='./test/tables/User.group.1.Linear.csv' download" = 1,
+	"a href='./test/tables/User.group.2.Cpp.csv' download" = 1,
+	"a href='./test/TimeSelection.User.group.1.txt' download" = 0,
+	"a href='./test/tables/User.group.2.toppClusterInput.csv' download" = 1,
+	'User.group.1' = 24,
+	'User.group.2' = 14
 )
 
 collect = checkFile( collect, file.path(path, "session-log-for-session-test.html") )

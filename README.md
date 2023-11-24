@@ -16,6 +16,25 @@ devtools::install_github("sonejilab/cellexalvrR" )
 library(cellexalvrR)
 ```
 
+At the moment we accqured some install problems from packages that are not longer supported.
+
+### Matrix.utils
+
+Matrix.utils has been thrown out of the CRAN repo. Therefore one needs to install a legacy version of the package. Let's see how long that will work.
+
+```
+BiocManager::install("grr") # was necessary for my R installation
+install.packages("https://cran.r-project.org/src/contrib/Archive/Matrix.utils/Matrix.utils_0.9.8.tar.gz", type = "source", repos = NULL)
+```
+
+### Propr
+
+This package has also been thrown out. And this one is available over it's github page:
+
+```
+devtools::install_github("tpq/propr")
+```
+
 cellexalvrR is productively used under R 4.0.2 and 4.1.0.
 
 # Preparing data using cellexalvrR

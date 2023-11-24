@@ -4,12 +4,15 @@
 \name{drcPlots2D}
 \alias{drcPlots2D}
 \alias{drcPlots2D,cellexalvrR,character-method}
+\alias{drcPlots2D,cellexalvrR,cellexalLinear-method}
 \alias{drcPlots2D,cellexalvrR,cellexalGrouping-method}
 \title{create one (2D) or three 2D drc plots for the report}
 \usage{
 drcPlots2D(cellexalObj, gInfo, showIDs = TRUE)
 
 \S4method{drcPlots2D}{cellexalvrR,character}(cellexalObj, gInfo, showIDs = TRUE)
+
+\S4method{drcPlots2D}{cellexalvrR,cellexalLinear}(cellexalObj, gInfo, showIDs = TRUE)
 
 \S4method{drcPlots2D}{cellexalvrR,cellexalGrouping}(cellexalObj, gInfo, showIDs = TRUE)
 }

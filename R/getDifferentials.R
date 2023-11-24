@@ -85,7 +85,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			}
 
 			rem.ind <- which(Matrix::rowSums(loc@data)==0)
-			
+
 			grp.vec <- info@grouping
 			
 			col.tab <- info@col
@@ -126,6 +126,9 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				 	drc = x@drc[[ 1 ]]
 				}
 				
+				if ( class(info)[1] == 'cellexalLinear'){
+					info = groupingInfo( x, info@parentSelection )
+				}
 				cellexalLinear = NULL
 				if (  nrow(info@linarObj@dat) == 0 ){
 					message('defining time')
@@ -144,16 +147,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
-
 				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
-				ret = createReport(cellexalLinear, 
-					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
-					info = groupingInfo( x, info@gname ) 
+				reduced = createReport(cellexalLinear, 
+					reduceTo(x, what='row', to = x@usedObj$deg.genes)
 				)
 				timeN = cellexalLinear@gname
-				x@usedObj$linearSelections[['lastEntry']] = x@usedObj$linearSelections[[timeN]] =
-					 ret$cellexalObj@usedObj$linearSelections[[timeN]]
-				
+				x = addSelection( reduced@usedObj$linearSelections[[timeN]] )
 				deg.genes = x@usedObj$deg.genes
 
 			}else if ( deg.method == 'wilcox') {
@@ -190,8 +189,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 						info@gname
 					)
 					save( loc, file=file.path( x@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ) )
+
 					grp.vec = groupingInfo( loc, info@gname )@grouping
-					x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] = groupingInfo( loc, info@gname )
+					tmp = groupingInfo( loc, info@gname )
+					tmp@gname = paste(info@gname, 'pseudoBulk')
+					x = addSelection( x, tmp)
+					#x@groupSelectedFrom[[paste(info@gname, 'pseudoBulk')]] =  groupingInfo( loc, info@gname )
 				}
 				
 				for ( n in  unique( sort(grp.vec)) ) {
@@ -202,7 +205,6 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					all_markers[,'cluster'] = paste( sep="",nameAdd, all_markers[,'cluster'] )
 				}
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
-
 				try ( {
 					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text, showIDs=showIDs)
 					## And get additional info about the genes

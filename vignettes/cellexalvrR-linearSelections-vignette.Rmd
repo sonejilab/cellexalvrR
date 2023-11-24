@@ -69,10 +69,7 @@ selectionFile = system.file("extdata", "SelectionHSPC_time.txt",package= "cellex
 cellexalObj = userGrouping( cellexalObj, selectionFile )
 cellexalObj = pseudotimeTest3D(cellexalObj, grouping= cellexalObj@usedObj$lastGroup )
 cellexalObj = createStats( "lastEntry" , cellexalObj,  num.sig= 250 )
-
-bossLinearSelection = cellexalObj@usedObj$linearSelections[["lastEntry"]]
-cellexalObj = createReport(bossLinearSelection, cellexalObj, info = bossLinearSelection)$cellexalObj
-
+cellexalObj = createReport("lastEntry" , cellexalObj)
 
 ## the statistics table
 print ( head( cellexalObj@usedObj$sigGeneLists$lin[[ cellexalObj@usedObj$lastGroup ]] ))
@@ -100,36 +97,45 @@ For a real live example the cells in the selection could be separated by treatme
 For this example I can only create an even split between the samples:
 
 ```{r, message=FALSE}
-linearSelection = getLinearSelection(cellexalObj, bossLinearSelection)
+
+linearSelection = getLinearSelection(cellexalObj, "lastEntry")
 
 ## split the cells in two
 subset1 = rownames(linearSelection@dat)[seq(1,nrow(linearSelection@dat),2)]
 subset2 = rownames(linearSelection@dat)[seq(2,nrow(linearSelection@dat),2)]
 
-## and split the linear selection in two, too.
-linearSubset1 = subset( linearSelection, subset1)
-linearSubset2 = subset( linearSelection, subset2)
+## and register the two subsets with the cellexalvrR object
 
-cellexalObj = addSelection( linearSubset1, cellexalObj )
-linearSubset1 = cellexalObj@usedObj$linearSelections[[1]]
+cellexalObj = subsetTime( 
+    cellexalObj, 
+    oldName = linearSelection@gname, 
+    newName = "SubsetA", 
+    cells =subset1
+)
 
-cellexalObj = addSelection( linearSubset2, cellexalObj )
-linearSubset2 = cellexalObj@usedObj$linearSelections[[1]]
+cellexalObj = subsetTime( 
+    cellexalObj, 
+    oldName = linearSelection@gname, 
+    newName = "SubsetB", 
+    cells =subset2
+)
 
 ## run the analysis for the two partial linear selections
-cellexalObj = createStats( linearSelection, cellexalObj,  num.sig= 250 )
+cellexalObj = createStats( linearSelection@gname, cellexalObj,  num.sig= 250 )
 deg.genes = cellexalObj@usedObj$deg.genes
 
-cellexalObj = createReport( linearSubset1, cellexalObj, 
-     linearSubset1, deg.genes = deg.genes )$cellexalObj
 
-cellexalObj = createStats( linearSubset2, cellexalObj,  num.sig= 250 )
-cellexalObj = createReport(linearSubset2, cellexalObj, 
-     linearSubset2, deg.genes = deg.genes )$cellexalObj
+cellexalObj = createStats( "subsetA", cellexalObj,  num.sig= 250 )
+deg.genes.subsetA = cellexalObj@usedObj$deg.genes
+
+cellexalObj = createStats( "subsetB", cellexalObj,  num.sig= 250 )
+deg.genes.subsetB = cellexalObj@usedObj$deg.genes
+
+all.deg = unique( c( deg.genes, deg.genes.subsetA, deg.genes.subsetB))
 
 ## and finally compare them
-cellexalObj = compareGeneClusters ( linearSubset1@gname, linearSubset2@gname, 
-	 cellexalObj, altGroupNames=c("subset A", "subset B" ) 
+cellexalObj = compareGeneClusters ( "subsetA", "subsetB", 
+	 cellexalObj, altGroupNames=c("WT", "Treated" ) 
 )
 
 ```

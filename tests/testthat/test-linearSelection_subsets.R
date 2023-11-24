@@ -1,5 +1,7 @@
 context('linearSelection - subsets')
 
+skip ( "functionality is outdated - do not use any more")
+
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
@@ -72,22 +74,22 @@ x = userGrouping( x, grouping)
 
 x = getDifferentials( x,cellidfile='User.group.1', deg.method= 'wilcox' , Log=TRUE)
 
-expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2" ), label="correct time names")
+expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "User.group.1" ), label="correct time names")
 
 
-expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["User.group.1"]][['clusters']]),
+expect_equal(names(x@usedObj$linearSelections[["User.group.1"]]@geneClusters[["User.group.1"]][['clusters']]),
 			c("1","2","3","4","5",'6'), label = "geneClusters are part of the linearSelections" )
 
 
 subset = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(1,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
-linearSubset = subset( x@usedObj$linearSelections[["lastEntry"]], subset)
+x = subsetTime( "lastEntry", subset)
 
-x = linearAnalysisSubset( linearSubset, x )
+x = linearAnalysisSubset( groupingInfo(x, "lastEntry")@linarObj, x )
 
+browser()
+expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "User.group.1", "Time.group.3" ), label="correct time names #2")
 
-expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2", "Time.group.3" ), label="correct time names #2")
-
-expect_equal(names(x@usedObj$linearSelections[["Time.group.3"]]@geneClusters[["Time.group.2"]][['clusters']]),
+expect_equal(names(x@usedObj$linearSelections[["Time.group.3"]]@geneClusters[["User.group.1"]][['clusters']]),
 			c("1","2","3","4","5","6"), label = "geneClusters are part of the linearSelections #3" )
 
 
@@ -100,19 +102,19 @@ expect_true( file.exists( ofile), label= ofile )
 ## check the html file for duplicated entries (sections).
 
 collect = list( 
-	'Time.group.2 TimeLine control' = 0,
-	'as group Time.group.2' = 0,
-	'Time.group.2.Linear.csv' = 0,
-	'Time.group.2.Linear.1.csv' = 0,
+	'User.group.1 TimeLine control' = 0,
+	'as group User.group.1' = 0,
+	'User.group.1.Linear.csv' = 0,
+	'User.group.1.Linear.1.csv' = 0,
 	'Session Log for Session timeSessionsubsets' = 0,
 	'2D DRC DDRtree dim 2,3' = 0,
 	'href="https://www.genecards.org/cgi-bin/' = 0
 )
 expt = list( 
-	'Time.group.2 TimeLine control' = 4, # one in the text and one in the TOC
-	'as group Time.group.2' = 2,
-	'Time.group.2.Linear.csv' = 1,
-	'Time.group.2.Linear.1.csv' = 1,
+	'User.group.1 TimeLine control' = 4, # one in the text and one in the TOC
+	'as group User.group.1' = 2,
+	'User.group.1.Linear.csv' = 1,
+	'User.group.1.Linear.1.csv' = 1,
 	'Session Log for Session timeSessionsubsets' = 2, # one in the text and one in the TOC
 	'2D DRC DDRtree dim 2,3' = 10, # this figure is shown twice..
 	'href="https://www.genecards.org/cgi-bin/' = 1000 # two 250 gene lists times two (heatmap and lexical order)
