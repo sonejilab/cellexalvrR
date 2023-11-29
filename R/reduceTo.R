@@ -68,6 +68,9 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 						if ( nrow(x@userGroups) == n){
 							x@userGroups <- x@userGroups[useOnly,]
 						}
+						if ( !is.na(match ("samples", names(x@usedObj))) ){ # if just checking the table we check every row of that table
+							x@usedObj$samples = x@usedObj$samples[useOnly,]
+						}
 						for ( na in names( x@drc) ) {
 							## I need to cut them down, too
 							## but they might have another dimension as the others!!

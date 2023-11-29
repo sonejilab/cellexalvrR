@@ -23,16 +23,18 @@ setMethod('as_Seurat', signature = c ('cellexalvrR'),
 			stop("package 'Seurat' needed for this function to work. Please install it.",
 					call. = FALSE)
 		}
-		test = CreateSeuratObject( x@data, project="CellexalvrR_TestData", min.cells = 3, min.features=200 )		
+		test = CreateSeuratObject( x@data, project="CellexalvrR_TestData", min.cells = 0, min.features=0 )		
 		#test[['scale.data']] = test[['RNA']]
 		if ( !is.null(x@usedObj$samples)){
 			if (dim(x@userGroups)[1] > 0 ){
-				test@meta.data = rbind(x@usedObj$samples, x@userGroups)
+				test@meta.data = cbind(x@usedObj$samples, x@userGroups)
 			}
 			else {
-				test@meta.data = rbind(x@usedObj$samples, x@userGroups)
+				test@meta.data = x@usedObj$samples
 			}
-			
+		}
+		else if (dim(x@userGroups)[1] > 0 ){
+			test@meta.data =x@userGroups
 		}
 
 		for (name in names(x@drc) ){

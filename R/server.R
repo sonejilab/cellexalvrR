@@ -150,9 +150,9 @@ setMethod('server', signature = c ('character'),
 
 			logText( cellexalObj, paste(sep="\n", 
 				"<h1>ShinyCell object</h1>\n",
-				"<p>A <a> href='https://github.com/SGDDNB/ShinyCell', taget='blank'>ShinyCell</a> path has been created. ",
+				"<p>A <a href='https://github.com/SGDDNB/ShinyCell', taget='blank'>ShinyCell</a> path has been created. ",
 				paste( sep="", 
-					"You need RStudio and ShinyCell to be installed on your system in order to use <a>href='./",
+					"You need RStudio and ShinyCell to be installed on your system in order to use <a href='./",
 					cellexalObj@usedObj$sessionName,
 					"/shinyApp/'>this folder</a>. Open the ui.app file in RStudio and start the app.</p>")
 				)
