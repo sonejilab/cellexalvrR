@@ -15,6 +15,7 @@ if ( is.na( match('cellexalvrR',rownames(installed.packages()))) ) {
 	skip ( "Please re-run this test with the updated cellexalvrR lib installed if any error occures" )
 }
 
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = '.'
 # prefix='tests/testthat'
 

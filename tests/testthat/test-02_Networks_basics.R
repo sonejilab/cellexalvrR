@@ -2,6 +2,7 @@ context('Networks')
 
 skip ( "functionality broken - procr package needs to be replaced in the code - functionality broken")
 
+Sys.setenv(TEST_MODE = "TRUE")
 
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")

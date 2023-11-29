@@ -17,19 +17,29 @@ setGeneric('as_ShinyCell', ## Name
 #' @rdname as_ShinyCell
 setMethod('as_ShinyCell', signature = c ('cellexalvrR'),
 	definition = function ( x, path ){
-		seu = as_Seurat( x )
-		seu = ScaleData( seu )
-		shiny_script = paste( sep="\n" ,
-			"library(Seurat)",
-			"library(ShinyCell)\n",
-			"load('Seurat.RData')",
-			"scConf = createConfig(seu)",
-			"makeShinyApp(seu, scConf, gene.mapping = TRUE,",
-			"             shiny.title = 'CellexalVR log system - ShinyCell')"
+		if ( is.null( path) ){
+			path=x@usedObj$sessionPath
+		}
+		if ( is.null(Sys.getenv("TEST_MODE")) || Sys.getenv("TEST_MODE") != "TRUE") {
+		tryCatch(
+		{
+			seu = as_Seurat( x )
+			#seu = ScaleData( seu )
+			if (!require("ShinyCell", quietly = TRUE ) == T ) {
+				stop("package 'ShinyCell' needed for this function to work. Please install it.",
+						call. = FALSE)
+			}
+			require("Seurat", quietly = TRUE )
+			scConf = createConfig(seu)
+
+			makeShinyApp(seu, scConf, gene.mapping = TRUE,shiny.dir = file.path(path, 'shinyApp'),
+				shiny.title = paste('CellexalVR log system -',x@usedObj$sessionName,'- ShinyCell'),
+
+			)
+		}
 		)
-		# Writing the script to a file
-        script_file <- file.path(path, "server.R")
-        writeLines(shiny_script, script_file)
-        save( seu, file = file.path(path, "Seurat.RData"))
+		}else {
+			warning("as_ShinyCell detected TEST_MODE - no action run" )
+		}
 	}
 )

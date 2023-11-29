@@ -1,6 +1,7 @@
 context('timeline')
 
 #skip('not stable enough')
+Sys.setenv(TEST_MODE = "TRUE")
 
 prefix = './'
 

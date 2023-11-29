@@ -1,6 +1,6 @@
 context('groupingInfo')
 
-
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = '.'
 
 x = reset(cellexalObj)

@@ -3,7 +3,7 @@ context('filterCapture')
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
-
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = './'
 #prefix = 'tests/testthat'
 

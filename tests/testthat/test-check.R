@@ -1,5 +1,7 @@
 context('check function')
 
+Sys.setenv(TEST_MODE = "TRUE")
+
 m = matrix( floor(runif(30000, min=-1000, max=101)), ncol=300)
 colnames(m) = paste('cell', 1:ncol(m))
 rownames(m) = paste('gene', 1:nrow(m))

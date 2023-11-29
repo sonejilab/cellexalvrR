@@ -1,6 +1,7 @@
 context('import from h5ad files (scanpy)')
 
 #prefix = 'tests/testthat'
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = '.'
 
 ipath = file.path( prefix, 'data' )

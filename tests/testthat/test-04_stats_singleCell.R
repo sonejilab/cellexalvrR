@@ -5,7 +5,7 @@ message("You are testing THIS file")
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
-
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = './'
 
 if ( file.exists( file.path(prefix, 'function.R'))){

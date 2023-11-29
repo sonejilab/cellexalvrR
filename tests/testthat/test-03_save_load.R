@@ -2,6 +2,7 @@ context('save and load')
 
 opath = file.path('data','output')
 
+Sys.setenv(TEST_MODE = "TRUE")
 
 datafile = file.path(opath,'..', 'cellexalObj.RData')
 lockfile = file.path(opath,'..', 'cellexalObj.RData.lock')
