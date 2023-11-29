@@ -3,11 +3,12 @@
 #'
 #' @description prepare the cellexalObj to be used for a ShinyCell session
 #' @param x a cellexalvrR object 
+#' @param path the path for the shinycell data
 #' @title create a Shiny server.R that can be used by RStudio to build a ShinyCell session
 #' @returns a Seurat object with the data from the cellexal object.
 #' @export 
 setGeneric('as_ShinyCell', ## Name
-	function ( x ) { 
+	function ( x , path) { 
 		standardGeneric('as_ShinyCell')
 	}
 )
@@ -23,7 +24,7 @@ setMethod('as_ShinyCell', signature = c ('cellexalvrR'),
 			"library(ShinyCell)\n",
 			"load('Seurat.RData')",
 			"scConf = createConfig(seu)",
-			"makeShinyApp(seu, scConf, gene.mapping = TRUE,"
+			"makeShinyApp(seu, scConf, gene.mapping = TRUE,",
 			"             shiny.title = 'CellexalVR log system - ShinyCell')"
 		)
 		# Writing the script to a file
