@@ -55,7 +55,7 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		}
 		if ( min(as.numeric(as.vector(gInfo@grouping)), na.rm=T) == 0){
 			na = names(gInfo@grouping)
-    		gInfo@grouping = factor(as.numeric(as.vector(gInfo@grouping))+1)
+    		gInfo@grouping = factor(as.numeric(as.vector(gInfo@grouping)))
     		names(gInfo@grouping) = na
     	}
 		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc[1] , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'

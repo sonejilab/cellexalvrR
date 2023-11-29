@@ -71,7 +71,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
  	gr = gInfo@grouping
     if ( length(which(is.na(gInfo@grouping))) == length(which(is.na(as.numeric(as.vector(gInfo@grouping))))) ){
     	if ( min(as.numeric(as.vector(gInfo@grouping)), na.rm=T) == 0){
-    		gr = factor(as.numeric(as.vector(gInfo@grouping))+1)
+    		gr = factor(as.numeric(as.vector(gInfo@grouping)))
     		names(gr) = na
     	}
     }
