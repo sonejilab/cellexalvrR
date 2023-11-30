@@ -27,7 +27,6 @@ LETTERS = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
 data= rbind( geneA, geneB)
 rownames(data) = paste(sep="", 'gene', LETTERS[1:nrow(data)])
 
-
 firstHalve =  matrix(ncol=3,c( rnorm(3*SIZE) ))
 secondHalve = firstHalve
 secondHalve[,1] = secondHalve[,1] + max( secondHalve[,1] ) *2

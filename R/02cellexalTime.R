@@ -320,24 +320,28 @@ setGeneric('compactTime', ## Name
 setMethod('compactTime', signature = c ('cellexalvrR'),
 definition = function (  cellexalObj ) {
 	## now I need to check which linearSelections I have
-	for (tName in names(cellexalObj@usedObj$linearSelections)[-1]) {
-		time = cellexalObj@usedObj$linearSelections[[tName]]
-		n = nrow(time@dat)
-		loc = reduceTo( cellexalObj, what='col', to=rownames(time@dat))
-		if ( n > 1000 ){
-			ids = rep( 1:1000, floor(n/1000))
-			ids = c( ids, sample( 1:1000, n%%1000))
-			ids = sort(ids)
-			B = FastWilcoxTest::collapse( loc@data, ids, 2 )
-			B <- Matrix::Matrix(B, sparse = TRUE)
-			rownames(B) = rownames(cellexalObj@data)
-			colnames(B) = 1:1000
-			cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = B
-		}else {
-			cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = loc@data
+
+	for (tName in names(cellexalObj@usedObj$linearSelections)) {
+		if ( tName != "lastEntry" && 
+			is.null( cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']])){
+			time = cellexalObj@usedObj$linearSelections[[tName]]
+			n = nrow(time@dat)
+			loc = reduceTo( cellexalObj, what='col', to=rownames(time@dat))
+			if ( n > 1000 ){
+				ids = rep( 1:1000, floor(n/1000))
+				ids = c( ids, sample( 1:1000, n%%1000))
+				ids = sort(ids)
+				B = FastWilcoxTest::collapse( loc@data, ids, 2 )
+				B <- Matrix::Matrix(B, sparse = TRUE)
+				rownames(B) = rownames(cellexalObj@data)
+				colnames(B) = 1:1000
+				cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = B
+			}else {
+				cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = loc@data
+			}
 		}
-		
 	}
+
 	invisible(cellexalObj)
 })
 
@@ -364,6 +368,8 @@ function ( x, deg.genes,  cellexalObj ) {
 #' @rdname compactTimeZscore
 setMethod('compactTimeZscore', signature = c ('cellexalLinear', 'character', 'cellexalvrR'),
 definition = function ( x, deg.genes, cellexalObj ) {
+
+	cellexalObj = addSelection( cellexalObj, x) # just make sure all is OK
 	
 	cellexalObj = compactTime ( cellexalObj )
 
@@ -371,10 +377,12 @@ definition = function ( x, deg.genes, cellexalObj ) {
 
 	collapsedData = NULL
 	collapseNames = NULL
-	for ( tName in names(cellexalObj@usedObj$linearSelections)[-1]) {
-		collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
-		collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
-			, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
+	for ( tName in names(cellexalObj@usedObj$linearSelections)) {
+		if ( tName != "lastEntry"){
+			collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
+			collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
+				, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
+		}
 	}
 	colnames( collapsedData ) = collapseNames
 	B = FastWilcoxTest::ZScoreAll( collapsedData )
@@ -741,8 +749,9 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 	o = order(ps[,'p.value'])
 	ps = ps[o,]
 	cellexalObj@usedObj$lastGroup = info@gname
+
 	## add the plots to the log
-	try({
+	#try({
 		#print( "simplePlotHeatmaps" )
 		
 		ret = simplePlotHeatmaps(
@@ -766,12 +775,11 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 			text= paste(text, ret$error, sep=" ", collapse=" ")
 		) 
 		#print( "finish" )
-	} )	
+	#} )	
 
-	cellexalObj = addSelection( x, cellexalObj )
 	#	print ( paste("4: createReport: The dims of the cellexalObj:", paste(collapse=", ", dim(cellexalObj@data))))
 
-	invisible( list( cellexalObj = cellexalObj, linearSelection = x) )
+	invisible( cellexalObj )
 	} )
 
 
@@ -920,7 +928,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		if ( is.null( cellexalObj@usedObj$linearSelections)) {
 			cellexalObj@usedObj$linearSelections = list()
 		}
-		cellexalObj = addSelection( x, cellexalObj)
+
 		cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = ps
 	}
 	## the stats have already been run and all is OK.
@@ -1599,6 +1607,19 @@ definition = function ( x, cells ) {
 }
 )
 
+#' get the (cell) names from this time
+#'
+#' @name names
+#' @docType names
+#' @description subset a cellexalLinear object
+#' @param x the object
+#' @title cellnames of a cellexalLinear object
+#' @export 
+setMethod('names', signature = c ('cellexalLinear'),
+definition = function ( x) {
+	return( rownames(x@dat) )
+} )
+
 
 #' Subset a cellexalLinear object based on a list of cells.
 #'
@@ -1652,6 +1673,8 @@ function ( x, cellexalObj, deg.genes=NULL ) {
 setMethod('linearAnalysisSubset', signature = c ('cellexalLinear'),
 definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
+	stop("This function is likely broken - debug it if you really need it")
+
 	loc = reduceTo( cellexalObj,what='col', to= rownames(x@dat) )
 	loc = createStats( x, loc )
 
@@ -1661,16 +1684,18 @@ definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
 	cellexalObj@usedObj$deg.genes = deg.genes
 	
-	cellexalObj = addSelection( x, cellexalObj, x@parentSelection)
+	cellexalObj = addSelection(cellexalObj, groupingInfo( loc, x@gname))
+
 	if ( is.null(cellexalObj@usedObj$sigGeneLists$lin) ) {
 		cellexalObj@usedObj$sigGeneLists$lin = list()
 	}
-
+	message("This next step should not be necessary!")
+	browser()
 	cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = loc@usedObj$sigGeneLists$lin[[x@gname]]
 	
 	loc = reduceTo(cellexalObj, what='row', to=deg.genes)
 	loc = createStats( x, loc )
-	ret = createReport(x, loc, groupingInfo( cellexalObj, x@gname ) )
+	loc = createReport(x, loc, groupingInfo( cellexalObj, x@gname ) )
 
 	x = ret$linearSelection
 	#cellexalObj = ret$cellexalObj

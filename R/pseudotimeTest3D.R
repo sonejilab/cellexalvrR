@@ -86,7 +86,8 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 
 	## add the time as group:
 	#the VR program dependeds on it
-	x = addSelection(  x, res )
+
+	x = addSelection( x, res )
 	## does the time look ok when copied to the cellexal object?
 	#fnames = drcPlots2Dlinear( x, groupingInfo(x, colnames(x@userGroups)[ncol(x@userGroups) -1]) )
 	#system( paste('display', fnames[1]))

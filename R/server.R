@@ -146,17 +146,7 @@ setMethod('server', signature = c ('character'),
 		if ( ! is.null(cellexalObj@usedObj$sessionName ) ) {
 			message( "closing session" );
 
-			as_ShinyCell( cellexalObj ,file.path(cellexalObj@usedObj$sessionPath) )
-
-			logText( cellexalObj, paste(sep="\n", 
-				"<h1>ShinyCell object</h1>\n",
-				"<p>A <a href='https://github.com/SGDDNB/ShinyCell', taget='blank'>ShinyCell</a> path has been created. ",
-				paste( sep="", 
-					"You need RStudio and ShinyCell to be installed on your system in order to use <a href='./",
-					cellexalObj@usedObj$sessionName,
-					"/shinyApp/'>this folder</a>. Open the ui.app file in RStudio and start the app.</p>")
-				)
-			 )
+			cellexalObj = logShinyApp( cellexalObj )
 
 			cellexalObj = renderReport( cellexalObj )
 			if ( debug ) {

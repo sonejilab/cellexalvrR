@@ -59,7 +59,7 @@ setMethod('check', signature = c ('cellexalGrouping'),
 
 
 #' @rdname describesTheseCells
-setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
+setMethod('describesTheseCells', signature = c ('cellexalGrouping', 'character'),
 definition = function ( x, cells ) {
 	m = match( names(x@grouping), cells )
 	good =  m[which(! is.na(m))]
@@ -68,6 +68,20 @@ definition = function ( x, cells ) {
 		length(which(! is.na( x@grouping[bad] ))) == 0
 }
 )
+
+#' get the (cell) names from this time
+#'
+#' @name names
+#' @docType names
+#' @description subset a cellexalLinear object
+#' @param x the object
+#' @title cellnames of a cellexalGrouping object
+#' @export 
+setMethod('names', signature = c ('cellexalGrouping'),
+definition = function ( x) {
+	return( names(x@grouping)[which(!is.na(x@grouping))] )
+} )
+
 
 #' @rdname subset
 setMethod('subset', signature = c ('cellexalGrouping'),

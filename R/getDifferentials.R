@@ -146,14 +146,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				message('creating reports')
 
 				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
-				ret = createReport(cellexalLinear, 
+				x = createReport(cellexalLinear, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
 					info = groupingInfo( x, info@gname ) 
 				)
 				timeN = cellexalLinear@gname
-				x@usedObj$linearSelections[['lastEntry']] = x@usedObj$linearSelections[[timeN]] =
-					 ret$cellexalObj@usedObj$linearSelections[[timeN]]
-				
+
 				deg.genes = x@usedObj$deg.genes
 
 			}else if ( deg.method == 'wilcox') {

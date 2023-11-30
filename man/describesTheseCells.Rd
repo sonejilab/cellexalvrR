@@ -3,12 +3,12 @@
 \docType{methods}
 \name{describesTheseCells}
 \alias{describesTheseCells}
-\alias{describesTheseCells,cellexalLinear,character-method}
+\alias{describesTheseCells,cellexalGrouping,character-method}
 \title{a simple check that does what ist is called for}
 \usage{
 describesTheseCells(x, cells)
 
-\S4method{describesTheseCells}{cellexalLinear,character}(x, cells)
+\S4method{describesTheseCells}{cellexalGrouping,character}(x, cells)
 }
 \arguments{
 \item{x}{the object}

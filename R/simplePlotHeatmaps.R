@@ -47,7 +47,7 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 
 	## now I need to cellexalLinear object:
 	ti = x@usedObj$linearSelections[[info@gname]]
-	
+
 	if ( is.null( ti ) ){
 		## oops - we got a parentSelection?
 		## best guess
@@ -278,13 +278,16 @@ setMethod('clusterGenes', signature = c ('matrix'),
 				if ( is.null( geneTrajectories[[groupname]]) || length(which(is.na(geneTrajectories[[groupname]]))) != 0 ){
 					geneTrajectories[[groupname]] = tryCatch({
 						 stats::predict( stats::loess( apply (x[genes,], 2, mean) ~ cT@dat[,'time'], span=1) )
-						}, error=function(err){message("loess failed with span .2") })	
+						}, error=function(err){message("loess failed with span 2") })	
 				}
+				
+				if (! is.null(geneTrajectories[[groupname]])){
+				
+					inClusters = sapply( split( geneTrajectories[[groupname]], cT@dat$col), max, na.rm=T )
 
-				inClusters = sapply( split( geneTrajectories[[groupname]], cT@dat$col), max, na.rm=T )
-
-				geneTrajectories[['MaxInCluster']][[groupname]] = 
-					c( which( inClusters ==max(inClusters)[1]), max(inClusters)[1] )
+					geneTrajectories[['MaxInCluster']][[groupname]] = 
+						c( which( inClusters ==max(inClusters)[1]), max(inClusters)[1] )
+				}
 			}
 			options(warn = defaultW)
 		}
