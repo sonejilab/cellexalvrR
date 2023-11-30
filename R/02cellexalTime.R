@@ -59,118 +59,118 @@ definition = function ( object ) {
 }
 )
 
-#' Method to copy a selection from cellexalObj to cellexalObj.
-#' This function makes sure that the linear grouping is fitting into the object.
-#' @name addSelection
-#' @docType methods
-#' @rdname addSelection
-#' @description add this cellexalLinear to the corresponding cellexal object
-#' @param x the cellexalLinear object
-#' @param cellexalObj the cellexalvrR object to add the linear selection as group
-#' @param upstreamSelection which group was the basis for this linearSelection?
-#' @title savely add a cellexalLinear object to a cellexalvR object
-#' @export 
-#if ( ! isGeneric('renew') ){
-setGeneric('addSelection', ## Name
-function ( x, cellexalObj, upstreamSelection=NULL  ) { 
-	standardGeneric('addSelection')
-}
-)
-#}
+# #' Method to copy a selection from cellexalObj to cellexalObj.
+# #' This function makes sure that the linear grouping is fitting into the object.
+# #' @name addSelection
+# #' @docType methods
+# #' @rdname addSelection
+# #' @description add this cellexalLinear to the corresponding cellexal object
+# #' @param x the cellexalLinear object
+# #' @param cellexalObj the cellexalvrR object to add the linear selection as group
+# #' @param upstreamSelection which group was the basis for this linearSelection?
+# #' @title savely add a cellexalLinear object to a cellexalvR object
+# #' @export 
+# #if ( ! isGeneric('renew') ){
+# setGeneric('addSelection', ## Name
+# function ( x, cellexalObj, upstreamSelection=NULL  ) { 
+# 	standardGeneric('addSelection')
+# }
+# )
+# #}
 
 
-#' @rdname addSelection
-setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
-definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
+# #' @rdname addSelection
+# setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
+# definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
-	if ( is.null(upstreamSelection)){
-		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)@gname
-		if ( class(upstreamSelection)[1] == "cellexalvrR"){
-			cellexalObj = upstreamSelection
-			upstreamSelection <- groupingInfo( cellexalObj, cellidfile )
-		}
+# 	if ( is.null(upstreamSelection)){
+# 		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)@gname
+# 		if ( class(upstreamSelection)[1] == "cellexalvrR"){
+# 			cellexalObj = upstreamSelection
+# 			upstreamSelection <- groupingInfo( cellexalObj, cellidfile )
+# 		}
 
-	}
-	id= (ncol(cellexalObj@userGroups) /2) + 1
+# 	}
+# 	id= (ncol(cellexalObj@userGroups) /2) + 1
 
-	x@gname = paste( "Time.group", id, sep="." ) 
-	if ( is.null( cellexalObj@usedObj$linearSelections )){
-		cellexalObj@usedObj$linearSelections= list()
-	}else{
-		## Is this linearSelection a copy of an other?
-		done=0
-		for ( n in names(cellexalObj@usedObj$linearSelections)){
-			if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
-				x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
-				cellexalObj@usedObj$linearSelections[[n]] = x
-				cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
-				cellexalObj@usedObj$linearSelections[['lastEntry']] = x
-				done=1
-			}
-		}
-		if ( done ){
-			return( invisible( cellexalObj) )
-		}
-	}
-	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
-	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
-	## I need to create a new one named 
-	info = groupingInfo(cellexalObj, upstreamSelection )
-
-	info@selectionFile = basename(paste( sep=".", cellexalObj@usedObj$SelectionFiles[[ upstreamSelection ]], 'time'))
-	info@linarObj = x
-
-	info@gname = x@gname
-
-	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
-
-	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
-
-	t1 = as.matrix(x@dat[,c('a','b','c')])
-
-	t2 = as.matrix(cellexalObj@drc[[x@drc[1]]][m,1:3])
-
-	colnames(t1) = colnames(t2)
-	#rownames(t1) = rownames(t2)
-# 	if ( ! isTRUE( all.equal( t1, t2) ) ){
-# 		message("CRITICAL ERROR: drc models are not the same - if this is 'intentional' fixit by
-  # x@dat[,'a'] = t2[,1]
-  # x@dat[,'b'] = t2[,2]
-  # x@dat[,'c'] = t2[,3]
-  # t1 = t2
-# 			")
-# 		if(interactive()) { browser() }
-# 		if ( ! isTRUE( all.equal( t1, t2) ) ){
-# 			stop( "The drc models are not the same!")
+# 	x@gname = paste( "Time.group", id, sep="." ) 
+# 	if ( is.null( cellexalObj@usedObj$linearSelections )){
+# 		cellexalObj@usedObj$linearSelections= list()
+# 	}else{
+# 		## Is this linearSelection a copy of an other?
+# 		done=0
+# 		for ( n in names(cellexalObj@usedObj$linearSelections)){
+# 			if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
+# 				x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
+# 				cellexalObj@usedObj$linearSelections[[n]] = x
+# 				cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
+# 				cellexalObj@usedObj$linearSelections[['lastEntry']] = x
+# 				done=1
+# 			}
+# 		}
+# 		if ( done ){
+# 			return( invisible( cellexalObj) )
 # 		}
 # 	}
+# 	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
+# 	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
+# 	## I need to create a new one named 
+# 	info = groupingInfo(cellexalObj, upstreamSelection )
 
-	if ( length(which(is.na(m)))>0){
-		stop("ERROR: This linearSelection describes cells that are not in the cellexalvrR object!")
-	}
+# 	info@selectionFile = basename(paste( sep=".", cellexalObj@usedObj$SelectionFiles[[ upstreamSelection ]], 'time'))
+# 	info@linarObj = x
 
-	m = match( rownames(x@dat), colnames(cellexalObj@data) )
+# 	info@gname = x@gname
 
-	cellexalObj@userGroups[,x@gname] = NA
-	cellexalObj@userGroups[m,x@gname] = as.vector(x@dat$time)
+# 	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
 
-	cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')] = NA
-	cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')] = order( x@dat$time )
+# 	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
 
-	#all.equal(cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')],  order( x@dat$time ) )
-	cellexalObj@usedObj$lastGroup = x@gname
-	#browser()
-	col = rep('gray80', ncol(cellexalObj@data))
-	col[m] = as.vector(x@dat$col)
-	#all.equal( rownames(cellexalObj@drc[[info@drc]])[m], rownames(x@dat))
-	#rgl::open3d()
-	#rgl::plot3d( cellexalObj@drc[[info@drc]], col=col)
-	#rgl::points3d (cbind( x@dat[,c('a','b')], 'c'= rep(1, nrow(x@dat)) ), col= as.vector(x@dat$col))
+# 	t1 = as.matrix(x@dat[,c('a','b','c')])
 
-	#rgl::plot3d( cellexalObj@drc[[info@drc]][ cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')],], col=wesanderson::wes_palette("Zissou1", nrow(cellexalObj@userGroups), type = "continuous") ) 
+# 	t2 = as.matrix(cellexalObj@drc[[x@drc[1]]][m,1:3])
 
-	invisible( cellexalObj)
-} )
+# 	colnames(t1) = colnames(t2)
+# 	#rownames(t1) = rownames(t2)
+# # 	if ( ! isTRUE( all.equal( t1, t2) ) ){
+# # 		message("CRITICAL ERROR: drc models are not the same - if this is 'intentional' fixit by
+#   # x@dat[,'a'] = t2[,1]
+#   # x@dat[,'b'] = t2[,2]
+#   # x@dat[,'c'] = t2[,3]
+#   # t1 = t2
+# # 			")
+# # 		if(interactive()) { browser() }
+# # 		if ( ! isTRUE( all.equal( t1, t2) ) ){
+# # 			stop( "The drc models are not the same!")
+# # 		}
+# # 	}
+
+# 	if ( length(which(is.na(m)))>0){
+# 		stop("ERROR: This linearSelection describes cells that are not in the cellexalvrR object!")
+# 	}
+
+# 	m = match( rownames(x@dat), colnames(cellexalObj@data) )
+
+# 	cellexalObj@userGroups[,x@gname] = NA
+# 	cellexalObj@userGroups[m,x@gname] = as.vector(x@dat$time)
+
+# 	cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')] = NA
+# 	cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')] = order( x@dat$time )
+
+# 	#all.equal(cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')],  order( x@dat$time ) )
+# 	cellexalObj@usedObj$lastGroup = x@gname
+# 	#browser()
+# 	col = rep('gray80', ncol(cellexalObj@data))
+# 	col[m] = as.vector(x@dat$col)
+# 	#all.equal( rownames(cellexalObj@drc[[info@drc]])[m], rownames(x@dat))
+# 	#rgl::open3d()
+# 	#rgl::plot3d( cellexalObj@drc[[info@drc]], col=col)
+# 	#rgl::points3d (cbind( x@dat[,c('a','b')], 'c'= rep(1, nrow(x@dat)) ), col= as.vector(x@dat$col))
+
+# 	#rgl::plot3d( cellexalObj@drc[[info@drc]][ cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')],], col=wesanderson::wes_palette("Zissou1", nrow(cellexalObj@userGroups), type = "continuous") ) 
+
+# 	invisible( cellexalObj)
+# } )
 
 
 #' The sanity check for a linear grouping.
@@ -1586,11 +1586,18 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 #' @title a simple check that does what ist is called for
 #' @export 
 #' @rdname describesTheseCells
+setGeneric('describesTheseCells', ## Name
+	function ( x, cells ) { 
+		standardGeneric('describesTheseCells')
+	}
+)
+
 setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
 definition = function ( x, cells ) {
 	a = unique( c(rownames(x@dat), cells ))
 	length(a) == nrow(x@dat) && length(a) == length(cells)	
 }
+)
 
 
 #' Subset a cellexalLinear object based on a list of cells.

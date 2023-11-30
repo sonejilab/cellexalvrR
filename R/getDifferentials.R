@@ -119,7 +119,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					info <- groupingInfo( x, cellidfile )
 				}
 				drc = x@drc[[ info@drc ]]
-				 if ( is.null(drc) ){
+				if ( is.null(drc) ){
 				 	message(paste("the drc info",info@drc, "can not be found in the data! (", paste(collapse=", ", names(loc@drc)) ))
 				 	message(paste("The linear stats has not gotten the drc information -- choosing the first possible" , names(loc@drc )[1] )) 
 				 	info@drc = names(x@drc )[1] ## for the log!
