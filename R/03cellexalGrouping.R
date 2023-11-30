@@ -38,7 +38,7 @@ setGeneric('reduceTo', ## Name
 #}
 
 #' @rdname reduceTo
-setMethod('reduceTo', signature = c ('cellexalvrR'),
+setMethod('reduceTo', signature = c ('cellexalGrouping'),
 	definition = function ( x, what='row', to=NULL ) {
 		if (what == 'col' ){
 			match_to_to_mine = match( to, names(x) )
