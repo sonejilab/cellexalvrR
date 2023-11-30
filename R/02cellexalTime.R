@@ -1611,7 +1611,7 @@ definition = function ( x, cells ) {
 #'
 #' @name names
 #' @docType names
-#' @description subset a cellexalLinear object
+#' @description cell names of a cellexalLinear object
 #' @param x the object
 #' @title cellnames of a cellexalLinear object
 #' @export 

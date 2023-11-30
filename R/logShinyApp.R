@@ -1,7 +1,7 @@
 #' Add the last entry into the log file
 #' A short explanation and a like to the folder with the ShinyCell data
 #'
-#' @name logStatResult
+#' @name logShinyApp
 #' @docType methods
 #' @description Create a log file part including a stats data download link (coma separted table file)
 #' @param x the cellexalvrR object

@@ -13,7 +13,7 @@
 \item{x}{the object}
 }
 \description{
-subset a cellexalLinear object
+cell names of a cellexalLinear object
 
 subset a cellexalLinear object
 }

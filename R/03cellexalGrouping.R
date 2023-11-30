@@ -18,6 +18,46 @@ setMethod('show', signature = c ('cellexalGrouping'),
 	}
 )
 
+#' reduceTo is the main subsetting function. For a grouping it will only work on cells,
+#' It also handles the linked cellexalTime object
+#' 
+#' @name reduceTo
+#' @docType methods
+#' @description  The main reduction function can drop both samples and genes using the colnames/rownames of the data tables
+#' @param x the cellexalvrR object
+#' @param what reduce to samples or row ids default='row'
+#' @param to select these names default=NULL
+#' @title reduce a cellexalvrR object on either genes or columns
+#' @export 
+#if ( ! isGeneric('reduceTo') ){
+setGeneric('reduceTo', ## Name
+	function ( x, what='row', to=NULL ) { 
+		standardGeneric('reduceTo') 
+	}
+)
+#}
+
+#' @rdname reduceTo
+setMethod('reduceTo', signature = c ('cellexalvrR'),
+	definition = function ( x, what='row', to=NULL ) {
+		if (what == 'col' ){
+			match_to_to_mine = match( to, names(x) )
+		
+			if (length(which(is.na(match_to_to_mine))) > 0) {
+				stop( paste("I never had info for these cells (n=",length(which(is.na(match_to_to_mine))),") like",
+					paste( to[which(is.na(match_to_to_mine))] [1:5]) , collapse=", ") )
+			}
+			x@grouping = x@grouping[match_to_to_mine]
+			x@VRgrouping = x@VRgrouping[match_to_to_mine]
+			x@order = x@order[match_to_to_mine]
+			if ( ! empty(x@linarObj) ){
+				x@linarObj = subset( x@linarObj, to )
+			}
+		}
+		invisible(x)
+	}
+)
+
 #' The cellexalvrR sanity check.
 #' Prints out the problems and sets a x@usedObj$ceckPassed boolean value.
 #' This function is called in the export2cellexalvr function and others.

@@ -68,9 +68,6 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 						if ( nrow(x@userGroups) == n){
 							x@userGroups <- x@userGroups[useOnly,]
 						}
-						if ( !is.na(match ("samples", names(x@usedObj))) ){ # if just checking the table we check every row of that table
-							x@usedObj$samples = x@usedObj$samples[useOnly,]
-						}
 						for ( na in names( x@drc) ) {
 							## I need to cut them down, too
 							## but they might have another dimension as the others!!
@@ -92,20 +89,14 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								x@groupSelectedFrom[[na]] = NULL
 								next
 							}
-							if ( length( x@groupSelectedFrom[[na]]@order) == n){
-								OK = match( colnames(x@data), names(x@groupSelectedFrom[[na]]@grouping))
-								x@groupSelectedFrom[[na]]@order = x@groupSelectedFrom[[na]]@order[OK]
-								x@groupSelectedFrom[[na]]@grouping = x@groupSelectedFrom[[na]]@grouping[OK]
-								if ( ! empty(x@groupSelectedFrom[[na]]@linarObj)  ){
-									x@groupSelectedFrom[[na]]@linarObj = 
-									   subset( x@groupSelectedFrom[[na]]@linarObj, colnames(x@data) )
-								}
-							}
-							
+							x@groupSelectedFrom[[na]] = reduceTo(x@groupSelectedFrom[[na]], what, to )					
 						}
 						for( na in names(x@userGroups$linearSelections) ) {
 							if ( length( which (is.na(match( rownames(x@userGroups$linearSelections[[na]]), colnames(x@data)) ))) > 0 ){
-								x@userGroups$linearSelections[[na]] = subset( x@userGroups$linearSelections[[na]], colnames(x@data) )
+								tmp = subset( x@userGroups$linearSelections[[na]], colnames(x@data) )
+								if ( ! is.null(tmp)){
+									x@userGroups$linearSelections[[na]] = tmp
+								}
 							}
 						}
 												
