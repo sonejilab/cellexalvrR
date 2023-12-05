@@ -70,3 +70,10 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping
 
 	}
 )
+
+#' @rdname toGSEA
+setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalLinear'),
+	definition = function (x, ofile, gname ) {
+		return (NULL)
+			}
+)

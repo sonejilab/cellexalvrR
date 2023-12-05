@@ -44,32 +44,15 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		## OK here we can only (1) get the entry for the second one - not add anything new!
 		gname = gname[1]
 	}
-	if ( length( cellexalObj@groupSelectedFrom[[gname]] ) > 0 ){
-	   if( !is.null( cellexalObj@groupSelectedFrom[[gname]])){
-		if ( ncol(cellexalObj@groupSelectedFrom[[gname]]@linarObj@dat)==0){
-			for ( name in names(cellexalObj@usedObj$linearSelections) ) {
-				time = cellexalObj@usedObj$linearSelections[[name]]
-				if ( time@gname == gname | time@parentSelection == gname){
-					cellexalObj@groupSelectedFrom[[gname]]@linarObj = time
-				}
-			}
-		 }
-		}
-		gname = tmp
-		if (length( gname ) > 1){
-			ret = unlist( lapply( gname, function(name) { 
-				cellexalObj@groupSelectedFrom[[name]]
-				} ) )
-			return ( ret )
-		}
-		
-		if ( length(cellexalObj@groupSelectedFrom[[gname]]@grouping) == ncol(cellexalObj@data) ){
-			if ( is.null(rownames(grouping)) ){
-				## best guess - it is the same as the colnames
-				names(cellexalObj@groupSelectedFrom[[gname]]@grouping) = colnames( cellexalObj@data )
-			}
-		}
+	if (! is.na(match( gname, names(cellexalObj@groupSelectedFrom) )) ){
 		return ( cellexalObj@groupSelectedFrom[[gname]] )
+	}
+	for ( grouping in cellexalObj@groupSelectedFrom ){
+		if ( ! empty(grouping@linarObj) ){
+			if ( gname == grouping@linarObj@gname){
+				return ( grouping@linarObj )
+			}
+		}
 	}
 
 	message( "The session info is missing - creating it from scratch")
@@ -104,7 +87,7 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 	}
 
 	if ( is.null(grouping) ) {
-		stop( paste("the grouping", gname, "is not found in this cellexalvrR object"))
+		stop( paste("the grouping", gname, "is nowhere found in this cellexalvrR object"))
 	}
     if ( ! is.factor(grouping) ){
 		grouping = factor( grouping )

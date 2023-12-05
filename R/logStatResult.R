@@ -49,7 +49,8 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 
 		
 		tableHTML = HTMLtable(gInfo)
-		if ( ! empty(gInfo@linarObj) ){
+
+		if ( class(gInfo)[1] == "cellexalGrouping" && ! empty(gInfo@linarObj) ){
 			tableHTML = HTMLtable(gInfo@linarObj)
 		}
 		gname = gInfo@gname
@@ -79,7 +80,13 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			selF = filename(paste(sep=".", "TimeSelection", gInfo@gname, 'txt'))
 			sesionFile = file.path(x@usedObj$sessionPath, selF )
 			if ( ! file.exists( sesionFile )){
-				exportSelection( gInfo@linarObj, sesionFile )
+				if ( class(gInfo)[1] == "cellexalGrouping"  && ! empty(gInfo@linarObj)){
+					exportSelection( gInfo@linarObj, sesionFile )
+				}
+				else {
+					exportSelection( gInfo, sesionFile )
+				}
+				
 			}
 		}else {
 			if ( is.null(x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] )){

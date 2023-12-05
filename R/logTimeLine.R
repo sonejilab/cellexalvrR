@@ -58,6 +58,8 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 				timeInfo = timeInfo@linarObj
 			}
 		}
+
+		print(timeInfo)
 		## now I need to create a heatmap myself using the genes provided
 
 	#	message("find a usable way to get the heatmap png")

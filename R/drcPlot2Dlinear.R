@@ -58,11 +58,9 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
     		gInfo@grouping = factor(as.numeric(as.vector(gInfo@grouping)))
     		names(gInfo@grouping) = na
     	}
-		DRC1 = file.path( sessionPath , 'png', filename( c( gInfo@gname ,gInfo@drc[1] , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
-		
-		grDevices::png( file= DRC1, width=1000, height=1000)
-		#browser()
-		linearSelection = cellexalObj@usedObj$linearSelections[[paste(gInfo@gname, 'linearSelection' )]]
+
+    	#browser()
+		linearSelection = gInfo@linarObj
 		if ( is.null( linearSelection) ) {
 			## if it is already a Time.group we look at, we are fine!
 			linearSelection = cellexalObj@usedObj$linearSelections[[gInfo@gname]]
@@ -82,6 +80,10 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 				return( drcPlots2D( cellexalObj, gInfo ) )
 			}
 		}
+
+		DRC1 = file.path( sessionPath , 'png', filename( c( linearSelection@gname ,gInfo@drc[1] , "1_2", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+		grDevices::png( file= DRC1, width=1000, height=1000)
+		
 		id = as.numeric(factor(color(linearSelection,rownames(drc))))
 		col = color(linearSelection, rownames(drc))
 		toPlot = data.frame(id = id, x=	as.numeric(drc[,1]), y=	as.numeric(drc[,2]), col = col)
@@ -96,13 +98,13 @@ setMethod('drcPlots2Dlinear', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		#rgl::plot3d( linearSelection$x[linearSelection$time], linearSelection$y[linearSelection$time], linearSelection$z[linearSelection$time], col=gplots::bluered( length( linearSelection$x)))
 		#rgl::plot3d( linearSelection$a[linearSelection$time], linearSelection$b[linearSelection$time], linearSelection$c[linearSelection$time], col=gplots::bluered( length( linearSelection$x)) )
 		DRC2 = DRC3 = NULL
-		if ( ! var(cellexalObj@drc[[gInfo@drc[1]]][,3]) == 0 ) {
-			DRC2 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+		if ( ! all(cellexalObj@drc[[gInfo@drc[1]]][,3] == 0) ) {
+			DRC2 = file.path( sessionPath , 'png', filename(c(  linearSelection@gname ,gInfo@drc[1], "2_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 			grDevices::png( file= DRC2, width=1000, height=1000)
 			p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,2], y=	drc[,3],col= col) ) #function definition in file drcPlot2D.R
     		print(p) #write the plot
 			grDevices::dev.off()
-			DRC3 = file.path( sessionPath , 'png', filename(c(  gInfo@gname ,gInfo@drc[1], "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
+			DRC3 = file.path( sessionPath , 'png', filename(c(  linearSelection@gname ,gInfo@drc[1], "1_3", 'png' ), file.path( sessionPath , 'png') )) #function definition in file 'filename.R'
 			grDevices::png( file= DRC3, width=1000, height=1000)
 			p= prettyPlot2Dtime( data.frame(id = id, x=	drc[,1], y=	drc[,3],col= col) ) #function definition in file drcPlot2D.R
     		print(p) #write the plot

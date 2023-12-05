@@ -34,9 +34,20 @@ setGeneric('simplePlotHeatmaps', ## Name
 #}
 
 
-
 #' @rdname simplePlotHeatmaps
 setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping', 'character'),
+	definition = function ( x, info, fname ) {
+		if ( class(info)[1] == 'cellexalGrouping' && ! empty(info@linarOb) ){
+			info = groupingInfo( x, info@linarObj@gname )	
+			return (simplePlotHeatmaps( x, info, fname ))
+		}else {
+			stop("there is no linear grouping connected to the cellexalGrouping object")
+		}
+	}
+)
+
+#' @rdname simplePlotHeatmaps
+setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalLinear', 'character'),
 	definition = function ( x, info, fname ) {
 	#definition = function ( mat, fname ) {
 	path = dirname(fname)
@@ -44,36 +55,20 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 		dir.create( path, recursive=TRUE)
 	}
 
-
-	## now I need to cellexalLinear object:
-	ti = x@usedObj$linearSelections[[info@gname]]
-
-	if ( is.null( ti ) ){
-		## oops - we got a parentSelection?
-		## best guess
-		if ( x@usedObj$linearSelections[["lastEntry"]]@parentSelection == info@gname){
-			ti = x@usedObj$linearSelections[["lastEntry"]]
-			info = groupingInfo(  x, ti@gname)
-		}
-	}
-	if ( is.null( ti ) ){
-		stop(paste( "The time for the selection", info@gname, "could not be found") )
-	}
-
 	#print('simplePlotHeatmaps compact time Zscore')
 	if ( ! is.null(x@usedObj$deg.genes) ) {
-		toPlot = compactTimeZscore( ti, x@usedObj$deg.genes, x )
+		toPlot = compactTimeZscore( info, x@usedObj$deg.genes, x )
 	}else {
 		if ( nrow(x@data) > 3000) {
 			stop("Huge dataset - Why are there no deg.genes!!")
 		}
-		toPlot = compactTimeZscore( ti, rownames(x@data), x )
+		toPlot = compactTimeZscore( info, rownames(x@data), x )
 	}
 
 	error = NULL
 	#print('simplePlotHeatmaps creating loes summary gene expressions')
 	if ( nrow(toPlot) != 1000 ){
-		rownames(toPlot) = rownames(ti@dat)
+		rownames(toPlot) = rownames(info@dat)
 	}
 
 	gr = clusterGenes( t(toPlot[, -c(1,2) ]), info = info, geneclusters = x@usedObj$gene_clusters  ) 
@@ -97,20 +92,19 @@ setMethod('simplePlotHeatmaps', signature = c ('cellexalvrR', 'cellexalGrouping'
 	## could I use this here to create a heatmap with the cluster info
 	## if this is also a timeline - change the name to the time name - otherwise the log can not find the correct files!
 	legName = file.path(path, paste(info@gname, "groupColors", 'png',sep="."))
-	if (  class(info@linarObj) == 'cellexalLinear' ) {
-		legName = file.path(path, paste(info@linarObj@gname, "groupColors", 'png',sep="."))
-	}
+
+
 	tryCatch(
 	{
 #		print ( paste( "creating this filename for grouping", info@gname, ":", paste(fname, "groupColors", 'png',sep=".")) )
 		grDevices::png(  legName, width=1000, height=200)
-		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
+		graphics::image( matrix(as.numeric(info@dat$col),ncol=1), col= levels(info@dat$col))
 		grDevices::dev.off()
 	}, 
 	error =function (err) { 
 		grDevices::dev.off() 
 		grDevices::png(  legName, width=1000, height=200)
-		graphics::image( matrix(as.numeric(info@linarObj@dat$col),ncol=1), col= levels(info@linarObj@dat$col))
+		graphics::image( matrix(as.numeric(info@dat$col),ncol=1), col= levels(info@dat$col))
 		grDevices::dev.off()
 	} 
 	)
@@ -248,9 +242,13 @@ setMethod('clusterGenes', signature = c ('matrix'),
 		names(gn) = rownames(x)
 		geneTrajectories = list(MaxInCluster = list())
 		
-		if ( ! is.null(info@linarObj ) ) {
+		if ( ! is.null(info) ) {
 
-			cT = collapseTime( info@linarObj, to =ncol(x) )
+			if ( class(info)[1] == "cellexalGrouping"){
+				info = info@linarObj
+			}
+
+			cT = collapseTime( info, to =ncol(x) )
 			if ( ncol(x) == nrow(cT@dat)){
 				colnames(x) = rownames(cT@dat) ## best guess as both data sets have been collapsed. Naming might be slightly different.
 			}

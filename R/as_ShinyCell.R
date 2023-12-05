@@ -24,6 +24,10 @@ setMethod('as_ShinyCell', signature = c ('cellexalvrR'),
 		tryCatch(
 		{
 			seu = as_Seurat( x )
+			#seu@meta.data = data.frame( as.matrix( seu@meta.data ))
+			if ( !file.exists( path)){
+				dir.create( path, recursive=TRUE )
+			}
 			#seu = ScaleData( seu )
 			if (!require("ShinyCell", quietly = TRUE ) == T ) {
 				stop("package 'ShinyCell' needed for this function to work. Please install it.",

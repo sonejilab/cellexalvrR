@@ -151,7 +151,11 @@ setMethod('check', signature = c ('cellexalvrR'),
 			error = c(error , 
 					paste("groupSelectedFrom",g,"is no cellexalGrouping"))
 		}
+		else if ( !empty(x@groupSelectedFrom[[g]]@linarObj) ){
+			x@groupSelectedFrom[[g]]@linarObj = checkTime( x@groupSelectedFrom[[g]]@linarObj )
+		}
 	}
+	
 
 	if ( ncol(x@meta.cell) == 1 ) {
 		x@meta.cell = cbind( x@meta.cell, 'save' = rep(1, nrow(x@meta.cell)))

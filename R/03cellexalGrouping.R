@@ -8,7 +8,7 @@ setMethod('show', signature = c ('cellexalGrouping'),
 	definition = function ( object ) {
 		cat (paste("An object of class", class(object)),"with gname", object@gname,"\n" )
 		cat (paste( 'with',length(table(object@grouping)),
-			'groups selected from', object@drc,'drc model'),"\n")
+			'groups selected from the ', object@drc,'drc model (n=', length(names(object)),")"),"\n")
 		cat (paste( 'based on the selection file',object@selectionFile),"\n")
 
 		if ( length( object@heatmapBasename) != 0){
@@ -18,45 +18,9 @@ setMethod('show', signature = c ('cellexalGrouping'),
 	}
 )
 
-#' reduceTo is the main subsetting function. For a grouping it will only work on cells,
-#' It also handles the linked cellexalTime object
-#' 
-#' @name reduceTo
-#' @docType methods
-#' @description  The main reduction function can drop both samples and genes using the colnames/rownames of the data tables
-#' @param x the cellexalvrR object
-#' @param what reduce to samples or row ids default='row'
-#' @param to select these names default=NULL
-#' @title reduce a cellexalvrR object on either genes or columns
-#' @export 
-#if ( ! isGeneric('reduceTo') ){
-setGeneric('reduceTo', ## Name
-	function ( x, what='row', to=NULL ) { 
-		standardGeneric('reduceTo') 
-	}
-)
-#}
 
-#' @rdname reduceTo
-setMethod('reduceTo', signature = c ('cellexalGrouping'),
-	definition = function ( x, what='row', to=NULL ) {
-		if (what == 'col' ){
-			match_to_to_mine = match( to, names(x) )
-		
-			if (length(which(is.na(match_to_to_mine))) > 0) {
-				stop( paste("I never had info for these cells (n=",length(which(is.na(match_to_to_mine))),") like",
-					paste( to[which(is.na(match_to_to_mine))] [1:5]) , collapse=", ") )
-			}
-			x@grouping = x@grouping[match_to_to_mine]
-			x@VRgrouping = x@VRgrouping[match_to_to_mine]
-			x@order = x@order[match_to_to_mine]
-			if ( ! empty(x@linarObj) ){
-				x@linarObj = subset( x@linarObj, to )
-			}
-		}
-		invisible(x)
-	}
-)
+
+
 
 #' The cellexalvrR sanity check.
 #' Prints out the problems and sets a x@usedObj$ceckPassed boolean value.
@@ -119,32 +83,42 @@ definition = function ( x, cells ) {
 #' @export 
 setMethod('names', signature = c ('cellexalGrouping'),
 definition = function ( x) {
-	return( names(x@grouping)[which(!is.na(x@grouping))] )
+	ok = which(!is.na(x@grouping))
+	names = names(x@grouping)[ ok ]
+	return ( names[order(x@order[ ok ])])
+	#return( names(x@grouping)[which(!is.na(x@grouping))] )
 } )
 
 
 #' @rdname subset
 setMethod('subset', signature = c ('cellexalGrouping'),
 definition = function ( x, cells) {
+
 	m = match( names(x@grouping), cells )
-	m = m[which(is.na(m))] # we need to get rid of data!
-
-	x@grouping[m] = NA
-	x@order[m] = NA
-
-	existing_files <- list.files(pattern = "^selection\\d+\\.txt$")
-	new = NULL
-	if (length(existing_files) == 0) {
-		new="selection0.txt"
-	}else{
-		numbers <- as.integer(gsub("[^0-9]", "", existing_files))
-		new=paste(sep="","selection",max(numbers) + 1,".txt")
+	m = which(is.na(m)) # we need to get rid of data!
+	if ( length(m) > 0){
+		message("subsetting")
+		x@grouping[m] = NA
+		x@order[m] = NA
+		id= (ncol(cellexalObj@userGroups) /2) + 1
+		x@gname = paste( "User.group", id, sep="." )
+	}else {
+		message("Subset - why subset to the same cell names?!")
 	}
-	exportSelection( x, new)
-	x@selectionFile = new
 
-	id= (ncol(cellexalObj@userGroups) /2) + 1
-	x@gname = paste( "User.group", id, sep="." )
+	if ( length(names(x)) == 0){
+		return( NULL )
+	}
+	# existing_files <- list.files(pattern = file.path( "^selection\\d+\\.txt$")
+	# new = NULL
+	# if (length(existing_files) == 0) {
+	# 	new="selection0.txt"
+	# }else{
+	# 	numbers <- as.integer(gsub("[^0-9]", "", existing_files))
+	# 	new=paste(sep="","selection",max(numbers) + 1,".txt")
+	# }
+	# exportSelection( x, new)
+	# x@selectionFile = new
 
 	invisible(x)
 } )
@@ -220,6 +194,8 @@ setMethod('exportSelection', signature = c ('cellexalGrouping'),
 
 	d = cbind( names(x@grouping), x@col[as.vector(x@grouping)],
 	 rep( x@drc , length(x@grouping) ), as.numeric(x@grouping)-1  )
+	# now get the order and selection right to what we got from the VR process!
+	d = d[match(names(x), names(x@grouping)),]
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
 
 #	f2 = paste( sep=".",fname,'points')

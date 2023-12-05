@@ -25,7 +25,8 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	save = FALSE
 	
     ## try to cut short - is the grouping already known?
-    info = try({groupingInfo( tmp,'sampleType')}, silent=TRUE)
+
+    info = try({suppressMessages(suppressWarnings(groupingInfo( cellexalObj, cellidfile)))}, silent=TRUE)
     if ( class(info) == 'cellexalGrouping'){
     	cellexalObj@usedObj$lastGroup = cellidfile
     	return ( cellexalObj )

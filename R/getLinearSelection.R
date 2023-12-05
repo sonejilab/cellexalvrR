@@ -21,7 +21,7 @@ setMethod('getLinearSelection', signature = c ('cellexalvrR', 'list'),
 
 	definition = function ( cellexalObj, name ) {
 
-		toIt = function (d) { 
+		doIt = function (d) { 
 			if (class(d) == "cellexalGrouping" ){
 				d@linarObj
 			}else{
@@ -37,15 +37,21 @@ setMethod('getLinearSelection', signature = c ('cellexalvrR', 'character'),
 	definition = function ( cellexalObj, name ) {
 	
 	if ( length(name) > 1) {
-		ret = unlist( lapply( name, function(d){ cellexalObj@usedObj$linearSelections[[d]] }))
+		ret = unlist( lapply( name, function(d){ groupingInfo(cellexalObj, d) }))
 		return (ret)
 	}
-	if ( is.null( cellexalObj@usedObj$linearSelections[[name]])){
-		stop( paste("The linearSelection",name,"could not be found in this cellexal object" ) )	
+	tmp = groupingInfo(cellexalObj,name)
+	if ( class(tmp)[1] == 'cellexalvrR' ) {
+		message("The grouping info was not found in the obejct!")
+		browser()	
 	}
-
-	cellexalObj@usedObj$linearSelections[[name]]
-	})
+	if ( class(tmp)[1] == "cellexalGrouping" && ! empty(tmp@linarObj)){
+		tmp = tmp@linarObj
+	}
+	return(tmp)
+	
+	}
+)
 
 
 #' @rdname getLinearSelection

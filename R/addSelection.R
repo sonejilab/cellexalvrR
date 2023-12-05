@@ -52,6 +52,7 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
         parentSelection = NULL
         if ( is.null( sel@parentSelection ) ){
             ## create it from scratch
+            warning("I need to create a new parent selection from scratch!")
         	cellexalObj = createGrouping ( cellexalObj, cells=names(sel), 
                 groups = rep(0, ncol(sel@dat)), col= "#34b1eb", drc = sel@drc  )
             parentSelection = groupingInfo( cellexalObj )
@@ -70,6 +71,15 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
         }
         
         cellexalObj@usedObj$linearSelections[[sel@gname]] = sel
+        cellexalObj@groupSelectedFrom[[sel@parentSelection]]@linarObj = sel
+
+        ## is the time represented in the userGroups table?
+        if ( is.na( match( sel@gname, colnames(cellexalObj@userGroups)))){
+            cellexalObj@userGroups[,sel@gname] = NA
+            cellexalObj@userGroups[,paste(sel@gname, 'order')] = NA
+            cellexalObj@userGroups[names(sel),sel@gname] = sel@dat['col']
+            cellexalObj@userGroups[names(sel),paste(sel@gname, 'order')] = sel@dat['order']
+        }
 
         cellexalObj@usedObj$lastGroup = sel@gname
         print(paste("added a new time object", sel@gname))
@@ -82,6 +92,8 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
 setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalGrouping'), 
 	definition = function ( cellexalObj, sel ) {
         overlapp = lapply( cellexalObj@usedObj$linearSelections, function(x) { describesTheseCells(x, names(sel) ) } )
+        same = names(overlapp)[unlist(overlapp)]
+
         if ( length(same) >1 ){
             len = length(same)
             for ( name in same) {
@@ -99,10 +111,13 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalGrouping'),
 
         }
         if ( length(same) == 1 ){
-            sel@gname = sname
+            sel@gname = same
         }
         cellexalObj@groupSelectedFrom[[sel@gname]] = sel
-        cellexalObj@usedObj$lastGroup = sel@gname    
+        cellexalObj@usedObj$lastGroup = sel@gname
+        if ( !empty(sel@linarObj) ) {
+            addSelection( cellexalObj, sel@linarObj )
+        }
         return(invisible(cellexalObj))
 
 	}

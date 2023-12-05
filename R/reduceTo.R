@@ -19,6 +19,43 @@ setGeneric('reduceTo', ## Name
 
 
 #' @rdname reduceTo
+setMethod('reduceTo', signature = c ('cellexalGrouping'),
+	definition = function ( x, what='row', to=NULL ) {
+
+		if (what == 'col' ){
+			match_to_my_data = match( tolower(to), tolower(names(x)) )
+		
+			if (length(which(is.na(match_to_my_data))) == length(to) ) {
+				return( NULL ) # this grouping does not define any cell any more
+			}
+
+			match_to_my_cells = match( tolower(to), tolower(names(x@grouping)) )
+			if ( length(which(is.na(match_to_my_cells))) >0 ){
+				stop( paste("I never had info for these cells (n=",length(which(is.na(match_to_my_cells))),") like",
+					paste( to[which(is.na(match_to_my_cells))][1:5] , collapse=", ", sep=", ")) )
+			}
+			tmp = rep(NA, length(x@grouping))
+			names(tmp) = names(x@grouping)
+			keep_this = match_to_my_data = match( tolower(to), tolower(names(x@grouping)) )
+
+			tmp[keep_this] = x@grouping[keep_this]
+			x@grouping = factor(tmp)
+
+			tmp[keep_this] = x@VRgrouping[keep_this]
+			x@VRgrouping = tmp
+
+			tmp[keep_this] = x@order[keep_this]
+			x@order = as.integer(tmp)
+
+			if ( ! empty(x@linarObj) ){
+				x@linarObj = subset( x@linarObj, to )
+			}
+		}
+		invisible(x)
+	}
+)
+
+#' @rdname reduceTo
 setMethod('reduceTo', signature = c ('cellexalvrR'),
 	definition = function ( x, what='row', to=NULL ) {
 
@@ -67,6 +104,9 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 						}
 						if ( nrow(x@userGroups) == n){
 							x@userGroups <- x@userGroups[useOnly,]
+						}
+						if ( !is.null( x@usedObj$samples)) {
+							x@usedObj$samples = x@usedObj$samples[useOnly,]
 						}
 						for ( na in names( x@drc) ) {
 							## I need to cut them down, too
