@@ -86,6 +86,7 @@ setClass(
 #' @slot geneClusters a list of gene clusters that are linked to a linearSelection
 #' @slot id the md5sum representation of thei object's dat (to prohibit duplicates)
 #' @slot parentSelection the cellexalGrouping name that was basis for this linear order
+#' @slot idModifier If you really want to have a copy of a timeline add a value here
 #' @exportClass cellexalLinear
 
 setClass("cellexalLinear", 
@@ -96,7 +97,8 @@ setClass("cellexalLinear",
 		error="character",
 		geneClusters="list",
 		id="character",
-		parentSelection="character"
+		parentSelection="character",
+		idModifier="character"
 		)
 )
 

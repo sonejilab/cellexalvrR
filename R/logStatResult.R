@@ -46,7 +46,9 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## get the VR order:
 		gInfo = groupingInfo(x)
 
-
+		if (length( grep ("pseudoBulk", gInfo@gname) ) > 0 ){
+			gInfo = groupingInfo(x, stringr::str_replace( gInfo@gname, " pseudoBulk", "" ) )
+		}
 		
 		tableHTML = HTMLtable(gInfo)
 
@@ -55,18 +57,19 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		}
 		gname = gInfo@gname
 
-		if ( !is.na( match( paste(gname, "pseudoBulk"), names(x@groupSelectedFrom)))){
-			pseudoB_group = groupingInfo( x, paste(gname, "pseudoBulk") )
-			if ( ! empty(pseudoB_group@linarObj) ){
+		pseudoB_group = groupingInfo(x, paste(gname, "pseudoBulk") )
+
+		if ( class(pseudoB_group)[1] == class(gInfo)[1] ){
+
+			if ( class(gInfo)[1] == "cellexalGrouping" && ! empty(gInfo@linarObj) ){
 				tab = table( pseudoB_group@linarObj@dat$col)
-			}else {
-				tab = table(as.numeric(pseudoB_group@grouping))
-			}
-			if ( ! empty(gInfo@linarObj) ){
 				tmp = gInfo@linarObj
-			}else {
+			}
+			else {
+				tab = table(as.numeric(pseudoB_group@grouping))
 				tmp = gInfo
 			}
+
 			tableHTML = HTMLtable(tmp,  
 				list ( 
 					'pseudo bulk samples [n]' = tab 

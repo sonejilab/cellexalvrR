@@ -59,7 +59,8 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 			}
 		}
 
-		print(timeInfo)
+		#print(timeInfo)
+		cellexalObj@usedObj$lastGroup = timeInfo@gname
 		## now I need to create a heatmap myself using the genes provided
 
 	#	message("find a usable way to get the heatmap png")

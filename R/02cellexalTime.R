@@ -214,9 +214,10 @@ definition = function (x, cellexalObj=NULL) {
 	## onestly change the color NOW!
 	ids = ceiling(seq( from=0, to=10,  length.out = nrow(x@dat) +1))
 	ids = ids[-1]
-	if ( length( x@id )== 0 ) {
-		x@id = digest::digest( x@dat, algo="md5")
-	}
+	
+	txt = paste(c(as.vector(x@dat), x@idModifier), collapse = ",", sep=",")
+	x@id = digest::digest( txt, algo="md5")
+	
 	x@dat$col = factor(wesanderson::wes_palette("Zissou1", 10, type = "continuous")[ ids ], 
 		levels= wesanderson::wes_palette("Zissou1", 10, type = "continuous") )
 
@@ -815,6 +816,8 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
 	# focus on our data only
+	if( x@gname == "PBS_Spl 4stats" ){browser()}
+
 	cellexalObj = addSelection( cellexalObj, x)
 
 	if (  is.null(cellexalObj@usedObj$sigGeneLists$lin[[x@gname]])) {
@@ -854,7 +857,6 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 			bulk_parent@gname = paste(bulk_parent@gname, 'pseudoBulk')
 			bulk_parent@linarObj = bulk_selection
 			cellexalObj = addSelection( cellexalObj, bulk_parent )
-			browser()
 			#cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
 
 		}
@@ -965,7 +967,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 	cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[which(!is.na(cellexalObj@usedObj$deg.genes))]
 	try({ suppressMessages(suppressWarnings( {cellexalObj = check(cellexalObj)} )) }, silent=T)
 	cellexalObj= logStatResult ( cellexalObj, method ='Linear', data=cellexalObj@usedObj$sigGeneLists$lin[[x@gname]], col='p.value'	 )
-	browser()
+
 	invisible( cellexalObj )
 } )
 

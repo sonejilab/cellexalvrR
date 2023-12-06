@@ -34,14 +34,12 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
             }
 
             if (len >1){
-                print("Library Error - I have a duplicate linear object in my internal list - fix me!")
-                if ( interactive() ){
-                    browser()
-                }
+                #print("Library Error - I have a duplicate linear object in my internal list - fix me!")
+                print("Multiple cellexalLinear objects describing the same cells - does that make sense here?")
             }
         }
         if ( length(same) == 1 ){
-            print(paste( "This time object already exixts - renamed old time object to",sel@gname ))
+            #print(paste( "This time object already exixts - renamed old time object to",sel@gname ))
             cellexalObj@usedObj$linearSelections[[same]] = sel
             cellexalObj@groupSelectedFrom[[sel@parentSelection]]@linarObj = sel
             cellexalObj@usedObj$linearSelections[['lastEntry']] = sel    
@@ -52,7 +50,7 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
         parentSelection = NULL
         if ( is.null( sel@parentSelection ) ){
             ## create it from scratch
-            warning("I need to create a new parent selection from scratch!")
+            #warning("I need to create a new parent selection from scratch!")
         	cellexalObj = createGrouping ( cellexalObj, cells=names(sel), 
                 groups = rep(0, ncol(sel@dat)), col= "#34b1eb", drc = sel@drc  )
             parentSelection = groupingInfo( cellexalObj )
@@ -81,8 +79,10 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
             cellexalObj@userGroups[names(sel),paste(sel@gname, 'order')] = sel@dat['order']
         }
 
-        cellexalObj@usedObj$lastGroup = sel@gname
-        print(paste("added a new time object", sel@gname))
+        if (length( grep ("pseudoBulk", sel@gname) ) == 0 ){
+            cellexalObj@usedObj$lastGroup = sel@gname
+        }
+        #print(paste("added a new time object", sel@gname))
         return(invisible(cellexalObj))
 	}
 )
@@ -103,10 +103,7 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalGrouping'),
             }
 
             if (len >1){
-                print("Library Error - I have a duplicate groupiong in my internal list - fix me!")
-                if ( interactive() ){
-                    browser()
-                }
+                print("Multiple cellexalGrouping objects describing the same cells - does that make sense here?")
             }
 
         }
