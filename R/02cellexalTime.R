@@ -816,7 +816,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
 	# focus on our data only
-	if( x@gname == "PBS_Spl 4stats" ){browser()}
+	#if( x@gname == "PBS_Spl 4stats" ){browser()}
 
 	cellexalObj = addSelection( cellexalObj, x)
 
@@ -967,7 +967,6 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 	cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[which(!is.na(cellexalObj@usedObj$deg.genes))]
 	try({ suppressMessages(suppressWarnings( {cellexalObj = check(cellexalObj)} )) }, silent=T)
 	cellexalObj= logStatResult ( cellexalObj, method ='Linear', data=cellexalObj@usedObj$sigGeneLists$lin[[x@gname]], col='p.value'	 )
-
 	invisible( cellexalObj )
 } )
 
