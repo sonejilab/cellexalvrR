@@ -32,9 +32,12 @@ setMethod('reduceTo', signature = c ('cellexalGrouping'),
 			match_to_my_cells = match( tolower(to), tolower(names(x@grouping)) )
 
 			if ( length(which(is.na(match_to_my_cells))) >0 ){
-				browser()
-				stop( paste("I never had info for these cells (n=",length(which(is.na(match_to_my_cells))),") like",
+				if ( length( grep('pseudoBulk', x@gname)) > 0 ){
+					return (NULL)
+				}
+				message( paste("retuning NULL as I (",x@gname,") never had info for these cells (n=",length(which(is.na(match_to_my_cells))),") like",
 					paste( to[which(is.na(match_to_my_cells))][1:5] , collapse=", ", sep=", ")) )
+				return (NULL)
 			}
 			tmp = rep(NA, length(x@grouping))
 			names(tmp) = names(x@grouping)

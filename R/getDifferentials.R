@@ -147,8 +147,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 
 				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
 				x = createReport(cellexalLinear, 
-					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
-					info = groupingInfo( x, info@gname ) 
+					reduceTo(x, what='row', to = x@usedObj$deg.genes)
 				)
 				timeN = cellexalLinear@gname
 
@@ -156,7 +155,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 
 			}else if ( deg.method == 'wilcox') {
 				## use the faster Rcpp implementation
-				CppStats <- function( n ) {
+				CppStats <- function( n, grp.vec, loc, logfc.threshold, minPct, onlyPos ) {
 					OK = which(grp.vec == n )
 					BAD= which(grp.vec != n )
 					r = NULL
@@ -183,7 +182,6 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					cellexalObj@usedObj$pseudoBulk = TRUE
 
 					loc = pseudoBulk ( info,  loc )
-
 					toGSEA( loc, 
 						ofile=file.path( loc@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ),
 						info@gname
@@ -194,7 +192,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				
 				for ( n in  unique( sort(grp.vec)) ) {
-					all_markers = rbind( all_markers, CppStats(n) )
+					all_markers = rbind( all_markers, CppStats(n, grp.vec, loc, logfc.threshold, minPct, onlyPos) )
 				}
 
 				if ( !is.null( nameAdd ) ) {

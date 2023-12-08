@@ -382,7 +382,14 @@ definition = function ( x, deg.genes, cellexalObj ) {
 	
 	cellexalObj = compactTime ( cellexalObj )
 
-	cellexalObj = reduceTo( cellexalObj, what='row', to=deg.genes )
+	tmp = reduceTo( cellexalObj, what='row', to=deg.genes )
+	if ( length(which(is.na(match( deg.genes, rownames(tmp@data))))) == 0){
+		cellexalObj = tmp 
+	}
+	else if ( interactive() ){
+		message("I have not obtained all genes I asked for !")
+		browser()
+	}
 
 	collapsedData = NULL
 	collapseNames = NULL
@@ -720,7 +727,6 @@ setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR'),
 definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 
 #print( paste( "I am in cellexalLinear::createReport and was called from here:", deparse(sys.calls()[[sys.nframe()-2]]) ) )
-
 	text = NULL
 	if ( is.null(deg.genes)){
 		deg.genes = cellexalObj@usedObj$deg.genes
@@ -754,6 +760,7 @@ definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 	o = order(ps[,'p.value'])
 	ps = ps[o,]
 	cellexalObj@usedObj$lastGroup = x@gname
+
 	## add the plots to the log
 	#try({
 		#print( "simplePlotHeatmaps" )

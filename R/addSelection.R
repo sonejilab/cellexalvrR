@@ -72,11 +72,11 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalLinear'),
         cellexalObj@groupSelectedFrom[[sel@parentSelection]]@linarObj = sel
 
         ## is the time represented in the userGroups table?
-        if ( is.na( match( sel@gname, colnames(cellexalObj@userGroups)))){
+        if ( length(grep("pseudoBulk", sel@gname)) == 0 && is.na( match( sel@gname, colnames(cellexalObj@userGroups))) ){
             cellexalObj@userGroups[,sel@gname] = NA
             cellexalObj@userGroups[,paste(sel@gname, 'order')] = NA
-            cellexalObj@userGroups[names(sel),sel@gname] = sel@dat['col']
-            cellexalObj@userGroups[names(sel),paste(sel@gname, 'order')] = sel@dat['order']
+            cellexalObj@userGroups[names(sel),sel@gname] = sel@dat[,'col']
+            cellexalObj@userGroups[names(sel),paste(sel@gname, 'order')] = sel@dat[,'order']
         }
 
         if (length( grep ("pseudoBulk", sel@gname) ) == 0 ){
@@ -113,7 +113,7 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalGrouping'),
         cellexalObj@groupSelectedFrom[[sel@gname]] = sel
         cellexalObj@usedObj$lastGroup = sel@gname
 
-        if ( is.na( match( sel@gname, colnames(cellexalObj@userGroups)))){
+        if ( length(grep("pseudoBulk", sel@gname) ) == 0 && is.na( match( sel@gname, colnames(cellexalObj@userGroups)))){
             cellexalObj@userGroups[,sel@gname] = sel@grouping
             cellexalObj@userGroups[,paste(sel@gname, 'order')] = sel@order
         }
