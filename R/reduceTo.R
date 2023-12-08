@@ -30,22 +30,23 @@ setMethod('reduceTo', signature = c ('cellexalGrouping'),
 			}
 
 			match_to_my_cells = match( tolower(to), tolower(names(x@grouping)) )
+
 			if ( length(which(is.na(match_to_my_cells))) >0 ){
+				browser()
 				stop( paste("I never had info for these cells (n=",length(which(is.na(match_to_my_cells))),") like",
 					paste( to[which(is.na(match_to_my_cells))][1:5] , collapse=", ", sep=", ")) )
 			}
 			tmp = rep(NA, length(x@grouping))
 			names(tmp) = names(x@grouping)
-			keep_this = match_to_my_data = match( tolower(to), tolower(names(x@grouping)) )
+			tmp[match_to_my_cells] = x@grouping[match_to_my_cells]
 
-			tmp[keep_this] = x@grouping[keep_this]
-			x@grouping = factor(tmp)
+			x@grouping = factor(tmp[match_to_my_cells])
 
-			tmp[keep_this] = x@VRgrouping[keep_this]
-			x@VRgrouping = tmp
+			tmp[match_to_my_cells] = x@VRgrouping[match_to_my_cells]
+			x@VRgrouping = tmp[match_to_my_cells]
 
-			tmp[keep_this] = x@order[keep_this]
-			x@order = as.integer(tmp)
+			tmp[match_to_my_cells] = x@order[match_to_my_cells]
+			x@order = as.integer(tmp[match_to_my_cells])
 
 			if ( ! empty(x@linarObj) ){
 				x@linarObj = subset( x@linarObj, to )
@@ -88,9 +89,9 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 					
 					
 				}else if ( what =="col" ) {
-					to <- tolower(to)
-					if ( length(which(is.na(match(to,tolower(colnames(x@data))))==F)) > 0 ) {
-						useOnly <- match(to, tolower(colnames(x@data)))
+					
+					if ( length(which(is.na(match(to, colnames(x@data)))==F)) > 0 ) {
+						useOnly <- match(to, colnames(x@data))
 						not.matched <- to[is.na(useOnly)]
 						if ( length(not.matched) > 0 ){
 							print (paste('Problematic samples:', paste(not.matched,sep=', ')))
@@ -112,10 +113,10 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 							## I need to cut them down, too
 							## but they might have another dimension as the others!!
 							if ( ! is.null(rownames(x@drc[[na]]))){
-								here <- match(to, tolower(rownames(x@drc[[na]])))
+								here <- match(to, rownames(x@drc[[na]]))
 								here = to[which(!is.na(here))]
 								## existing IDs
-								x@drc[[na]] = x@drc[[na]][match(here, tolower(rownames( x@drc[[na]]))),]
+								x@drc[[na]] = x@drc[[na]][match(here, rownames( x@drc[[na]])),]
 							}else {
 								if ( nrow( x@drc[[na]] ) > 0 ){ ## otherwise there is nothing to do here ;-)
 									x@drc[[na]] = x@drc[[na]][useOnly,]
@@ -124,7 +125,6 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 							
 						}
 						for( na in names( x@groupSelectedFrom) ) {
-
 							if ( class( x@groupSelectedFrom[[na]]) != 'cellexalGrouping'){
 								x@groupSelectedFrom[[na]] = NULL
 								next

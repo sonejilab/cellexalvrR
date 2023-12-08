@@ -128,7 +128,7 @@ definition = function ( x, cells) {
 setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {
 
-		tab = table( object@grouping)
+		tab = table( object@grouping )
 		min_cells = min(tab)
 		toCells = minSize
 		if ( floor(min_cells/minSize) < minBulks ){
@@ -163,7 +163,6 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 			ids = sort(ids)
 			ids
 		}
-
 		cellexalObj = reorderSamples ( cellexalObj, object@gname )
 		object = groupingInfo(cellexalObj, object@gname)
 
@@ -171,11 +170,12 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 		for (n in tab[-1]) {
 			ids = c( ids, toIDs(n) + max(ids))
 		}
-
+		grouping = object@grouping[which(!is.na(object@grouping))]
+		grouping = grouping[order(grouping)]
 		# now I need to construct the pseudoBulk object...
-		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(object@grouping)[match(unique(ids), ids)])
+		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(grouping)[match(unique(ids), ids)])
 		PseudoBulk@usedObj$pseudoBulk_groupings = ids
-		names(PseudoBulk@usedObj$pseudoBulk_groupings) = colnames(cellexalObj@data)
+		names(PseudoBulk@usedObj$pseudoBulk_groupings) = names(grouping)[ ids]
 		
 		PseudoBulk@data = Matrix(FastWilcoxTest::collapse( cellexalObj@data, ids, type=2 ), sparse=TRUE) ## mean expression
 

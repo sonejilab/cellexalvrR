@@ -22,7 +22,7 @@ definition = function ( x ) {
 		)
 	}
 
-	txt
+	paste(txt,"\n")
 }
 )
 
@@ -58,6 +58,9 @@ definition = function ( object ) {
 	nrow(object@dat) == 0
 }
 )
+
+
+
 
 # #' Method to copy a selection from cellexalObj to cellexalObj.
 # #' This function makes sure that the linear grouping is fitting into the object.

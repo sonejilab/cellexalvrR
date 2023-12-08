@@ -33,6 +33,11 @@ setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'character'),
 setMethod('toGSEA', signature = c ('cellexalvrR', 'character', 'cellexalGrouping'),
 	definition = function (x, ofile, gname ) {
 
+		if ( length(ofile) == 0) {
+			## crappy R object tests!
+			warning( "toGSEA -> I have no outfile here! -> returning NULL")
+			return (NULL)
+		}
 		ofile=stringr::str_replace_all( ofile, '..RData', '')
 		print( paste("do I have an outfile here?:", ofile))
 		ofile = file.path( dirname(ofile), filename( c(  basename(ofile), "gct" ), dirname(ofile) ))

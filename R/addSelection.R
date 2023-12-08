@@ -112,6 +112,12 @@ setMethod('addSelection', signature = c ('cellexalvrR', 'cellexalGrouping'),
         }
         cellexalObj@groupSelectedFrom[[sel@gname]] = sel
         cellexalObj@usedObj$lastGroup = sel@gname
+
+        if ( is.na( match( sel@gname, colnames(cellexalObj@userGroups)))){
+            cellexalObj@userGroups[,sel@gname] = sel@grouping
+            cellexalObj@userGroups[,paste(sel@gname, 'order')] = sel@order
+        }
+
         if ( !empty(sel@linarObj) ) {
             addSelection( cellexalObj, sel@linarObj )
         }

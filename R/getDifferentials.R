@@ -64,7 +64,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			}
 
 			ok <- which(!is.na(x@userGroups[,cellidfile]))
-
+			
 			if ( length(ok) > 0) {
 				loc <- reduceTo (x, what='col', to=colnames(x@data)[ ok ] ) #function definition in file 'reduceTo.R'
 			}else {
@@ -183,6 +183,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					cellexalObj@usedObj$pseudoBulk = TRUE
 
 					loc = pseudoBulk ( info,  loc )
+
 					toGSEA( loc, 
 						ofile=file.path( loc@usedObj$sessionPath, paste(sep=".", "PseudoBulk", info@gname,".RData" ) ),
 						info@gname
