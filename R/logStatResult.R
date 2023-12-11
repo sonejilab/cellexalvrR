@@ -57,7 +57,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		}
 		gname = gInfo@gname
 
-		pseudoB_group = groupingInfo(x, paste(gname, "pseudoBulk") )
+		pseudoB_group = try({suppressMessages(suppressWarnings(groupingInfo(x, paste(gname, "pseudoBulk") )))}, silent=TRUE)
 
 		if ( class(pseudoB_group)[1] == class(gInfo)[1] ){
 
@@ -74,6 +74,8 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 				list ( 
 					'pseudo bulk samples [n]' = tab 
 				) )
+		}else {
+			tableHTML = HTMLtable( gInfo )
 		}
 
 		tableHTML = paste(tableHTML, "\n")

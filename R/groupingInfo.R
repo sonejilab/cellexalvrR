@@ -55,6 +55,17 @@ setMethod('groupingInfo', signature = c ('cellexalvrR'),
 		}
 	}
 
+	## one more option - do you have a file name as gname?!
+	for ( group in cellexalObj@groupSelectedFrom ){
+		if ( group@selectionFile == gname ){
+			return ( group ) 
+		}
+	}
+
+	if (!is.na(match ('linearSelections', names(cellexalObj@usedObj))) && ! is.na(match( gname, names(cellexalObj@usedObj$linearSelections) )) ){
+		return ( cellexalObj@usedObj$linearSelections[[gname]] )
+	}
+
 	message( "The session info is missing - creating it from scratch")
 
 	if ( is.null(cellexalObj@groupSelectedFrom)) {

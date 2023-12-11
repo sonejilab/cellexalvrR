@@ -1029,7 +1029,7 @@ definition = function ( parentSelection, cellexalObj=NULL ) {
 	)
 	
 	if ( all(as.vector(x@dat$c) == 0 ) ){
-		dat$c = NULL
+		dat = dat[,-3]
 	}
 	
 	bad= which(apply( dat,1, function(d) { all(is.na(d))}))
@@ -1108,7 +1108,7 @@ definition = function ( parentSelection, cellexalObj=NULL ) {
 		}
 		x@dat$x = curves[[use]]$s[,1]
 		x@dat$y = curves[[use]]$s[,2]
-		if ( var(x@dat$c) == 0 ){
+		if ( all(x@dat$c == 0) ){
 			x@dat$z = rep(0, nrow(slingTime))
 		}
 		else{
@@ -1454,6 +1454,8 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 
 	mi = min(dat[1,])
 	ma = max(dat[2,])
+	color = wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10]
+	#browser()
 	pl = pl + 
  		ggplot2::geom_rect(data=rects,mapping = ggplot2::aes(
 		xmin = xstarts, 
@@ -1463,7 +1465,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 		ymin = -Inf,
 		ymax = mi
 		),
-  		fill= wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10],
+  		fill= rects[,'col'], #wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10],
 		alpha = 1) + 
 	  	ggplot2::geom_rect(data=rects,mapping = ggplot2::aes(
 		xmin = xstarts, 
@@ -1473,7 +1475,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 		ymin = ma,
 		ymax = Inf
 		),
-  		fill= wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10],
+  		fill= rects[,'col'],
 		alpha = 1) 
 
 	print(pl) # write the plot data
