@@ -52,12 +52,35 @@ setMethod('reduceTo', signature = c ('cellexalGrouping'),
 			x@order = as.integer(tmp[match_to_my_cells])
 
 			if ( ! empty(x@linarObj) ){
-				x@linarObj = subset( x@linarObj, to )
+				x@linarObj = reduceTo( x@linarObj, what=what,to=to )
 			}
 		}
 		invisible(x)
 	}
 )
+
+#' @rdname reduceTo
+setMethod('reduceTo', signature = c ('cellexalLinear'),
+	definition = function ( x, what='row', to=NULL ) {
+		if ( what  == "row" ){
+			if (! is.null(x@geneClusters[['collapsedExp']]) ){
+				x@geneClusters[['collapsedExp']] = x@geneClusters[['collapsedExp']][to,]
+			}
+		}
+		if ( what == "col") {
+			## reset the gene clusters
+			x@geneClusters = list()
+			x = subset(x, to)
+			if ( is.null(x)){
+				x=new('cellexalLinear')
+			}
+		}
+		invisible (x)
+	}
+)
+		
+
+
 
 #' @rdname reduceTo
 setMethod('reduceTo', signature = c ('cellexalvrR'),
@@ -68,6 +91,15 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 				colnames(x@meta.gene) = c('Gene Symbol', 'useless')
 				rownames(x@meta.gene) = rownames(x@data)
 			}
+
+			if ( length(x@usedObj$linearSelections) > 0 && ! is.null( x@usedObj$linearSelections )){
+				x@usedObj$linearSelections = lapply( x@usedObj$linearSelections, reduceTo , what, to )
+			}
+			#x@userGroups$linearSelections = lapply( x@userGroups$linearSelections, reduceTo , what=what, to =to )
+			# for( na in names(x@userGroups$linearSelections) ) {
+			# 	x@userGroups$linearSelections[[na]] = reduceTo( x@userGroups$linearSelections[[na]],what=what, colnames(x@data) )
+			# }
+
 			if ( ! is.null(to)) {
 				if ( what =="row") {
 					if ( length(which(is.na(match(to,rownames(x@data)))==F)) > 0 ) {
@@ -80,12 +112,6 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 						}
 						x@data <- x@data[useOnly,]
 						x@meta.gene <- x@meta.gene[useOnly,]
-						for ( tName in names( x@usedObj$linearSelections)[-1]){
-							if ( ! is.null( x@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] ) ) {
-								x@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = 
-									x@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']][useOnly,]
-							}
-						}
 					}else {
 						print (paste( "None of the probesets matched the probesets in the cellexalvr object -> keep everything!"))
 					}
@@ -133,14 +159,6 @@ setMethod('reduceTo', signature = c ('cellexalvrR'),
 								next
 							}
 							x@groupSelectedFrom[[na]] = reduceTo(x@groupSelectedFrom[[na]], what, to )					
-						}
-						for( na in names(x@userGroups$linearSelections) ) {
-							if ( length( which (is.na(match( rownames(x@userGroups$linearSelections[[na]]), colnames(x@data)) ))) > 0 ){
-								tmp = subset( x@userGroups$linearSelections[[na]], colnames(x@data) )
-								if ( ! is.null(tmp)){
-									x@userGroups$linearSelections[[na]] = tmp
-								}
-							}
 						}
 												
 					}else {

@@ -381,7 +381,6 @@ definition = function ( x, deg.genes, cellexalObj ) {
 	cellexalObj = addSelection( cellexalObj, x) # just make sure all is OK
 	
 	cellexalObj = compactTime ( cellexalObj )
-
 	tmp = reduceTo( cellexalObj, what='row', to=deg.genes )
 	if ( length(which(is.na(match( deg.genes, rownames(tmp@data))))) == 0){
 		cellexalObj = tmp 
@@ -393,13 +392,25 @@ definition = function ( x, deg.genes, cellexalObj ) {
 
 	collapsedData = NULL
 	collapseNames = NULL
-	for ( tName in names(cellexalObj@usedObj$linearSelections)) {
-		if ( tName != "lastEntry"){
-			collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
-			collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
-				, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
+	if ( !is.na(match( x@gname, names(cellexalObj@usedObj$linearSelections)))){
+		collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[x@gname]]@geneClusters[['collapsedExp']] )
+		collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[x@gname]]@gname
+				, ncol(cellexalObj@usedObj$linearSelections[[x@gname]]@geneClusters[['collapsedExp']]) ))
+	}
+	else {
+		for ( tName in names(cellexalObj@usedObj$linearSelections)) {
+			if ( tName != "lastEntry" && length(grep('pseudoBulk', tName )) == 0 ){
+				if ( !is.null(collapsedData)){
+					message("This should not have happened!")
+					browser()
+				}
+				collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
+				collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
+					, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
+			}
 		}
 	}
+
 	colnames( collapsedData ) = collapseNames
 	B = FastWilcoxTest::ZScoreAll( collapsedData )
 	colnames(B) = collapseNames
@@ -714,13 +725,6 @@ definition = function ( x, cellexalObj,  deg.genes=NULL, num.sig=250 ) {
 	createReport ( x =getLinearSelection(cellexalObj, x), cellexalObj=cellexalObj, deg.genes=deg.genes )
 })
 
-#' @rdname createReport
-setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR'),
-definition = function ( x, cellexalObj,  deg.genes=NULL, num.sig=250 ) {
-	#info = groupingInfo(cellexalObj, info )
-	createReport ( x =x, cellexalObj=cellexalObj,deg.genes=deg.genes )
-})
-
 
 #' @rdname createReport
 setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR'),
@@ -728,6 +732,7 @@ definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 
 #print( paste( "I am in cellexalLinear::createReport and was called from here:", deparse(sys.calls()[[sys.nframe()-2]]) ) )
 	text = NULL
+
 	if ( is.null(deg.genes)){
 		deg.genes = cellexalObj@usedObj$deg.genes
 		message('using the deg.genes stored in the object')
@@ -751,12 +756,14 @@ definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 
 	ps = cellexalObj@usedObj$sigGeneLists$lin[[x@gname]]
 	if ( is.null(ps)) {
+		#cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = "This_Ststistics_has_not_been_run"
 		message("the linear statistics table is NULL!")
 		cellexalObj = createStats( x, cellexalObj, num.sig=num.sig )
 		cellexalObj@usedObj$deg.genes = deg.genes
 		ps = cellexalObj@usedObj$sigGeneLists$lin[[x@gname]]
 
 	}
+
 	o = order(ps[,'p.value'])
 	ps = ps[o,]
 	cellexalObj@usedObj$lastGroup = x@gname
@@ -764,7 +771,7 @@ definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 	## add the plots to the log
 	#try({
 		#print( "simplePlotHeatmaps" )
-		
+
 		ret = simplePlotHeatmaps(
 			cellexalObj, 
 			info= x,  
@@ -873,7 +880,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		else if ( bulkStats ) {
 			## oops with the new pseudo bulk stuff we might want to still collapse the data?!
 			bulk = pseudoBulk( x, cellexalObj, maxBulks = 1000 )
-			warning( "Too little data to run std. pseudo bulk analysis collapsing to less pseudo samples")
+			print( "Too little data to run std. pseudo bulk analysis collapsing to less pseudo samples")
 			cellexalObj@usedObj$pseudoBulk = TRUE
 			bulk_selection = groupingInfo( bulk, x@gname )
 			bulk_selection@gname = paste(bulk_selection@gname, 'pseudoBulk')
@@ -889,7 +896,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 
 		}
 		else {
-			warning( "Too little data to run pseudo bulk analysis")
+			print( "Too little data to run pseudo bulk analysis")
 			bulk = loc
 		}
 		## run stats (pearson linear correlation directly on sparse matrix)

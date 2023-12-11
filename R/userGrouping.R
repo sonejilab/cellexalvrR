@@ -166,7 +166,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		grouping = NULL
 		order = NULL
 		if (length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) == 1){
-			grouping = cellexalObj@meta.cell[, cellidfile] +1 
+			grouping = cellexalObj@meta.cell[, toMerge] +1 
 			names(grouping) = colnames(cellexalObj@data)
 			order = 1:ncol(cellexalObj@data)
 		}
@@ -241,6 +241,8 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	}
 	if ( file.exists(cellidfile) ){
 		cellexalObj@usedObj$SelectionFiles[[gname]] = cellidfile
+	}else{
+		cellexalObj@usedObj$SelectionFiles[[gname]] = paste(sep="","Selection",id,".txt" )
 	}
 	savePart ( cellexalObj, 'usedObj') #function definition in file 'integrateParts.R'
 	cellexalObj

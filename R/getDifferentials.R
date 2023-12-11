@@ -144,9 +144,9 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
-
+		
 				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
-				x = createReport(cellexalLinear, 
+				createReport(cellexalLinear, 
 					reduceTo(x, what='row', to = x@usedObj$deg.genes)
 				)
 				timeN = cellexalLinear@gname

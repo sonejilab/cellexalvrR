@@ -71,7 +71,6 @@ setMethod('subsetTime', signature = c('cellexalvrR', 'character', 'character', '
             cellexalObj@userGroups[, paste(newParent@gname, 'order')] = NA
             cellexalObj@userGroups[matching, paste(newParent@gname, 'order')] = cellexalObj@userGroups[matching, paste(newTime@parentSelection, 'order')]
 
-            
             parentSelection = newParent
         }
         # now finally register the enw time in the object!
@@ -80,7 +79,6 @@ setMethod('subsetTime', signature = c('cellexalvrR', 'character', 'character', '
         cellexalObj@usedObj$SelectionFiles[[newTime@gname]] = parentSelection@selectionFile
         cellexalObj@usedObj$linearSelections[['lastEntry']] = newTime
         cellexalObj@usedObj$linearSelections[[newName]] = newTime
-
         cellexalObj@usedObj$lastGroup = newName
         print(paste("The new name for the time is", newName))
         return(invisible(cellexalObj))
