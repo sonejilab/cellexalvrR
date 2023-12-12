@@ -48,8 +48,12 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		}
 		sessionStoreFile <- function() {
 			if ( ! is.null(cellexalObj@usedObj$sessionPath) ){## active session - we need to copy the cellidfile to this path
-				if ( file.exists( cellidfile )){
-					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath,""))
+				if ( ! file.exists(cellexalObj@usedObj$sessionPath)){
+					dir.create( cellexalObj@usedObj$sessionPath, recursive=T)
+				}
+				if ( file.exists( cellidfile ) && 
+					! file.exists( file.path(cellexalObj@usedObj$sessionPath, basename( cellidfile ) )) ) {
+					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath,basename( cellidfile ) ))
 					cat( gname ,file=file.path(cellexalObj@usedObj$sessionPath, paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
 				}
 			}
@@ -132,6 +136,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
         if ( !is.factor(cellexalObj@userGroups[,gname]) ){
         	cellexalObj@userGroups[,gname] = factor( cellexalObj@userGroups[,gname] )
         }
+
 		ginfo = new( 'cellexalGrouping',
 			gname = gname,
 			selectionFile= basename( cellidfile ),
