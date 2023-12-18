@@ -181,6 +181,15 @@ setMethod('as_cellexalvrR', signature = c ('H5File'),
 		meta.data = H5Anno2df( file, 'obs')
 		annotation = H5Anno2df( file,'var')
 
+		if ( nrow(m) == nrow(annotation) -1 ) {
+			# The last gene had no expression and therefore was lost in the transit
+			annotation = annotation[-nrow(annotation),]
+		}
+		if ( ncol(m) == nrow(meta.data) -1 ) {
+			# The last cell had no expression and therefore was lost in the transit
+			meta.data = meta.data[-nrow(meta.data),]
+		}
+
 		rownames(m) = annotation[,'_index']
 		colnames(m) = meta.data[,'_index']
 
@@ -424,17 +433,19 @@ setMethod('H5Anno2df', signature = c ('H5File'),
 			colnames( obs ) = names(x[[slotName]])[OK]
 
 			obs2 = data.frame()
-			try( {
-			obs2 = data.frame(lapply(names(x[[slotName]])[!OK], function(n) {
+			doIt = function(n) {
 				if ( n == "__categories"){
 					return (NULL)
 				}
-				factor ( 
-					x[[paste(sep="/",slotName,n)]][['codes']][], 
-					labels= x[[paste(sep="/",slotName,n)]][['categories']][] 
-						)
-				 } 
-			))
+				labels = x[[paste(sep="/",slotName,n)]][['categories']][]
+				data = x[[paste(sep="/",slotName,n)]][['codes']][]
+				if ( length( table(data) )  == length(labels) + 1 ) {
+					labels = c( NA, labels )
+				}
+				factor ( data, labels= labels )
+			} 
+			try( {
+			obs2 = data.frame(lapply(names(x[[slotName]])[!OK], doIt))
 			})
 			if ( nrow( obs2) == nrow(obs) ){
 				colnames( obs2) = names(x[[slotName]])[!OK]
