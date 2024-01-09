@@ -60,7 +60,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				if ( file.exists( cellidfile ) && 
 					! file.exists( file.path(cellexalObj@usedObj$sessionPath, selectionF )) ) {
 					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath, selectionF ))
-					cat( gname ,file=file.path( dirname(cellidfile)), paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
+					#cat( gname ,file=file.path( dirname(cellidfile)), paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
 				}
 			}
 		}
