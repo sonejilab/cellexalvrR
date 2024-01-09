@@ -97,9 +97,14 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 	#system( paste('display', fnames[1]))
 
 	## create the .time selection file for cellexalVR
+	f = NULL
+	if ( file.exists(info@selectionFile) ){
+		f= paste(sep=".", info@selectionFile, 'time')
+	}else {
+		f= file.path( x@outpath, basename(info@selectionFile))
+		f= paste(sep=".", f, 'time')
+	}
 
-	f= file.path( x@outpath, basename(info@selectionFile)) 
-	f= paste(sep=".", f, 'time')
 	exportSelection( groupingInfo( loc )@linarObj, f )
 
 	if ( file.exists( x@usedObj$sessionPath ) ) {

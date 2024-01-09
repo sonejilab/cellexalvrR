@@ -51,10 +51,16 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				if ( ! file.exists(cellexalObj@usedObj$sessionPath)){
 					dir.create( cellexalObj@usedObj$sessionPath, recursive=T)
 				}
+				if ( ! file.exists( file.path( cellexalObj@usedObj$sessionPath,basename(dirname(cellidfile)))) ){
+					dir.create( file.path( cellexalObj@usedObj$sessionPath,basename(dirname(cellidfile)))) 
+				}
+				# change in CellexalVR - the tool now stores the selections in folders - argh
+				selectionF = file.path(basename(dirname(cellidfile)), basename(cellidfile))
+
 				if ( file.exists( cellidfile ) && 
-					! file.exists( file.path(cellexalObj@usedObj$sessionPath, basename( cellidfile ) )) ) {
-					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath,basename( cellidfile ) ))
-					cat( gname ,file=file.path(cellexalObj@usedObj$sessionPath, paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
+					! file.exists( file.path(cellexalObj@usedObj$sessionPath, selectionF )) ) {
+					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath, selectionF ))
+					cat( gname ,file=file.path( dirname(cellidfile)), paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
 				}
 			}
 		}
