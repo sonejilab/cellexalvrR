@@ -1628,7 +1628,10 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 		}
 
 		cellexalObj = reorderSamples ( cellexalObj, object@gname )
-		object = groupingInfo(cellexalObj, object@gname)@linarObj
+		object = groupingInfo(cellexalObj, object@gname)
+		if ( class(object)[1] == "cellexalGrouping"){
+			object = object@linarObj
+		}
 
 		ids =  toIDs(tab[1])
 		for (n in tab[-1]) {

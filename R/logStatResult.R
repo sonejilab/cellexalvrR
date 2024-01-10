@@ -82,6 +82,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## this need to become a relative path - relative to the final outfile
 
 		if (length(grep('Time.group', x@usedObj$lastGroup)) > 0 ) {
+			browser()
 			selF = filename(paste(sep=".", "TimeSelection", gInfo@gname, 'txt'))
 			sesionFile = file.path(x@usedObj$sessionPath, selF )
 			if ( ! file.exists( sesionFile )){
@@ -95,12 +96,11 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			}
 		}else {
 			if ( is.null(x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] )){
-				fname = file.path( x@outpath, x@usedObj$sessionName, paste(sep=".","selection", x@usedObj$lastGroup, "txt") )
-				fname = stringr::str_replace_all( fname, '\\s+', '_')
+				fname = getUniqueFile( x@outpath, 'session.txt', 'txt' )
 				exportSelection( groupingInfo( x, x@usedObj$lastGroup), fname=fname )
 				x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] = fname
 			}
-			sesionFile = file.path( x@usedObj$sessionPath, basename( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] ) )
+			sesionFile = getUniqueFile( x@usedObj$sessionPath, 'session.txt', 'txt' )
 			if ( ! file.exists( sesionFile )){
 				file.copy( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]], sesionFile)
 			}

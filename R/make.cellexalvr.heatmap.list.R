@@ -38,13 +38,16 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 				unlink( paste(sep=".", outfile, 'sqlite3') )
 			}
 			
-			if ( ! file.exists( file.path(cvrObj@outpath, basename(cellidfile)) ) ){
-				if ( ! file.exists( cellidfile )) {
-					# crap! - A user defined fake grouping. Create this file from scratch
-					exportSelection ( groupingInfo(cvrObj,cellidfile ), cellidfile )
-				}
-				file.copy( cellidfile, file.path(cvrObj@outpath, basename(cellidfile ) ) )
-				cellidfile = file.path(cvrObj@outpath, basename(cellidfile ) )
+			rel_path = fs::path_rel(cellidfile, cvrObj@outpath )
+
+			if ( stringr::str_detect( rel_path, "^\\.\\.") ){
+				# crap! - A user defined fake grouping. Create this file from scratch
+				dir.create( file.path( cvrObj@outpath, "Selections"))
+				next_id = length( list.dirs ( file.path( cvrObj@outpath, "Selections/") ) ) -1
+				path =  file.path( cvrObj@outpath, "Selections", paste("Selection", next_id, sep=""))
+				dir.create( path )
+				exportSelection ( groupingInfo(cvrObj,cellidfile ), file.path(path, 'selection.txt') )
+				cellidfile = file.path( path, 'selection.txt' )
 			}
 
 			cvrObj = getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig, nameAdd=nameAdd ) #function definition in file 'getDifferentials.R'

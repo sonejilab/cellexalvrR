@@ -97,6 +97,34 @@ if ( length(list.files(sessionPath, pattern =paste(sep="","*",type,"*.html" ))) 
 } )
 
 
+#' @name getUniqueFile
+#' @aliases getUniqueFile,cellexalvrR-method
+#' @rdname getUniqueFile
+#' @docType methods
+#' @description store the Rmd contens produced in a logXYZ function into a file and register that one.
+#' @param file_path the path for the new file
+#' @param file_name the name of the new file (including the extension)
+#' @param file_ext the extension of the new file
+#' @title preceed the file_core with AA_ to XX_ for all file_path with the  file_ext extension
+#' @export 
+setGeneric('getUniqueFile', ## Name
+	function ( file_path, file_name, file_ext ) { ## Argumente der generischen Funktion
+		standardGeneric('getUniqueFile') ## der Aufruf von standardGeneric sorgt für das Dispatching
+	}
+)
+
+
+#' @rdname getUniqueFile
+setMethod('getUniqueFile', signature = c ('character'),
+	definition = function ( file_path, file_name, file_ext ) {
+		id = length( list.files ( file_path, pattern=paste( sep="",'*', file_ext,'$'), full.names =TRUE ) ) 
+		AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
+		fname = paste( sep="_", AA[id+1], file_name )
+		return ( file.path( file_path, fname ))
+	}
+)
+
+
 #' @name storeLogContents
 #' @aliases storeLogContents,cellexalvrR-method
 #' @rdname storeLogContents
@@ -117,39 +145,20 @@ setGeneric('storeLogContents', ## Name
 #' @rdname storeLogContents
 setMethod('storeLogContents', signature = c ('cellexalvrR'),
 	definition = function ( x, content, type='' ) {
-
+		
 	if ( is.null( x@usedObj$sessionPath )){
 		x = sessionPath(x) #function definition in file 'sessionPath.R'
 	}
 	sessionPath = normalizePath(x@usedObj$sessionPath)
-	
-	if ( type !="Start"){
-		id = length( list.files ( x@outpath, pattern='*html$', full.names =TRUE ) ) 
-
-		if ( length(x@usedObj$sessionRmdFiles ) != id ) {
-			x@usedObj$sessionRmdFiles =
-		 	list.files( sessionPath , pattern='*Rmd$', full.names =TRUE )
-		}
-		id = id +1
-	}else {
-		id = 1
-	}
-
-	AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
-	fname = paste( sep="_", AA[id], type, "paritalLog.Rmd" )
-	fname = file.path( sessionPath, fname )
-
-	if ( file.exists( fname )) {
-		## damn - somewhere the cellexal object was not saved - better read in all Rmd files now
-		x@usedObj$sessionRmdFiles = list.files(sessionPath, full.names = TRUE, pattern='*.Rmd')
-		id = length(x@usedObj$sessionRmdFiles) +1
-		AA = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
-		fname = paste( sep="_", AA[id], type, "paritalLog.Rmd" )
+	fname = NULL
+	if ( type =="Start"){
+		fname = paste( sep="_", "AA", type, "paritalLog.Rmd" )
 		fname = file.path( sessionPath, fname )
+	}else {
+		fname = getUniqueFile( sessionPath, paste( sep="_", type, "paritalLog.Rmd"), 'Rmd' )
 	}
-	if ( file.exists(fname) ){
-		stop(paste( "The outfile already existed!" , fname))
-	}
+	x@usedObj$sessionRmdFiles =
+	 	list.files( sessionPath , pattern='*Rmd$', full.names =TRUE )
 
 	file.create( fname )
 

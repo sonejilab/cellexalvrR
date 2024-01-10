@@ -10,7 +10,6 @@ prefix = './'
 if ( file.exists( file.path(prefix, 'function.R'))){
 	## the test functions that should not be maintained in differet test scripts...
 	source( file.path(prefix, 'function.R')) 
-
 }
 
 if ( file.exists( file.path(prefix,'data','output','statTest','statTestPsedoBulk_2' ) )){
@@ -36,7 +35,6 @@ grouping <- file.path(prefix, 'data/selection00.txt')
 
 x = userGrouping( x, grouping)
 info = groupingInfo( x )
-x = reduceTo( x, what='col', to=colnames(x@data)[which(!is.na(info@grouping))])
 
 gene2 = getDifferentials(x, grouping, 'wilcox', num.sig=100, Log=FALSE, logfc.threshold = .1, minPct=0.1, bulkStats=TRUE )
 
@@ -54,6 +52,7 @@ if ( file.exists( ofile))
 
 x = renderReport(x)
 
+browser()
 expect_true( file.exists( ofile), label="stats main outfile")
 
 search = list(

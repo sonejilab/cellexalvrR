@@ -45,7 +45,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 		definition = function (x,cellidfile, deg.method='wilcox', num.sig=250, Log=TRUE, 
 			logfc.threshold = 0.5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, 
 			text = NULL, bulkStats = TRUE, nameAdd=NULL, showIDs=TRUE ) {
-			
+
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
 			if ( nrow( x@data) <= 1000 ){
@@ -201,12 +201,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
-				try ( {
+				#try ( {
 					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text, showIDs=showIDs)
 					## And get additional info about the genes
 
 
-				}) #function definition in file 'logStatResult.R'
+				#}) #function definition in file 'logStatResult.R'
 				
 				if ( is.null(x@usedObj$sigGeneLists$Cpp)) 
 					x@usedObj$sigGeneLists$Cpp = list()

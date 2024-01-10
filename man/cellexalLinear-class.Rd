@@ -26,5 +26,7 @@ the cellexalLinear class is representing one linear ordered cell group
 \item{\code{id}}{the md5sum representation of thei object's dat (to prohibit duplicates)}
 
 \item{\code{parentSelection}}{the cellexalGrouping name that was basis for this linear order}
+
+\item{\code{idModifier}}{If you really want to have a copy of a timeline add a value here}
 }}
 

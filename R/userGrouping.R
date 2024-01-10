@@ -40,7 +40,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	possibleNames = unique(unlist(lapply( colnames(cellexalObj@meta.cell), 
 			function(x) { str_split(x, "@")} )))
 
-	if ( file.exists(cellidfile)){ ## file from the VR env
+	if ( file.exists(cellidfile) ){ ## file from the VR env
 		## add this group into the object
 		cellid <- utils::read.delim(cellidfile,header=F)
 		if ( cellid[1,1] == 'CellID'){ ## reading a file from the session path
@@ -145,7 +145,7 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 
 		ginfo = new( 'cellexalGrouping',
 			gname = gname,
-			selectionFile= basename( cellidfile ),
+			selectionFile= cellidfile ,
 			grouping = cellexalObj@userGroups[,gname],
 			order = as.integer(order),
 			'drc' = drc,

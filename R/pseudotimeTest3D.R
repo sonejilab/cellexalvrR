@@ -98,6 +98,7 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 
 	## create the .time selection file for cellexalVR
 	f = NULL
+	
 	if ( file.exists(info@selectionFile) ){
 		f= paste(sep=".", info@selectionFile, 'time')
 	}else {
