@@ -120,7 +120,10 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		}
 
 		colorIDs = names(table(cellid[,4]))
-		colVR = colR =  cellid[match( colorIDs,cellid[,4]),2]
+		colVR = rep( NA, max(colorIDs))
+		colVR[colorIDs] = cellid[match( colorIDs,cellid[,4]),2]
+
+		#colVR = colR =  cellid[match( colorIDs,cellid[,4]),2]
 		#colVR = c()
 		#for ( i in 1:length(colR)) {
 		#	colVR[colorIDs[i]] = as.character(colR[i])
@@ -138,9 +141,14 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				drc = c(drc, goodDRC)
 			}
 		}
+
 		drc = unique( drc )
         if ( !is.factor(cellexalObj@userGroups[,gname]) ){
         	cellexalObj@userGroups[,gname] = factor( cellexalObj@userGroups[,gname] )
+        }
+
+        if ( class(colVR)[1] != "character"){
+        	browser()
         }
 
 		ginfo = new( 'cellexalGrouping',
