@@ -46,6 +46,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			logfc.threshold = 0.5, minPct=0.2, onlyPos=TRUE, report4genes= NULL, 
 			text = NULL, bulkStats = TRUE, nameAdd=NULL, showIDs=TRUE ) {
 
+
 			x <- loadObject(x) #function definition in file 'lockedSave.R'
 			x= check(x)
 			if ( nrow( x@data) <= 1000 ){
@@ -56,6 +57,8 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'
 			cellidfile = x@usedObj$lastGroup
 
+			group = groupingInfo( x, cellidfile)
+
 			num.sig <- as.numeric( num.sig )
 			
 			accepted = c('wilcox','Seurat_wilcox',  'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova')
@@ -63,7 +66,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				stop( paste('The deg.method',deg.method, 'is not supported' ) )
 			}
 
-			ok <- which(!is.na(x@userGroups[,cellidfile]))
+			ok <- which(!is.na(x@userGroups[,group@gname]))
 			
 			if ( length(ok) > 0) {
 				loc <- reduceTo (x, what='col', to=colnames(x@data)[ ok ] ) #function definition in file 'reduceTo.R'

@@ -50,6 +50,7 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 				cellidfile = file.path( path, 'selection.txt' )
 			}
 			#cvrObj = userGrouping( cvrObj, cellidfile )
+
 			cvrObj = getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig, nameAdd=nameAdd ) #function definition in file 'getDifferentials.R'
 			#getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig) #function definition in file 'getDifferentials.R'
 
