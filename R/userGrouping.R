@@ -28,7 +28,10 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 
     info = try({suppressMessages(suppressWarnings(groupingInfo( cellexalObj, cellidfile)))}, silent=TRUE)
     if ( class(info) == 'cellexalGrouping'){
-    	cellexalObj@usedObj$lastGroup = cellidfile
+    	# the old way breaks if there is a path in this slot.
+    	# So let's try to use the group name instead?!
+    	#cellexalObj@usedObj$lastGroup = cellidfile
+		cellexalObj@usedObj$lastGroup = info@gname
     	return ( cellexalObj )
     }
 	#init local vars

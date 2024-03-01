@@ -32,7 +32,13 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		}
 
 		## get a unique file not overwriting old ones.
-		ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
+		ofile = NULL
+		if ( length(unlist(stringr::str_split( x@usedObj$lastGroup, "/"))) > 1 ){
+			ofile = filename( c( basename( x@usedObj$lastGroup ), method, "csv" ), opath )
+		}else {
+			ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
+		}
+
 		#print( paste( "Saving stats table as", file.path(opath,ofile)))
 		if ( colnames(data)[1] == 'cor' ){
 			data = cbind( 'Gene Name' = rownames(data), data )
@@ -82,7 +88,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## this need to become a relative path - relative to the final outfile
 
 		if (length(grep('Time.group', x@usedObj$lastGroup)) > 0 ) {
-			browser()
+
 			selF = filename(paste(sep=".", "TimeSelection", gInfo@gname, 'txt'))
 			sesionFile = file.path(x@usedObj$sessionPath, selF )
 			if ( ! file.exists( sesionFile )){
@@ -139,6 +145,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			toppgenes = getSigGenes( data, count=100, nameAdd = nameAdd)
 			write.table( toppgenes, file=file.path(opath, toppGF), col.names=F, row.names=F, quote=F, sep="," )
 		})
+
 
 		content=paste( sep="\n", collapse = "\n",
 				paste( "##", x@usedObj$lastGroup,"Statistical Result" ),
