@@ -2,6 +2,8 @@ context('server VR interface')
 
 skip('Test outdated')
 
+Sys.setenv(TEST_MODE = "TRUE")
+
 if ( .Platform$OS.type != 'unix' ) {
 	skip('Test only work on unix platform')
 }

@@ -4,11 +4,14 @@
 \name{simplePlotHeatmaps}
 \alias{simplePlotHeatmaps}
 \alias{simplePlotHeatmaps,cellexalvrR,cellexalGrouping,character-method}
+\alias{simplePlotHeatmaps,cellexalvrR,cellexalLinear,character-method}
 \title{create the heatmaps for the (interactive only) timline logs}
 \usage{
 simplePlotHeatmaps(x, info, fname)
 
 \S4method{simplePlotHeatmaps}{cellexalvrR,cellexalGrouping,character}(x, info, fname)
+
+\S4method{simplePlotHeatmaps}{cellexalvrR,cellexalLinear,character}(x, info, fname)
 }
 \arguments{
 \item{x, }{cellexalvrR object that has the correct order and only the genes of interest!}

@@ -111,7 +111,6 @@ setMethod('ontologyLogPage', signature = c ('cellexalvrR'),
 	}
 
 	GOI_2_genes = cbind(GOI_2_genes,  allRes )	
-	browser()
 	if ( ! is.null(cellexalObj@usedObj$sessionPath) ){
 		utils::write.table(GOI_2_genes, sep='\t', quote=F, row.names=F, file= 
 					file.path( 

@@ -28,7 +28,7 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 	definition = function ( cellexalObj, stats, genes=NULL, info, png, timeInfo, GOIs=NULL, text=NULL ) {
 	## here I need to create a page of the final log
 
-	if ( VRmode() ){
+	if ( FALSE) { #interactive() ){
 		warning("In VR mode the detailed linearSelection report is deactivated.")
 		content = paste(collapse="\n", sep="\n","",
 			"##", "TimeLine control from Saved Selection ", 
@@ -58,6 +58,9 @@ setMethod('logTimeLine', signature = c ('cellexalvrR'),
 				timeInfo = timeInfo@linarObj
 			}
 		}
+
+		#print(timeInfo)
+		cellexalObj@usedObj$lastGroup = timeInfo@gname
 		## now I need to create a heatmap myself using the genes provided
 
 	#	message("find a usable way to get the heatmap png")

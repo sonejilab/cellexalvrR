@@ -140,7 +140,6 @@ setMethod('renderReport', signature = c ('cellexalvrR'),
 	}	
 
 	lockedSave( cellexalObj) #function definition in file 'lockedSave.R'
-	
 	cellexalObj
 } )
 

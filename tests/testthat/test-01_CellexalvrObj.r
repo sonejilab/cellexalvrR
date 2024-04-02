@@ -1,7 +1,7 @@
 context('dependant programs')
 expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed")
 
-
+Sys.setenv(TEST_MODE = "TRUE")
 
 context('error throwing') 
 expect_error( loadObject( 'SomeFileNotExistsing') )

@@ -3,17 +3,17 @@
 \docType{methods}
 \name{createTime}
 \alias{createTime}
-\alias{createTime,cellexalLinear-method}
+\alias{createTime,cellexalGrouping,cellexalvrR-method}
 \title{create the pseudo time / linear selection for the selection}
 \usage{
-createTime(x, parentSelection = NULL)
+createTime(parentSelection, cellexalObj = NULL)
 
-\S4method{createTime}{cellexalLinear}(x, parentSelection = NULL)
+\S4method{createTime}{cellexalGrouping,cellexalvrR}(parentSelection, cellexalObj = NULL)
 }
 \arguments{
-\item{x}{the object}
-
 \item{parentSelection}{the selection name this linear selection bases on.}
+
+\item{x}{the object}
 }
 \description{
 calculate pseudo time based on the internal table a b and c columns

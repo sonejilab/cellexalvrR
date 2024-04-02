@@ -1,5 +1,6 @@
 context('myNextCoolHeatmapFeature')
 
+Sys.setenv(TEST_MODE = "TRUE")
 prefix= './'
 #prefix = 'tests/testthat'
 

@@ -55,7 +55,9 @@ setMethod('server', signature = c ('character'),
 	outFile = file(paste( file,  Sys.getpid(), 'output', sep=".") )
 	
 	if (! is.null(masterPID)) {
-		masterPID = ps::ps_handle( pid = as.integer(masterPID) )
+		try({
+			masterPID = ps::ps_handle( pid = as.integer(masterPID) )
+		})
 	}
 
 	#if ( debug ){
@@ -143,6 +145,9 @@ setMethod('server', signature = c ('character'),
 	if ( exists('cellexalObj') ) {
 		if ( ! is.null(cellexalObj@usedObj$sessionName ) ) {
 			message( "closing session" );
+
+			cellexalObj = logShinyApp( cellexalObj )
+
 			cellexalObj = renderReport( cellexalObj )
 			if ( debug ) {
 				cat("cellexalObj = renderReport( cellexalObj )")

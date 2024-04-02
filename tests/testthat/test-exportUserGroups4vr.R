@@ -1,6 +1,7 @@
 context('exportUserGroups4vr')
 
 ## this is an in depth check of internal logics.
+Sys.setenv(TEST_MODE = "TRUE")
 
 prefix = './'
 

@@ -3,10 +3,16 @@
 \docType{methods}
 \name{reduceTo}
 \alias{reduceTo}
+\alias{reduceTo,cellexalGrouping-method}
+\alias{reduceTo,cellexalLinear-method}
 \alias{reduceTo,cellexalvrR-method}
 \title{reduce a cellexalvrR object on either genes or columns}
 \usage{
 reduceTo(x, what = "row", to = NULL)
+
+\S4method{reduceTo}{cellexalGrouping}(x, what = "row", to = NULL)
+
+\S4method{reduceTo}{cellexalLinear}(x, what = "row", to = NULL)
 
 \S4method{reduceTo}{cellexalvrR}(x, what = "row", to = NULL)
 }

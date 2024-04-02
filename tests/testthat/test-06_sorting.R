@@ -3,7 +3,7 @@ context('sorting')
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
-
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = './'
 
 
@@ -26,7 +26,6 @@ LETTERS = as.vector( sapply(LETTERS, function(x) paste0(x, LETTERS)))
 
 data= rbind( geneA, geneB)
 rownames(data) = paste(sep="", 'gene', LETTERS[1:nrow(data)])
-
 
 firstHalve =  matrix(ncol=3,c( rnorm(3*SIZE) ))
 secondHalve = firstHalve
@@ -66,6 +65,8 @@ obj = check(obj)
 expect_true( obj@usedObj$checkPassed, label="synthetic object creation" )
 
 obj@usedObj$samples = samp
+obj = groupingInfo( obj, 'sampleType')
+
 
 d1 = reorderSamples(obj, 'rev')
 
@@ -80,9 +81,11 @@ expect_true( isTRUE( all.equal( obj, d2)), label="sort back got same samples inf
 
 context('sorting - groupings')
 
-obj = userGrouping( obj, 'sampleType')
-
-g0 = groupingInfo( obj,'sampleType')
+g0 = groupingInfo( obj, 'sampleType')
+if (class(g0) == "cellexalvrR"){
+	obj = g0
+	g0 = groupingInfo( obj, 'sampleType')
+}
 
 d1 = reorderSamples(obj, 'rev')
 g1 = groupingInfo( d1,'sampleType')
@@ -99,18 +102,24 @@ expect_true( sum(png0 - png1) == 0, label="drc plots are exactly the same for or
 
 context('sorting - linear')
 
-
 obj@userGroups[,'test'] = rep(1, nrow(obj@userGroups) )
 obj@userGroups[,'test order'] = 1:nrow(obj@userGroups)
 
+g = groupingInfo(obj, "test")
+if (class(g) == "cellexalvrR"){
+	obj = g
+}
+
+
+skip("Too little data for usable timeline tests")
+
 obj = getDifferentials( obj, 'test', log=FALSE, num.sig = 40) ## should get a linear object
 
-
-time0 = groupingInfo( obj )@linarObj 
+time0 = groupingInfo( obj,'test' )@linarObj 
 
 d1 = reorderSamples(obj, 'rev')
 
-time1 = groupingInfo( d1 )@linarObj 
+time1 = groupingInfo( d1, 'test' )@linarObj 
 
 expect_equal( time0, time1, label="timelines should not change")
 

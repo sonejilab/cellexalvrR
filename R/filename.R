@@ -28,6 +28,7 @@ setMethod('filename', signature = c ('character', 'missing'),
 #' @rdname filename
 setMethod('filename', signature = c ('character', 'character'),
 	definition = function ( str, path ) {
+		#print (paste("file path", path, "str: ", str) )
 		if ( file.exists(file.path( path, filename(str)))){
 			id = 1
 			ext = length(str)

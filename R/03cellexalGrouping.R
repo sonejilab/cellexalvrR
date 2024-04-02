@@ -8,7 +8,7 @@ setMethod('show', signature = c ('cellexalGrouping'),
 	definition = function ( object ) {
 		cat (paste("An object of class", class(object)),"with gname", object@gname,"\n" )
 		cat (paste( 'with',length(table(object@grouping)),
-			'groups selected from', object@drc,'drc model'),"\n")
+			'groups selected from the ', object@drc,'drc model (n=', length(names(object)),")"),"\n")
 		cat (paste( 'based on the selection file',object@selectionFile),"\n")
 
 		if ( length( object@heatmapBasename) != 0){
@@ -17,6 +17,10 @@ setMethod('show', signature = c ('cellexalGrouping'),
 		cat('\n')
 	}
 )
+
+
+
+
 
 #' The cellexalvrR sanity check.
 #' Prints out the problems and sets a x@usedObj$ceckPassed boolean value.
@@ -57,11 +61,75 @@ setMethod('check', signature = c ('cellexalGrouping'),
 )
 
 
+
+#' @rdname describesTheseCells
+setMethod('describesTheseCells', signature = c ('cellexalGrouping', 'character'),
+definition = function ( x, cells ) {
+	m = match( names(x@grouping), cells )
+	good =  m[which(! is.na(m))]
+	bad = m[which(is.na(m))]
+	length(which( is.na( x@grouping[good] ))) == 0 && 
+		length(which(! is.na( x@grouping[bad] ))) == 0
+}
+)
+
+
+#' get the (cell) names from this time
+#'
+#' @name names
+#' @docType names
+#' @description subset a cellexalLinear object
+#' @param x the object
+#' @title cellnames of a cellexalGrouping object
+#' @export 
+setMethod('names', signature = c ('cellexalGrouping'),
+definition = function ( x) {
+	ok = which(!is.na(x@grouping))
+	names = names(x@grouping)[ ok ]
+	return ( names[order(x@order[ ok ])])
+	#return( names(x@grouping)[which(!is.na(x@grouping))] )
+} )
+
+
+#' @rdname subset
+setMethod('subset', signature = c ('cellexalGrouping'),
+definition = function ( x, cells) {
+
+	m = match( names(x@grouping), cells )
+	m = which(is.na(m)) # we need to get rid of data!
+	if ( length(m) > 0){
+		message("subsetting")
+		x@grouping[m] = NA
+		x@order[m] = NA
+		id= (ncol(cellexalObj@userGroups) /2) + 1
+		x@gname = paste( "User.group", id, sep="." )
+	}else {
+		message("Subset - why subset to the same cell names?!")
+	}
+
+	if ( length(names(x)) == 0){
+		return( NULL )
+	}
+	# existing_files <- list.files(pattern = file.path( "^selection\\d+\\.txt$")
+	# new = NULL
+	# if (length(existing_files) == 0) {
+	# 	new="selection0.txt"
+	# }else{
+	# 	numbers <- as.integer(gsub("[^0-9]", "", existing_files))
+	# 	new=paste(sep="","selection",max(numbers) + 1,".txt")
+	# }
+	# exportSelection( x, new)
+	# x@selectionFile = new
+
+	invisible(x)
+} )
+
+
 #' @rdname pseudoBulk
 setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 	definition = function ( object, cellexalObj, minSize=10, minBulks = 10, maxBulks = 500 ) {
 
-		tab = table( object@grouping)
+		tab = table( object@grouping )
 		min_cells = min(tab)
 		toCells = minSize
 		if ( floor(min_cells/minSize) < minBulks ){
@@ -96,7 +164,6 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 			ids = sort(ids)
 			ids
 		}
-
 		cellexalObj = reorderSamples ( cellexalObj, object@gname )
 		object = groupingInfo(cellexalObj, object@gname)
 
@@ -104,11 +171,12 @@ setMethod('pseudoBulk', signature = c ('cellexalGrouping'),
 		for (n in tab[-1]) {
 			ids = c( ids, toIDs(n) + max(ids))
 		}
-
+		grouping = object@grouping[which(!is.na(object@grouping))]
+		grouping = grouping[order(grouping)]
 		# now I need to construct the pseudoBulk object...
-		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(object@grouping)[match(unique(ids), ids)])
+		PseudoBulk = reduceTo( cellexalObj, what='col', to= names(grouping)[match(unique(ids), ids)])
 		PseudoBulk@usedObj$pseudoBulk_groupings = ids
-		names(PseudoBulk@usedObj$pseudoBulk_groupings) = colnames(cellexalObj@data)
+		names(PseudoBulk@usedObj$pseudoBulk_groupings) = names(grouping)[ ids]
 		
 		PseudoBulk@data = Matrix(FastWilcoxTest::collapse( cellexalObj@data, ids, type=2 ), sparse=TRUE) ## mean expression
 
@@ -127,6 +195,8 @@ setMethod('exportSelection', signature = c ('cellexalGrouping'),
 
 	d = cbind( names(x@grouping), x@col[as.vector(x@grouping)],
 	 rep( x@drc , length(x@grouping) ), as.numeric(x@grouping)-1  )
+	# now get the order and selection right to what we got from the VR process!
+	d = d[match(names(x), names(x@grouping)),]
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file= fname)
 
 #	f2 = paste( sep=".",fname,'points')

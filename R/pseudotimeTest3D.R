@@ -80,21 +80,33 @@ setMethod('pseudotimeTest3D', signature = c ('cellexalvrR'),
 	drc = loc@drc[[info@drc]][,1:3]
 	colnames(drc) = c('a', 'b' ,'c')
 
-	res = new('cellexalLinear', dat= data.frame(drc), drc=info@drc)
-	info = groupingInfo(loc, grouping )
-	res = createTime( res, info )
+	## the createTime now really creates the time and adds it to the cellexalObj
+	loc = createTime( info, loc );
+	# res = new('cellexalLinear', dat= data.frame(drc), drc=info@drc)
+	# info = groupingInfo(loc, grouping )
+	# res = createTime( res, info )
 
-	## add the time as group:
-	#the VR program dependeds on it
-	x = addSelection( res, x, grouping )
+	# ## add the time as group:
+	# #the VR program dependeds on it
+
+	## add the time info from the loc object to the parsnt cellexalvrR object x
+	x = addSelection( x, groupingInfo( loc ) )
+
 	## does the time look ok when copied to the cellexal object?
 	#fnames = drcPlots2Dlinear( x, groupingInfo(x, colnames(x@userGroups)[ncol(x@userGroups) -1]) )
 	#system( paste('display', fnames[1]))
 
 	## create the .time selection file for cellexalVR
-	f= file.path( x@outpath, basename(info@selectionFile)) 
-	f= paste(sep=".", f, 'time')
-	exportSelection( res, f )
+	f = NULL
+	
+	if ( file.exists(info@selectionFile) ){
+		f= paste(sep=".", info@selectionFile, 'time')
+	}else {
+		f= file.path( x@outpath, basename(info@selectionFile))
+		f= paste(sep=".", f, 'time')
+	}
+
+	exportSelection( groupingInfo( loc )@linarObj, f )
 
 	if ( file.exists( x@usedObj$sessionPath ) ) {
 		file.copy( f, x@usedObj$sessionPath)

@@ -2,6 +2,11 @@
 
 CellexalvrR now supports squidpy spacial analyses.
 
+# 1.2.3
+
+The way Selection files are used has chjanged in the VR application.
+This package should support the new way to handle them.
+
 # 1.1.2
 
 In FACS data all gene names are cleaned up and whitespace dashes and colons are replaced by one undersore.

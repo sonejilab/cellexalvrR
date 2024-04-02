@@ -5,6 +5,7 @@ if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed")
 }
 
 #prefix = 'tests/testthat'
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = '.'
 
 ofile = file.path( prefix, 'data', 'output', 'testGSEAfile' )

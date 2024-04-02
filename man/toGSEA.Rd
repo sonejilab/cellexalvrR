@@ -5,6 +5,7 @@
 \alias{toGSEA}
 \alias{toGSEA,cellexalvrR,character,character-method}
 \alias{toGSEA,cellexalvrR,character,cellexalGrouping-method}
+\alias{toGSEA,cellexalvrR,character,cellexalLinear-method}
 \title{easily identify e.g. all TFs in the dataset}
 \usage{
 toGSEA(x, ofile, gname = NULL)
@@ -12,6 +13,8 @@ toGSEA(x, ofile, gname = NULL)
 \S4method{toGSEA}{cellexalvrR,character,character}(x, ofile, gname = NULL)
 
 \S4method{toGSEA}{cellexalvrR,character,cellexalGrouping}(x, ofile, gname = NULL)
+
+\S4method{toGSEA}{cellexalvrR,character,cellexalLinear}(x, ofile, gname = NULL)
 }
 \arguments{
 \item{x}{the cellexalvrR object}

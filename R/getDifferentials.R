@@ -56,6 +56,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 			x <- userGrouping(x, cellidfile) #function definition in file 'userGrouping.R'
 			cellidfile = x@usedObj$lastGroup
 
+			group = groupingInfo( x, cellidfile)
+			if ( class(group) ==  'cellexalvrR'){
+				x = group
+				group = groupingInfo( x, cellidfile)
+			}
+
 			num.sig <- as.numeric( num.sig )
 			
 			accepted = c('wilcox','Seurat_wilcox',  'bimod', 'roc', 't', 'tobit', 'poisson', 'negbinom', 'MAST', 'DESeq2', 'anova')
@@ -63,8 +69,8 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				stop( paste('The deg.method',deg.method, 'is not supported' ) )
 			}
 
-			ok <- which(!is.na(x@userGroups[,cellidfile]))
-
+			ok <- which(!is.na(x@userGroups[,group@gname]))
+			
 			if ( length(ok) > 0) {
 				loc <- reduceTo (x, what='col', to=colnames(x@data)[ ok ] ) #function definition in file 'reduceTo.R'
 			}else {
@@ -119,7 +125,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					info <- groupingInfo( x, cellidfile )
 				}
 				drc = x@drc[[ info@drc ]]
-				 if ( is.null(drc) ){
+				if ( is.null(drc) ){
 				 	message(paste("the drc info",info@drc, "can not be found in the data! (", paste(collapse=", ", names(loc@drc)) ))
 				 	message(paste("The linear stats has not gotten the drc information -- choosing the first possible" , names(loc@drc )[1] )) 
 				 	info@drc = names(x@drc )[1] ## for the log!
@@ -144,21 +150,19 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 					cellexalLinear = info@linarObj
 				}
 				message('creating reports')
-
+		
 				x  = createStats( cellexalLinear, x,  num.sig= num.sig, bulkStats=bulkStats )
-				ret = createReport(cellexalLinear, 
-					reduceTo(x, what='row', to = x@usedObj$deg.genes), 
-					info = groupingInfo( x, info@gname ) 
+				
+				createReport(cellexalLinear, 
+					reduceTo(x, what='row', to = x@usedObj$deg.genes)
 				)
 				timeN = cellexalLinear@gname
-				x@usedObj$linearSelections[['lastEntry']] = x@usedObj$linearSelections[[timeN]] =
-					 ret$cellexalObj@usedObj$linearSelections[[timeN]]
-				
+
 				deg.genes = x@usedObj$deg.genes
 
 			}else if ( deg.method == 'wilcox') {
 				## use the faster Rcpp implementation
-				CppStats <- function( n ) {
+				CppStats <- function( n, grp.vec, loc, logfc.threshold, minPct, onlyPos ) {
 					OK = which(grp.vec == n )
 					BAD= which(grp.vec != n )
 					r = NULL
@@ -195,7 +199,7 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				
 				for ( n in  unique( sort(grp.vec)) ) {
-					all_markers = rbind( all_markers, CppStats(n) )
+					all_markers = rbind( all_markers, CppStats(n, grp.vec, loc, logfc.threshold, minPct, onlyPos) )
 				}
 
 				if ( !is.null( nameAdd ) ) {
@@ -203,12 +207,12 @@ setMethod('getDifferentials', signature = c ('cellexalvrR', "character"),
 				}
 				#all_markers <- all_markers[ order( all_markers[,'p.value']),]
 
-				try ( {
+				#try ( {
 					x = logStatResult( x,method='Cpp', data= all_markers, col='p.value', text=text, showIDs=showIDs)
 					## And get additional info about the genes
 
 
-				}) #function definition in file 'logStatResult.R'
+				#}) #function definition in file 'logStatResult.R'
 				
 				if ( is.null(x@usedObj$sigGeneLists$Cpp)) 
 					x@usedObj$sigGeneLists$Cpp = list()

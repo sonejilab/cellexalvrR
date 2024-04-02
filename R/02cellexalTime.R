@@ -22,7 +22,7 @@ definition = function ( x ) {
 		)
 	}
 
-	txt
+	paste(txt,"\n")
 }
 )
 
@@ -59,111 +59,121 @@ definition = function ( object ) {
 }
 )
 
-#' Method to copy a selection from cellexalObj to cellexalObj.
-#' This function makes sure that the linear grouping is fitting into the object.
-#' @name addSelection
-#' @docType methods
-#' @rdname addSelection
-#' @description add this cellexalLinear to the corresponding cellexal object
-#' @param x the cellexalLinear object
-#' @param cellexalObj the cellexalvrR object to add the linear selection as group
-#' @param upstreamSelection which group was the basis for this linearSelection?
-#' @title savely add a cellexalLinear object to a cellexalvR object
-#' @export 
-#if ( ! isGeneric('renew') ){
-setGeneric('addSelection', ## Name
-function ( x, cellexalObj, upstreamSelection=NULL  ) { 
-	standardGeneric('addSelection')
-}
-)
-#}
 
 
-#' @rdname addSelection
-setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
-definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
-	if ( is.null(upstreamSelection)){
-		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)@gname
-		if ( class(upstreamSelection)[1] == "cellexalvrR"){
-			cellexalObj = upstreamSelection
-			upstreamSelection <- groupingInfo( cellexalObj, cellidfile )
-		}
+# #' Method to copy a selection from cellexalObj to cellexalObj.
+# #' This function makes sure that the linear grouping is fitting into the object.
+# #' @name addSelection
+# #' @docType methods
+# #' @rdname addSelection
+# #' @description add this cellexalLinear to the corresponding cellexal object
+# #' @param x the cellexalLinear object
+# #' @param cellexalObj the cellexalvrR object to add the linear selection as group
+# #' @param upstreamSelection which group was the basis for this linearSelection?
+# #' @title savely add a cellexalLinear object to a cellexalvR object
+# #' @export 
+# #if ( ! isGeneric('renew') ){
+# setGeneric('addSelection', ## Name
+# function ( x, cellexalObj, upstreamSelection=NULL  ) { 
+# 	standardGeneric('addSelection')
+# }
+# )
+# #}
 
-	}
-	id= (ncol(cellexalObj@userGroups) /2) + 1
 
-	x@gname = paste( "Time.group", id, sep="." ) 
-	if ( is.null( cellexalObj@usedObj$linearSelections )){
-		cellexalObj@usedObj$linearSelections= list()
-	}else{
-		## Is this linearSelection a copy of an other?
-		done=0
-		for ( n in names(cellexalObj@usedObj$linearSelections)){
-			if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
-				x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
-				cellexalObj@usedObj$linearSelections[[n]] = x
-				cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
-				cellexalObj@usedObj$linearSelections[['lastEntry']] = x
-				done=1
-			}
-		}
-		if ( done ){
-			return( invisible( cellexalObj) )
-		}
-	}
-	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
-	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
-	## I need to create a new one named 
-	info = groupingInfo(cellexalObj, upstreamSelection )
+# #' @rdname addSelection
+# setMethod('addSelection', signature = c ('cellexalLinear', 'cellexalvrR'),
+# definition = function ( x, cellexalObj, upstreamSelection=NULL ) {
 
-	info@selectionFile = basename(paste( sep=".", cellexalObj@usedObj$SelectionFiles[[ upstreamSelection ]], 'time'))
-	info@linarObj = x
+# 	if ( is.null(upstreamSelection)){
+# 		upstreamSelection = groupingInfo(cellexalObj , x@parentSelection)@gname
+# 		if ( class(upstreamSelection)[1] == "cellexalvrR"){
+# 			cellexalObj = upstreamSelection
+# 			upstreamSelection <- groupingInfo( cellexalObj, cellidfile )
+# 		}
 
-	info@gname = x@gname
+# 	}
+# 	id= (ncol(cellexalObj@userGroups) /2) + 1
 
-	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
+# 	x@gname = paste( "Time.group", id, sep="." ) 
+# 	if ( is.null( cellexalObj@usedObj$linearSelections )){
+# 		cellexalObj@usedObj$linearSelections= list()
+# 	}else{
+# 		## Is this linearSelection a copy of an other?
+# 		done=0
+# 		for ( n in names(cellexalObj@usedObj$linearSelections)){
+# 			if ( cellexalObj@usedObj$linearSelections[[n]]@id == x@id ) {
+# 				x@gname = cellexalObj@usedObj$linearSelections[[n]]@gname
+# 				cellexalObj@usedObj$linearSelections[[n]] = x
+# 				cellexalObj@groupSelectedFrom[[ x@gname ]]@linarObj = x
+# 				cellexalObj@usedObj$linearSelections[['lastEntry']] = x
+# 				done=1
+# 			}
+# 		}
+# 		if ( done ){
+# 			return( invisible( cellexalObj) )
+# 		}
+# 	}
+# 	cellexalObj@usedObj$linearSelections[['lastEntry']] = x
+# 	cellexalObj@usedObj$linearSelections[[ x@gname ]] = x
+# 	## I need to create a new one named 
+# 	info = groupingInfo(cellexalObj, upstreamSelection )
 
-	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
+# 	info@selectionFile = basename(paste( sep=".", cellexalObj@usedObj$SelectionFiles[[ upstreamSelection ]], 'time'))
+# 	info@linarObj = x
 
-	t1 = as.matrix(x@dat[,c('a','b','c')])
+# 	info@gname = x@gname
 
-	t2 = as.matrix(cellexalObj@drc[[x@drc[1]]][m,1:3])
+# 	cellexalObj@groupSelectedFrom[[ x@gname ]] = info
 
-	colnames(t1) = colnames(t2)
-	#rownames(t1) = rownames(t2)
-	if ( ! isTRUE( all.equal( t1, t2) ) ){
-		message("CRITICAL ERROR: drc models are not the same - check in getDifferentials and likely reducteTo or reorderSamples")
-		if(interactive()) { browser() }
-		stop( "The drc models are not the same!")
-	}
+# 	m = match( rownames(x@dat), rownames(cellexalObj@drc[[x@drc[1]]]) )
 
-	if ( length(which(is.na(m)))>0){
-		stop("ERROR: This linearSelection describes cells that are not in the cellexalvrR object!")
-	}
+# 	t1 = as.matrix(x@dat[,c('a','b','c')])
 
-	m = match( rownames(x@dat), colnames(cellexalObj@data) )
+# 	t2 = as.matrix(cellexalObj@drc[[x@drc[1]]][m,1:3])
 
-	cellexalObj@userGroups[,x@gname] = NA
-	cellexalObj@userGroups[m,x@gname] = as.vector(x@dat$time)
+# 	colnames(t1) = colnames(t2)
+# 	#rownames(t1) = rownames(t2)
+# # 	if ( ! isTRUE( all.equal( t1, t2) ) ){
+# # 		message("CRITICAL ERROR: drc models are not the same - if this is 'intentional' fixit by
+#   # x@dat[,'a'] = t2[,1]
+#   # x@dat[,'b'] = t2[,2]
+#   # x@dat[,'c'] = t2[,3]
+#   # t1 = t2
+# # 			")
+# # 		if(interactive()) { browser() }
+# # 		if ( ! isTRUE( all.equal( t1, t2) ) ){
+# # 			stop( "The drc models are not the same!")
+# # 		}
+# # 	}
 
-	cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')] = NA
-	cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')] = order( x@dat$time )
+# 	if ( length(which(is.na(m)))>0){
+# 		stop("ERROR: This linearSelection describes cells that are not in the cellexalvrR object!")
+# 	}
 
-	#all.equal(cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')],  order( x@dat$time ) )
-	cellexalObj@usedObj$lastGroup = x@gname
-	#browser()
-	col = rep('gray80', ncol(cellexalObj@data))
-	col[m] = as.vector(x@dat$col)
-	#all.equal( rownames(cellexalObj@drc[[info@drc]])[m], rownames(x@dat))
-	#rgl::open3d()
-	#rgl::plot3d( cellexalObj@drc[[info@drc]], col=col)
-	#rgl::points3d (cbind( x@dat[,c('a','b')], 'c'= rep(1, nrow(x@dat)) ), col= as.vector(x@dat$col))
+# 	m = match( rownames(x@dat), colnames(cellexalObj@data) )
 
-	#rgl::plot3d( cellexalObj@drc[[info@drc]][ cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')],], col=wesanderson::wes_palette("Zissou1", nrow(cellexalObj@userGroups), type = "continuous") ) 
+# 	cellexalObj@userGroups[,x@gname] = NA
+# 	cellexalObj@userGroups[m,x@gname] = as.vector(x@dat$time)
 
-	invisible( cellexalObj)
-} )
+# 	cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')] = NA
+# 	cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')] = order( x@dat$time )
+
+# 	#all.equal(cellexalObj@userGroups[m,paste(x@gname, sep=" ", 'order')],  order( x@dat$time ) )
+# 	cellexalObj@usedObj$lastGroup = x@gname
+# 	#browser()
+# 	col = rep('gray80', ncol(cellexalObj@data))
+# 	col[m] = as.vector(x@dat$col)
+# 	#all.equal( rownames(cellexalObj@drc[[info@drc]])[m], rownames(x@dat))
+# 	#rgl::open3d()
+# 	#rgl::plot3d( cellexalObj@drc[[info@drc]], col=col)
+# 	#rgl::points3d (cbind( x@dat[,c('a','b')], 'c'= rep(1, nrow(x@dat)) ), col= as.vector(x@dat$col))
+
+# 	#rgl::plot3d( cellexalObj@drc[[info@drc]][ cellexalObj@userGroups[,paste(x@gname, sep=" ", 'order')],], col=wesanderson::wes_palette("Zissou1", nrow(cellexalObj@userGroups), type = "continuous") ) 
+
+# 	invisible( cellexalObj)
+# } )
 
 
 #' The sanity check for a linear grouping.
@@ -193,18 +203,24 @@ definition = function (x, cellexalObj=NULL) {
 		warning("empty object")
 		return ("empty")
 	}
+	if ( is.null(x@dat$time)) {
+        # this thing has not be initialized correctly!
+        x = createTime( x )
+	}
 	bad=which( is.na(x@dat$time))
 	if ( length(bad) > 0 ){
 		warning("Missing values detected in the linear order - dropping these")
 		x@dat= x@dat[-bad,]
 	}
+	
 	x@dat = x@dat[order(x@dat$time),]
 	## onestly change the color NOW!
 	ids = ceiling(seq( from=0, to=10,  length.out = nrow(x@dat) +1))
 	ids = ids[-1]
-	if ( length( x@id )== 0 ) {
-		x@id = digest::digest( x@dat, algo="md5")
-	}
+	
+	txt = paste(c(as.vector(x@dat), x@idModifier), collapse = ",", sep=",")
+	x@id = digest::digest( txt, algo="md5")
+	
 	x@dat$col = factor(wesanderson::wes_palette("Zissou1", 10, type = "continuous")[ ids ], 
 		levels= wesanderson::wes_palette("Zissou1", 10, type = "continuous") )
 
@@ -313,24 +329,28 @@ setGeneric('compactTime', ## Name
 setMethod('compactTime', signature = c ('cellexalvrR'),
 definition = function (  cellexalObj ) {
 	## now I need to check which linearSelections I have
-	for (tName in names(cellexalObj@usedObj$linearSelections)[-1]) {
-		time = cellexalObj@usedObj$linearSelections[[tName]]
-		n = nrow(time@dat)
-		loc = reduceTo( cellexalObj, what='col', to=rownames(time@dat))
-		if ( n > 1000 ){
-			ids = rep( 1:1000, floor(n/1000))
-			ids = c( ids, sample( 1:1000, n%%1000))
-			ids = sort(ids)
-			B = FastWilcoxTest::collapse( loc@data, ids, 2 )
-			B <- Matrix::Matrix(B, sparse = TRUE)
-			rownames(B) = rownames(cellexalObj@data)
-			colnames(B) = 1:1000
-			cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = B
-		}else {
-			cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = loc@data
+
+	for (tName in names(cellexalObj@usedObj$linearSelections)) {
+		if ( tName != "lastEntry" && 
+			is.null( cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']])){
+			time = cellexalObj@usedObj$linearSelections[[tName]]
+			n = nrow(time@dat)
+			loc = reduceTo( cellexalObj, what='col', to=rownames(time@dat))
+			if ( n > 1000 ){
+				ids = rep( 1:1000, floor(n/1000))
+				ids = c( ids, sample( 1:1000, n%%1000))
+				ids = sort(ids)
+				B = FastWilcoxTest::collapse( loc@data, ids, 2 )
+				B <- Matrix::Matrix(B, sparse = TRUE)
+				rownames(B) = rownames(cellexalObj@data)
+				colnames(B) = 1:1000
+				cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = B
+			}else {
+				cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] = loc@data
+			}
 		}
-		
 	}
+
 	invisible(cellexalObj)
 })
 
@@ -357,18 +377,40 @@ function ( x, deg.genes,  cellexalObj ) {
 #' @rdname compactTimeZscore
 setMethod('compactTimeZscore', signature = c ('cellexalLinear', 'character', 'cellexalvrR'),
 definition = function ( x, deg.genes, cellexalObj ) {
+
+	cellexalObj = addSelection( cellexalObj, x) # just make sure all is OK
 	
 	cellexalObj = compactTime ( cellexalObj )
-
-	cellexalObj = reduceTo( cellexalObj, what='row', to=deg.genes )
+	tmp = reduceTo( cellexalObj, what='row', to=deg.genes )
+	if ( length(which(is.na(match( deg.genes, rownames(tmp@data))))) == 0){
+		cellexalObj = tmp 
+	}
+	else if ( interactive() ){
+		message("I have not obtained all genes I asked for !")
+		browser()
+	}
 
 	collapsedData = NULL
 	collapseNames = NULL
-	for ( tName in names(cellexalObj@usedObj$linearSelections)[-1]) {
-		collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
-		collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
-			, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
+	if ( !is.na(match( x@gname, names(cellexalObj@usedObj$linearSelections)))){
+		collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[x@gname]]@geneClusters[['collapsedExp']] )
+		collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[x@gname]]@gname
+				, ncol(cellexalObj@usedObj$linearSelections[[x@gname]]@geneClusters[['collapsedExp']]) ))
 	}
+	else {
+		for ( tName in names(cellexalObj@usedObj$linearSelections)) {
+			if ( tName != "lastEntry" && length(grep('pseudoBulk', tName )) == 0 ){
+				if ( !is.null(collapsedData)){
+					message("This should not have happened!")
+					browser()
+				}
+				collapsedData =cbind(collapsedData, cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']] )
+				collapseNames = c( collapseNames, rep(cellexalObj@usedObj$linearSelections[[tName]]@gname
+					, ncol(cellexalObj@usedObj$linearSelections[[tName]]@geneClusters[['collapsedExp']]) ))
+			}
+		}
+	}
+
 	colnames( collapsedData ) = collapseNames
 	B = FastWilcoxTest::ZScoreAll( collapsedData )
 	colnames(B) = collapseNames
@@ -454,7 +496,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 			time = getLinearSelection(cellexalObj, time)
 		}
 		if ( parent != time@parentSelection){
-			stop("the other object is not from the same parent selection - stop")
+			#stop("the other object is not from the same parent selection - stop")
 		}
 		if ( class(time) == "cellexalGrouping" ){
 			time = time@linarObj
@@ -493,8 +535,8 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 	text = "## Comparison between the gene clusters of linearSelection"
 
 	for ( i in 1:length(times)){
-	 	header = paste(sep="", header, "<th>",altGroupNames[i],"</th>")
-	 	body   = paste(sep="", body  , "<td>![](",
+	 	header = paste(sep="",collapse="", header, "<th>",altGroupNames[i],"</th>")
+	 	body   = paste(sep="",collapse="", body  , "<td>![](",
 	 		R.utils::getRelativePath( times[[i]]@geneClusters[[times[[i]]@gname]]$figure, cellexalObj@outpath),
 	 		")</td>"
 	 		)
@@ -503,7 +545,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 	 	}else if(i == length(times)){
 	 		text=paste(text, "and", altGroupNames[i], "\n\n")
 	 	}else {
-	 		text=paste(sep="",text, ", ", altGroupNames[i])
+	 		text=paste(sep="",collapse="",text, ", ", altGroupNames[i])
 	 	}
 	}
 
@@ -563,9 +605,9 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
    		for (i in 1:length(times) ){
    			groupID = df[genes[1], i]
    			circles = c( circles, R.utils::getRelativePath( 
-   				paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,groupID,'svg'), 
+   				paste( sep=".",times[[i]]@geneClusters[[times[[i]]@gname]]$figure,
+   					groupID,'svg'), 
    				cellexalObj@outpath) )
-   			#text = paste( sep="",text, altGroupNames[i]," ", "<img src='",circles[i], "' height='15'/>")
 
    		}
 
@@ -578,12 +620,12 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
  		## and now the heatmaps for this set of genes.
  		for (i in 1:length(times) ){
  			groupID = df[genes[1], i]
- 			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, "heatmap" )
+ 			of = paste(sep="_", "directComp",  times[[i]]@gname, tag, length(genes), "heatmap" )
 			of2 = file.path( cellexalObj@usedObj$sessionPath, 'png', of )
 			
 			groupCol = paste( times[[i]]@gname, 'groupColors','png', sep=".")
 
- 			text = paste( text, sep=" ", "\n\n#### Expression in", 
+ 			text = paste( text, sep=" ",collapse="", "\n\n#### Expression in", 
 					altGroupNames[i],"and trajectory",groupID," / <img src='",circles[i],"' height='20'/>", "\n\n",
 					paste("![](",correctPath(groupCol, cellexalObj ),")\n"),
 					plotHeatmap_rmd( 
@@ -592,6 +634,7 @@ definition = function (x, other, cellexalObj, altGroupNames=NULL, color=NULL, GO
 						ofile = of2,
 						cellexalObj = cellexalObj
 					), "\n\n")
+ 			#print(paste("DEBUG:",of,"genes n=", length(genes)) )
  		}
    		return ( paste(text, '\n', sep="") );
    	})))
@@ -638,6 +681,9 @@ definition = function (x, to=1000 ) {
 		tmp = x@dat[ match(1:to, ids),]
 		tmp[,'time'] = sapply( split( as.vector(x@dat[,'time']), ids ), 
 			function(dat) { mean(dat) })
+		if ( is.na( match('col', colnames(x@dat)))){
+			x = checkTime(x)
+		}
 		tmp[,'col']= unlist(lapply( split( as.vector(x@dat[,'col']), ids ), 
 	 			function(dat) { t=table(dat); names(t)[which(t==max(t))[1]]})) 
 
@@ -660,14 +706,13 @@ definition = function (x, to=1000 ) {
 #' @description 3D plot using linear order colors
 #' @param x the cellexalLinear object or a linear grouping name
 #' @param cellexalObj the object to get the data from
-#' @param info a cellexalGrouping or grouping name
 #' @param deg.genes a list of genes to create the report for
 #' @param num.sig number of signififcant genes (default 250)
 #' @title create a report for one cellexalLinear object (interactive mode only)
 #' @export 
 #if ( ! isGeneric('createReport') ){
 setGeneric('createReport', ## Name
-function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250) { 
+function ( x, cellexalObj,  deg.genes=NULL, num.sig=250) { 
 	standardGeneric('createReport')
 }
 )
@@ -675,32 +720,19 @@ function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250) {
 
 
 #' @rdname createReport
-setMethod('createReport', signature = c ('character', 'cellexalvrR', 'character'),
-definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
-	createReport ( x =getLinearSelection(cellexalObj, x), cellexalObj=cellexalObj, info=groupingInfo(x,info), deg.genes=deg.genes )
+setMethod('createReport', signature = c ('character', 'cellexalvrR'),
+definition = function ( x, cellexalObj,  deg.genes=NULL, num.sig=250 ) {
+	createReport ( x =getLinearSelection(cellexalObj, x), cellexalObj=cellexalObj, deg.genes=deg.genes )
 })
 
-#' @rdname createReport
-setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'character'),
-definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
-	info = groupingInfo(cellexalObj, info )
-	createReport ( x =x, cellexalObj=cellexalObj, info=info, deg.genes=deg.genes )
-})
 
 #' @rdname createReport
-setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'cellexalLinear'),
-definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
-	info = groupingInfo(cellexalObj, info@gname )
-	createReport ( x =x, cellexalObj=cellexalObj, info=info, deg.genes=deg.genes )
-})
-
-#' @rdname createReport
-setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR', 'cellexalGrouping'),
-definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
+setMethod('createReport', signature = c ('cellexalLinear', 'cellexalvrR'),
+definition = function ( x, cellexalObj, deg.genes=NULL, num.sig=250 ) {
 
 #print( paste( "I am in cellexalLinear::createReport and was called from here:", deparse(sys.calls()[[sys.nframe()-2]]) ) )
-
 	text = NULL
+
 	if ( is.null(deg.genes)){
 		deg.genes = cellexalObj@usedObj$deg.genes
 		message('using the deg.genes stored in the object')
@@ -724,25 +756,28 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 
 	ps = cellexalObj@usedObj$sigGeneLists$lin[[x@gname]]
 	if ( is.null(ps)) {
+		#cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = "This_Ststistics_has_not_been_run"
 		message("the linear statistics table is NULL!")
 		cellexalObj = createStats( x, cellexalObj, num.sig=num.sig )
 		cellexalObj@usedObj$deg.genes = deg.genes
 		ps = cellexalObj@usedObj$sigGeneLists$lin[[x@gname]]
 
 	}
+
 	o = order(ps[,'p.value'])
 	ps = ps[o,]
-	cellexalObj@usedObj$lastGroup = info@gname
+	cellexalObj@usedObj$lastGroup = x@gname
+
 	## add the plots to the log
-	try({
+	#try({
 		#print( "simplePlotHeatmaps" )
-		
+
 		ret = simplePlotHeatmaps(
 			cellexalObj, 
-			info= info,  
-			fname=file.path( cellexalObj@usedObj$sessionPath,'png', info@gname ) 
+			info= x,  
+			fname=file.path( cellexalObj@usedObj$sessionPath,'png', x@gname ) 
 		)
-		x@geneClusters[[info@gname]] = list( 
+		x@geneClusters[[x@gname]] = list( 
 			clusters= ret$genes, 
 			matrix = ret$mat, 
 			figure= ret$ofile,
@@ -758,12 +793,11 @@ definition = function ( x, cellexalObj, info, deg.genes=NULL, num.sig=250 ) {
 			text= paste(text, ret$error, sep=" ", collapse=" ")
 		) 
 		#print( "finish" )
-	} )	
+	#} )	
 
-	cellexalObj = addSelection( x, cellexalObj )
 	#	print ( paste("4: createReport: The dims of the cellexalObj:", paste(collapse=", ", dim(cellexalObj@data))))
-
-	invisible( list( cellexalObj = cellexalObj, linearSelection = x) )
+	cellexalObj = addSelection( cellexalObj, x)
+	invisible( cellexalObj )
 	} )
 
 
@@ -799,7 +833,10 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 
 	#cellexalObj = addSelection( x, cellexalObj, info@gname)
 	# focus on our data only
-	cellexalObj@usedObj$lastGroup = x@gname
+	#if( x@gname == "PBS_Spl 4stats" ){browser()}
+
+	cellexalObj = addSelection( cellexalObj, x)
+
 	if (  is.null(cellexalObj@usedObj$sigGeneLists$lin[[x@gname]])) {
 			## otherwise the stats have already been calculated and do not need to be re-run.
 		loc = reduceTo(cellexalObj, what='col', to=rownames(x@dat) )
@@ -827,28 +864,48 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 			colnames( bulk@data ) = cn
 			rownames( bulk@data ) = rn
 			cellexalObj@usedObj$pseudoBulk = TRUE
-			cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
+			bulk_selection = groupingInfo( bulk, x@gname )
+			bulk_selection@gname = paste(bulk_selection@gname, 'pseudoBulk')
+			if ( class(bulk_selection)[1] == "cellexalGrouping"){
+				bulk_selection@linarObj@gname = paste(bulk_selection@linarObj@gname, 'pseudoBulk')
+			}
+			bulk_selection = checkTime(bulk_selection)
+			bulk_parent = groupingInfo( bulk, bulk_selection@parentSelection )
+			bulk_parent@gname = paste(bulk_parent@gname, 'pseudoBulk')
+			bulk_parent@linarObj = bulk_selection
+			cellexalObj = addSelection( cellexalObj, bulk_parent )
+			#cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
 
 		}
 		else if ( bulkStats ) {
 			## oops with the new pseudo bulk stuff we might want to still collapse the data?!
 			bulk = pseudoBulk( x, cellexalObj, maxBulks = 1000 )
-			warning( "Too little data to run pseudo bulk analysis - forced collapse")
+			print( "Too little data to run std. pseudo bulk analysis collapsing to less pseudo samples")
 			cellexalObj@usedObj$pseudoBulk = TRUE
-			cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
+			bulk_selection = groupingInfo( bulk, x@gname )
+			bulk_selection@gname = paste(bulk_selection@gname, 'pseudoBulk')
+			if ( class(bulk_selection)[1] == "cellexalGrouping"){
+				bulk_selection@linarObj@gname = paste(bulk_selection@linarObj@gname, 'pseudoBulk')
+			}
+			bulk_selection = check(bulk_selection)
+			bulk_parent = groupingInfo( bulk, bulk_selection@parentSelection )
+			bulk_parent@gname = paste(bulk_parent@gname, 'pseudoBulk')
+			bulk_parent@linarObj = bulk_selection
+			cellexalObj = addSelection( cellexalObj, bulk_parent )
+			#cellexalObj@groupSelectedFrom[[paste(x@gname, 'pseudoBulk')]] = groupingInfo( bulk, x@gname )
 
 		}
 		else {
-			warning( "Too little data to run pseudo bulk analysis")
+			print( "Too little data to run pseudo bulk analysis")
 			bulk = loc
 		}
 		## run stats (pearson linear correlation directly on sparse matrix)
 
-		save( bulk, file= file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ) )
-		toGSEA( bulk, 
-			ofile=file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ),
-			x@gname
-		)
+		# save( bulk, file= file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ) )
+		# toGSEA( bulk, 
+		# 	ofile=file.path( bulk@usedObj$sessionPath, paste(sep=".", "PseudoBulk", x@gname,".RData" ) ),
+		# 	x@gname
+		# )
 		m = match( colnames(bulk@data), rownames(x@dat))
 
 		ps = FastWilcoxTest::CorMatrix_N(  
@@ -888,8 +945,15 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 				conv = stats::convolve( da, filter, type='filter' )
 			 (conv -mean(conv)) / stats::sd(conv)
 			} )
-		info = groupingInfo( cellexalObj, x@gname )
-		info@linarObj = x
+		info = groupingInfo( cellexalObj, x@parentSelection )
+		x= checkTime(x)
+		if ( class(info)[1] == "cellexalGrouping"){
+			info@linarObj = x
+			addSelection( cellexalObj, info)
+		}else {
+			addSelection( cellexalObj, x)
+		}
+
 		gr = clusterGenes( t(conv),deg.genes=NULL, info=info)
 		cellexalObj@usedObj$deg.genes = cellexalObj@usedObj$deg.genes[order(gr$geneClusters)]
 
@@ -912,7 +976,7 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 		if ( is.null( cellexalObj@usedObj$linearSelections)) {
 			cellexalObj@usedObj$linearSelections = list()
 		}
-		cellexalObj = addSelection( x, cellexalObj)
+
 		cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = ps
 	}
 	## the stats have already been run and all is OK.
@@ -942,30 +1006,33 @@ setMethod('createStats', signature = c ( 'cellexalLinear', 'cellexalvrR' ),
 #' @export
 #if ( ! isGeneric('createTime') ){
 setGeneric('createTime', ## Name
-function ( x, parentSelection=NULL ) { 
+function ( parentSelection, cellexalObj=NULL ) { 
 	standardGeneric('createTime')
 }
 )
 #}
 
 #' @rdname createTime
-setMethod('createTime', signature = c ('cellexalLinear'),
-definition = function ( x, parentSelection=NULL ) {
-	if ( is.null(parentSelection) && length(x@parentSelection)==0 ){
-		stop( "cellexalLinear::createTime needs to know the parentSelection")
-	}
-	if ( !is.null( parentSelection )){
-		x@parentSelection = parentSelection@gname
+setMethod('createTime', signature = c ('cellexalGrouping', 'cellexalvrR'),
+definition = function ( parentSelection, cellexalObj=NULL ) {
+
+	dat = cellexalObj@drc[[parentSelection@drc]][names(parentSelection),1:3]
+	colnames(dat) = c('a','b','c')
+	mode(dat) = 'numeric'
+	rownames = rownames(dat) = names(parentSelection)
+
+	#this object is ordered in the order of selection in the parent object!
+	x= new( "cellexalLinear", 
+		dat = data.frame(dat),
+		drc = parentSelection@drc,
+		gname = gsub("User", "Time", parentSelection@gname),
+		parentSelection = parentSelection@gname 
+	)
+	
+	if ( all(as.vector(x@dat$c) == 0 ) ){
+		dat = dat[,-3]
 	}
 	
-	dat = cbind( x@dat$a, x@dat$b )
-	colnames(dat) = c('a','b')
-	if ( ! var(as.vector(x@dat$c)) == 0 ){
-		dat = cbind( dat, x@dat$c )
-		colnames(dat) = c('a','b','c')
-	}
-	mode(dat) = 'numeric'
-	rownames = rownames(dat) = rownames(x@dat)
 	bad= which(apply( dat,1, function(d) { all(is.na(d))}))
 	if ( length(bad) > 0 ) {
 		message( "pseudotimeTest3D - There are NA values in the dat matrix!")
@@ -979,10 +1046,10 @@ definition = function ( x, parentSelection=NULL ) {
 	dist_of_centers = NULL
 
 	if ( ncol(dat) == 2) {
-		dist_of_centers = FastWilcoxTest::eDist3d( group$centers[,'a'], group$centers[,'b'], rep(0, length(group$centers[,'b'])), 0 )
+		dist_of_centers = FastWilcoxTest::eDist3d( group$centers[,'a'], group$centers[,'b'], rep(0, length(group$centers[,'b'])), group$cluster[1]-1 )
 	}
 	else {
-		dist_of_centers = FastWilcoxTest::eDist3d( group$centers[,'a'], group$centers[,'b'], group$centers[,'c'], 0 )
+		dist_of_centers = FastWilcoxTest::eDist3d( group$centers[,'a'], group$centers[,'b'], group$centers[,'c'], group$cluster[1]-1 )
 	}
 	end = which( dist_of_centers == max(dist_of_centers))
 
@@ -997,9 +1064,12 @@ definition = function ( x, parentSelection=NULL ) {
 		#	stop("This should not be applied here!")
 		#	setTimeLimit(220)#after 120 sec this has failed - get a more simple selection
 		#}
-		slingshot::slingshot(dat, group$cluster, 
-		start.clus= group$cluster[which(parentSelection@order == 1)], 
-		end.clus = end  ) ## assuming that the first cell selected should also be in the first cluster...
+		slingshot::slingshot(
+			dat, 
+			group$cluster, 
+			start.clus= group$cluster[1], 
+			end.clus = end
+		) ## assuming that the first cell selected should also be in the first cluster...
 	}
 	#})
 	if ( is.null(sling)) {
@@ -1016,6 +1086,14 @@ definition = function ( x, parentSelection=NULL ) {
 	}
 	if ( length(which(is.na(slingTime[,use]))) > 0 ){
 		print("The linearSelection could not reach all cells - possibly worth a debug session")
+		rand = sample(1:nrow(dat), nrow(dat) )
+		sling = slingshot::slingshot(
+            dat[rand,], 
+            group$cluster[rand], 
+            start.clus= group$cluster[1], 
+            end.clus = end
+        )
+		slingTime = slingshot::slingPseudotime( sling )
 	}
 	o = order( slingTime[,use])
 	
@@ -1031,18 +1109,20 @@ definition = function ( x, parentSelection=NULL ) {
 		}
 		x@dat$x = curves[[use]]$s[,1]
 		x@dat$y = curves[[use]]$s[,2]
-		if ( var(x@dat$c) == 0 ){
+		if ( all(x@dat$c == 0) ){
 			x@dat$z = rep(0, nrow(slingTime))
 		}
 		else{
 			curves[[use]]$s[,3]
 		}
 	}
-	if ( ! is.null(parentSelection)){
-		x@gname = parentSelection@gname
-	}
-	#plotTime(checkTime(x))
-	checkTime(x) ## adds the color info
+	x = checkTime(x)
+	parentSelection@linarObj = x
+	# This should also add the time selection
+	# checkTime should also be run
+	cellexalObj = addSelection( cellexalObj, parentSelection )
+
+	return( cellexalObj )
 }
 )
 
@@ -1074,7 +1154,7 @@ setMethod('exportSelection', signature = c ('cellexalLinear'),
 
 	f2 = paste( sep=".",fname,'points')
 
-	d = cbind( names(dat$c), dat$x, dat$y, dat$z  )
+	d = cbind( rownames(dat), dat$a, dat$b, dat$c  )
 	utils::write.table( d, col.names=F, row.names=F, quote=F, sep="\t", file=f2)
 
 	invisible(x)
@@ -1352,7 +1432,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 	for ( a in 1:length(dat) ){
 		n = names(dat)[a]
 		pl = pl + ggplot2::geom_smooth(data=toPlot, 
-		  	mapping=ggplot2::aes_string(x='time', y= n, alpha=.6 ), color=color[a], 
+		  	mapping=ggplot2::aes(x=time, y= n, alpha=.6 ), color=color[a], 
 		  	method=loess, fill=color[a], alpha=.2, na.rm = TRUE)	
 
 		circleF = paste(sep=".", ofile,a,'svg' )	
@@ -1375,6 +1455,8 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 
 	mi = min(dat[1,])
 	ma = max(dat[2,])
+	color = wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10]
+	#browser()
 	pl = pl + 
  		ggplot2::geom_rect(data=rects,mapping = ggplot2::aes(
 		xmin = xstarts, 
@@ -1384,7 +1466,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 		ymin = -Inf,
 		ymax = mi
 		),
-  		fill= wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10],
+  		fill= rects[,'col'], #wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10],
 		alpha = 1) + 
 	  	ggplot2::geom_rect(data=rects,mapping = ggplot2::aes(
 		xmin = xstarts, 
@@ -1394,7 +1476,7 @@ setMethod('plotDataOnTime', signature = c ('data.frame', 'list'),
 		ymin = ma,
 		ymax = Inf
 		),
-  		fill= wesanderson::wes_palette("Zissou1",10, type = "continuous")[1:10],
+  		fill= rects[,'col'],
 		alpha = 1) 
 
 	print(pl) # write the plot data
@@ -1547,7 +1629,10 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 		}
 
 		cellexalObj = reorderSamples ( cellexalObj, object@gname )
-		object = groupingInfo(cellexalObj, object@gname)@linarObj
+		object = groupingInfo(cellexalObj, object@gname)
+		if ( class(object)[1] == "cellexalGrouping"){
+			object = object@linarObj
+		}
 
 		ids =  toIDs(tab[1])
 		for (n in tab[-1]) {
@@ -1566,6 +1651,45 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 	}
 )
 
+
+
+#' describesTheseCells - check if this object describes these cells
+#'
+#' @name describesTheseCells
+#' @docType methods
+#' @description describesTheseCells - check if this object describes these cells
+#' @param x the object
+#' @param cells the cell names to subset the object to
+#' @title a simple check that does what ist is called for
+#' @export 
+#' @rdname describesTheseCells
+setGeneric('describesTheseCells', ## Name
+	function ( x, cells ) { 
+		standardGeneric('describesTheseCells')
+	}
+)
+
+setMethod('describesTheseCells', signature = c ('cellexalLinear', 'character'),
+definition = function ( x, cells ) {
+	a = unique( c(rownames(x@dat), cells ))
+	length(a) == nrow(x@dat) && length(a) == length(cells)	
+}
+)
+
+#' get the (cell) names from this time
+#'
+#' @name names
+#' @docType names
+#' @description cell names of a cellexalLinear object
+#' @param x the object
+#' @title cellnames of a cellexalLinear object
+#' @export 
+setMethod('names', signature = c ('cellexalLinear'),
+definition = function ( x) {
+	return( rownames(x@dat) )
+} )
+
+
 #' Subset a cellexalLinear object based on a list of cells.
 #'
 #' @name subset
@@ -1577,8 +1701,11 @@ setMethod('pseudoBulk', signature = c ('cellexalLinear'),
 #' @export 
 setMethod('subset', signature = c ('cellexalLinear'),
 definition = function ( x, cells) {
-	m = match( cells, rownames(x@dat) )
+	m = match( tolower(cells), tolower(rownames(x@dat)) )
 	m = m[which(!is.na(m))]
+	if ( length(m) == 0){
+		return (NULL)
+	}
 	x@dat = x@dat[m,]
 	## the merged data - if existing - becomes invalid
 	if ( ! is.null( x@geneClusters[['collapsedExp']])) {
@@ -1618,6 +1745,8 @@ function ( x, cellexalObj, deg.genes=NULL ) {
 setMethod('linearAnalysisSubset', signature = c ('cellexalLinear'),
 definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
+	stop("This function is likely broken - debug it if you really need it")
+
 	loc = reduceTo( cellexalObj,what='col', to= rownames(x@dat) )
 	loc = createStats( x, loc )
 
@@ -1627,16 +1756,18 @@ definition = function ( x, cellexalObj, deg.genes=NULL ) {
 
 	cellexalObj@usedObj$deg.genes = deg.genes
 	
-	cellexalObj = addSelection( x, cellexalObj, x@parentSelection)
+	cellexalObj = addSelection(cellexalObj, groupingInfo( loc, x@gname))
+
 	if ( is.null(cellexalObj@usedObj$sigGeneLists$lin) ) {
 		cellexalObj@usedObj$sigGeneLists$lin = list()
 	}
-
+	message("This next step should not be necessary!")
+	browser()
 	cellexalObj@usedObj$sigGeneLists$lin[[x@gname]] = loc@usedObj$sigGeneLists$lin[[x@gname]]
 	
 	loc = reduceTo(cellexalObj, what='row', to=deg.genes)
 	loc = createStats( x, loc )
-	ret = createReport(x, loc, groupingInfo( cellexalObj, x@gname ) )
+	loc = createReport(x, loc, groupingInfo( cellexalObj, x@gname ) )
 
 	x = ret$linearSelection
 	#cellexalObj = ret$cellexalObj

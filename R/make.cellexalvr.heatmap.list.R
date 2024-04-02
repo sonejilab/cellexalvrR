@@ -37,22 +37,30 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 			if ( file.exists( paste(sep=".", outfile, 'sqlite3')) ){
 				unlink( paste(sep=".", outfile, 'sqlite3') )
 			}
-			
-			if ( ! file.exists( file.path(cvrObj@outpath, basename(cellidfile)) ) ){
-				if ( ! file.exists( cellidfile )) {
-					# crap! - A user defined fake grouping. Create this file from scratch
-					exportSelection ( groupingInfo(cvrObj,cellidfile ), cellidfile )
-				}
-				file.copy( cellidfile, cvrObj@outpath )
+
+			rel_path = fs::path_rel(cellidfile, cvrObj@outpath )
+
+			if ( stringr::str_detect( rel_path, "^\\.\\.") ){
+				# crap! - A user defined fake grouping. Create this file from scratch
+				dir.create( file.path( cvrObj@outpath, "Selections"))
+				next_id = length( list.dirs ( file.path( cvrObj@outpath, "Selections/") ) ) -1
+				path =  file.path( cvrObj@outpath, "Selections", paste("Selection", next_id, sep=""))
+				dir.create( path )
+				file.copy( cellidfile, file.path( path, 'selection.txt' ) )
+				cellidfile = file.path( path, 'selection.txt' )
 			}
+			#cvrObj = userGrouping( cvrObj, cellidfile )
 
 			cvrObj = getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig, nameAdd=nameAdd ) #function definition in file 'getDifferentials.R'
 			#getDifferentials(cvrObj,cellidfile, stats_method, num.sig= num.sig) #function definition in file 'getDifferentials.R'
 
 			cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@heatmapBasename = basename( outfile )
+			## this test needs to improve!
+			grouping = groupingInfo( cvrObj )	
 
-			if ( length( grep('Time', cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@gname)) > 0 ){
-				partentGroup = getLinearSelection( cvrObj, cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@gname )@parentSelection
+			if ( ! empty( grouping@linarObj )){
+			#if ( length( grep('Time', cvrObj@groupSelectedFrom[[cvrObj@usedObj$lastGroup]]@gname)) > 0 ){
+				partentGroup = grouping@linarObj@parentSelection
 				cvrObj@groupSelectedFrom[[partentGroup]]@heatmapBasename = basename( outfile )
 			}
 			gene.cluster.order = cvrObj@usedObj$deg.genes
@@ -63,8 +71,7 @@ setMethod('make.cellexalvr.heatmap.list', signature = c ('cellexalvrR'),
 			## we only need the GOIs
 			tmp = reduceTo(cvrObj, what='row', to=  gene.cluster.order ) #function definition in file 'reduceTo.R'
 			## we also only need the samples that have been selected:
-			tmp = reduceTo(tmp, what='col', to=  colnames(cvrObj@data)[ #function definition in file 'reduceTo.R'
-				which(!is.na(cvrObj@userGroups[,cvrObj@usedObj$lastGroup])) ] )
+			tmp = reduceTo(tmp, what='col', to=  names(grouping) )
 			if ( file.exists(paste(sep=".", outfile, 'sqlite3'))){
 				unlink(paste(sep=".", outfile, 'sqlite3') )
 			}

@@ -3,13 +3,13 @@ context('stat functions pseudoBulk')
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
+Sys.setenv(TEST_MODE = "TRUE")
 
 prefix = './'
 
 if ( file.exists( file.path(prefix, 'function.R'))){
 	## the test functions that should not be maintained in differet test scripts...
 	source( file.path(prefix, 'function.R')) 
-
 }
 
 if ( file.exists( file.path(prefix,'data','output','statTest','statTestPsedoBulk_2' ) )){
@@ -35,7 +35,6 @@ grouping <- file.path(prefix, 'data/selection00.txt')
 
 x = userGrouping( x, grouping)
 info = groupingInfo( x )
-x = reduceTo( x, what='col', to=colnames(x@data)[which(!is.na(info@grouping))])
 
 gene2 = getDifferentials(x, grouping, 'wilcox', num.sig=100, Log=FALSE, logfc.threshold = .1, minPct=0.1, bulkStats=TRUE )
 
@@ -53,6 +52,7 @@ if ( file.exists( ofile))
 
 x = renderReport(x)
 
+#browser()
 expect_true( file.exists( ofile), label="stats main outfile")
 
 search = list(
@@ -98,8 +98,7 @@ order= names(loc@usedObj$pseudoBulk_groupings)
 cmp@usedObj$samples = data.frame( 'wanted_order'= order( match( order, colnames(cmp@data)) ))
 cmp = reorderSamples ( cmp, 'wanted_order' )
 
-
-bad = which( FastWilcoxTest::ColNotZero( t( cmp@data)) == 0)
+bad = which( FastWilcoxTest::ColNotZero( Matrix::t( cmp@data)) == 0)
 if ( length(bad) > 0){
 	cmp = reduceTo( cmp, what='row', to=rownames(cmp@data)[-bad] )
 }

@@ -32,7 +32,13 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		}
 
 		## get a unique file not overwriting old ones.
-		ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
+		ofile = NULL
+		if ( length(unlist(stringr::str_split( x@usedObj$lastGroup, "/"))) > 1 ){
+			ofile = filename( c( basename( x@usedObj$lastGroup ), method, "csv" ), opath )
+		}else {
+			ofile = filename( c(  x@usedObj$lastGroup, method, "csv" ), opath )
+		}
+
 		#print( paste( "Saving stats table as", file.path(opath,ofile)))
 		if ( colnames(data)[1] == 'cor' ){
 			data = cbind( 'Gene Name' = rownames(data), data )
@@ -46,49 +52,61 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 		## get the VR order:
 		gInfo = groupingInfo(x)
 
-
+		if (length( grep ("pseudoBulk", gInfo@gname) ) > 0 ){
+			gInfo = groupingInfo(x, stringr::str_replace( gInfo@gname, " pseudoBulk", "" ) )
+		}
 		
 		tableHTML = HTMLtable(gInfo)
-		if ( ! empty(gInfo@linarObj) ){
+
+		if ( class(gInfo)[1] == "cellexalGrouping" && ! empty(gInfo@linarObj) ){
 			tableHTML = HTMLtable(gInfo@linarObj)
 		}
 		gname = gInfo@gname
 
-		if ( !is.na( match( paste(gname, "pseudoBulk"), names(x@groupSelectedFrom)))){
-			pseudoB_group = groupingInfo( x, paste(gname, "pseudoBulk") )
-			if ( ! empty(pseudoB_group@linarObj) ){
+		pseudoB_group = try({suppressMessages(suppressWarnings(groupingInfo(x, paste(gname, "pseudoBulk") )))}, silent=TRUE)
+
+		if ( class(pseudoB_group)[1] == class(gInfo)[1] ){
+
+			if ( class(gInfo)[1] == "cellexalGrouping" && ! empty(gInfo@linarObj) ){
 				tab = table( pseudoB_group@linarObj@dat$col)
-			}else {
-				tab = table(as.numeric(pseudoB_group@grouping))
-			}
-			if ( ! empty(gInfo@linarObj) ){
 				tmp = gInfo@linarObj
-			}else {
+			}
+			else {
+				tab = table(as.numeric(pseudoB_group@grouping))
 				tmp = gInfo
 			}
+
 			tableHTML = HTMLtable(tmp,  
 				list ( 
 					'pseudo bulk samples [n]' = tab 
 				) )
+		}else {
+			tableHTML = HTMLtable( gInfo )
 		}
 
 		tableHTML = paste(tableHTML, "\n")
 		## this need to become a relative path - relative to the final outfile
 
 		if (length(grep('Time.group', x@usedObj$lastGroup)) > 0 ) {
+
 			selF = filename(paste(sep=".", "TimeSelection", gInfo@gname, 'txt'))
 			sesionFile = file.path(x@usedObj$sessionPath, selF )
 			if ( ! file.exists( sesionFile )){
-				exportSelection( gInfo@linarObj, sesionFile )
+				if ( class(gInfo)[1] == "cellexalGrouping"  && ! empty(gInfo@linarObj)){
+					exportSelection( gInfo@linarObj, sesionFile )
+				}
+				else {
+					exportSelection( gInfo, sesionFile )
+				}
+				
 			}
 		}else {
 			if ( is.null(x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] )){
-				fname = file.path( x@outpath, x@usedObj$sessionName, paste(sep=".","selection", x@usedObj$lastGroup, "txt") )
-				fname = stringr::str_replace_all( fname, '\\s+', '_')
+				fname = getUniqueFile( x@outpath, 'session.txt', 'txt' )
 				exportSelection( groupingInfo( x, x@usedObj$lastGroup), fname=fname )
 				x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] = fname
 			}
-			sesionFile = file.path( x@usedObj$sessionPath, basename( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]] ) )
+			sesionFile = getUniqueFile( x@usedObj$sessionPath, 'session.txt', 'txt' )
 			if ( ! file.exists( sesionFile )){
 				file.copy( x@usedObj$SelectionFiles[[x@usedObj$lastGroup]], sesionFile)
 			}
@@ -127,6 +145,7 @@ setMethod('logStatResult', signature = c ('cellexalvrR'),
 			toppgenes = getSigGenes( data, count=100, nameAdd = nameAdd)
 			write.table( toppgenes, file=file.path(opath, toppGF), col.names=F, row.names=F, quote=F, sep="," )
 		})
+
 
 		content=paste( sep="\n", collapse = "\n",
 				paste( "##", x@usedObj$lastGroup,"Statistical Result" ),

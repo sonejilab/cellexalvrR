@@ -2,6 +2,7 @@ context('GrabDRCs')
 
 set.seed(100)
 #prefix = 'tests/testthat'
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = '.'
 
 

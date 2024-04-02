@@ -5,7 +5,7 @@ message("You are testing THIS file")
 if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed") ){
 	skip ( "Pandoc needed - but missing here")
 }
-
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = './'
 
 if ( file.exists( file.path(prefix, 'function.R'))){
@@ -92,7 +92,7 @@ checkThis = function(id){
 	B = (1:ncol(gene2@data))[-Bbad]
 
 	expect_equal( toCheck[id,"p.value"], wilcox.test( gene[A], gene[B], exact=FALSE)$p.value, label=paste("Wilcox result gene", toCheck[id,"gene"]))
-	browser()
+	#browser()
 }
 
 

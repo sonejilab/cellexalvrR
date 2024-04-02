@@ -71,7 +71,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
  	gr = gInfo@grouping
     if ( length(which(is.na(gInfo@grouping))) == length(which(is.na(as.numeric(as.vector(gInfo@grouping))))) ){
     	if ( min(as.numeric(as.vector(gInfo@grouping)), na.rm=T) == 0){
-    		gr = factor(as.numeric(as.vector(gInfo@grouping))+1)
+    		gr = factor(as.numeric(as.vector(gInfo@grouping)))
     		names(gr) = na
     	}
     }
@@ -87,6 +87,7 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
     OK = match(rownames(cellexalObj@drc[[gInfo@drc[1]]]), names(gr))
     gr = gr[OK]
 	grDevices::png( file= DRC1, width=1000, height=1000)
+
 	toPlot = data.frame(
 		x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),1], 
 		y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),2], 
@@ -106,7 +107,6 @@ setMethod('drcPlots2D', signature = c ('cellexalvrR', 'cellexalGrouping'),
 		}
 
 		grDevices::png( file= DRC2, width=1000, height=1000)
-	
     	toPlot = data.frame(x=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),2], y=cellexalObj@drc[[gInfo@drc[1]]][which(!is.na(OK)),3], id=gr )
     	p= prettyPlot2D( toPlot, gInfo@col, showIDs = showIDs  ) #function definition in file drcPlot2D.R
     	#browser()
@@ -216,9 +216,12 @@ correctPath = function( f, cellexalObj ) {
 drcFiles2HTML = function( cellexalObj, gInfo, showIDs=TRUE, addOn = NULL ) {
 	## gInfo is a list with names grouping, drc, col and order
 	# create a file containing the grouping info (and thereby color) and the drc info - do not create doubles
-	if ( nrow(gInfo@linarObj@dat) > 0 ) {
+	if ( class(gInfo)[1] == "cellexalGrouping" && ! empty(gInfo@linarObj) ) {
 		return( drcFiles2HTMLlinear( cellexalObj, gInfo@linarObj, showIDs= showIDs, addOn =addOn ) )
-	}	
+	}
+	if ( class(gInfo)[1] == "cellexalLinear"){
+		return( drcFiles2HTMLlinear( cellexalObj, gInfo, showIDs= showIDs, addOn =addOn ) )
+	}
 	drcFiles =sapply( drcPlots2D( cellexalObj, gInfo, showIDs=showIDs ), correctPath, cellexalObj )
 	str = c(
 		paste( "### 2D DRC", gInfo@drc[1], "dim 1,2","(", gInfo@gname,")", addOn),"\n",

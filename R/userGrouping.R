@@ -25,9 +25,13 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	save = FALSE
 	
     ## try to cut short - is the grouping already known?
-    info = try({groupingInfo( tmp,'sampleType')}, silent=TRUE)
+
+    info = try({suppressMessages(suppressWarnings(groupingInfo( cellexalObj, cellidfile)))}, silent=TRUE)
     if ( class(info) == 'cellexalGrouping'){
-    	cellexalObj@usedObj$lastGroup = cellidfile
+    	# the old way breaks if there is a path in this slot.
+    	# So let's try to use the group name instead?!
+    	#cellexalObj@usedObj$lastGroup = cellidfile
+		cellexalObj@usedObj$lastGroup = info@gname
     	return ( cellexalObj )
     }
 	#init local vars
@@ -37,9 +41,9 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 
 	n = vector( 'numeric', ncol(cellexalObj@data))
 	possibleNames = unique(unlist(lapply( colnames(cellexalObj@meta.cell), 
-			function(x) { str_split(x, "@")} )))
+			function(x) { stringr::str_split(x, "@")} )))
 
-	if ( file.exists(cellidfile)){ ## file from the VR env
+	if ( file.exists(cellidfile) ){ ## file from the VR env
 		## add this group into the object
 		cellid <- utils::read.delim(cellidfile,header=F)
 		if ( cellid[1,1] == 'CellID'){ ## reading a file from the session path
@@ -47,9 +51,19 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		}
 		sessionStoreFile <- function() {
 			if ( ! is.null(cellexalObj@usedObj$sessionPath) ){## active session - we need to copy the cellidfile to this path
-				if ( file.exists( cellidfile )){
-					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath,""))
-					cat( gname ,file=file.path(cellexalObj@usedObj$sessionPath, paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
+				if ( ! file.exists(cellexalObj@usedObj$sessionPath)){
+					dir.create( cellexalObj@usedObj$sessionPath, recursive=T)
+				}
+				if ( ! file.exists( file.path( cellexalObj@usedObj$sessionPath,basename(dirname(cellidfile)))) ){
+					dir.create( file.path( cellexalObj@usedObj$sessionPath,basename(dirname(cellidfile)))) 
+				}
+				# change in CellexalVR - the tool now stores the selections in folders - argh
+				selectionF = file.path(basename(dirname(cellidfile)), basename(cellidfile))
+
+				if ( file.exists( cellidfile ) && 
+					! file.exists( file.path(cellexalObj@usedObj$sessionPath, selectionF )) ) {
+					file.copy(cellidfile, file.path(cellexalObj@usedObj$sessionPath, selectionF ))
+					#cat( gname ,file=file.path( dirname(cellidfile)), paste( basename(cellidfile), 'group', 'txt', sep=".") ),append=TRUE)
 				}
 			}
 		}
@@ -108,8 +122,11 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 			}
 		}
 
-		colorIDs = names(table(cellid[,4]))
-		colVR = colR =  cellid[match( colorIDs,cellid[,4]),2]
+		colorIDs = table(cellid[,4])
+		colVR = rep( NA, max(colorIDs))
+		colVR[colorIDs] = cellid[match( names(colorIDs),cellid[,4]),2]
+
+		#colVR = colR =  cellid[match( colorIDs,cellid[,4]),2]
 		#colVR = c()
 		#for ( i in 1:length(colR)) {
 		#	colVR[colorIDs[i]] = as.character(colR[i])
@@ -127,13 +144,19 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 				drc = c(drc, goodDRC)
 			}
 		}
+
 		drc = unique( drc )
         if ( !is.factor(cellexalObj@userGroups[,gname]) ){
         	cellexalObj@userGroups[,gname] = factor( cellexalObj@userGroups[,gname] )
         }
+
+        if ( class(colVR)[1] != "character"){
+        	browser()
+        }
+
 		ginfo = new( 'cellexalGrouping',
 			gname = gname,
-			selectionFile= basename( cellidfile ),
+			selectionFile= cellidfile ,
 			grouping = cellexalObj@userGroups[,gname],
 			order = as.integer(order),
 			'drc' = drc,
@@ -165,13 +188,13 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 		grouping = NULL
 		order = NULL
 		if (length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) == 1){
-			grouping = cellexalObj@meta.cell[, cellidfile] +1 
+			grouping = cellexalObj@meta.cell[, toMerge] +1 
 			names(grouping) = colnames(cellexalObj@data)
 			order = 1:ncol(cellexalObj@data)
 		}
 		else if ( length(grep (cellidfile, possibleNames) ) == 1 &&  length(toMerge) > 1){
 			entries = unique(unlist(lapply( colnames(cellexalObj@meta.cell)[toMerge], 
-			function(x) { str_split(x, "@")[[1]][2]} )))
+			function(x) { stringr::str_split(x, "@")[[1]][2]} )))
 			grouping = rep( NA, ncol(cellexalObj@data))
 			names(grouping) = colnames(cellexalObj@data)
 			order = 1:ncol(cellexalObj@data)
@@ -240,6 +263,8 @@ setMethod('userGrouping', signature = c ('cellexalvrR'),
 	}
 	if ( file.exists(cellidfile) ){
 		cellexalObj@usedObj$SelectionFiles[[gname]] = cellidfile
+	}else{
+		cellexalObj@usedObj$SelectionFiles[[gname]] = paste(sep="","Selection",id,".txt" )
 	}
 	savePart ( cellexalObj, 'usedObj') #function definition in file 'integrateParts.R'
 	cellexalObj

@@ -6,6 +6,7 @@ if ( ! expect_true( rmarkdown::pandoc_available() ,label= "pandoc is installed")
 #skip('not stable enough')
 
 #prefix = 'tests/testthat'
+Sys.setenv(TEST_MODE = "TRUE")
 prefix = './'
 
 #genes <- file.path(prefix, 'data/heatmap_0.txt')
@@ -72,20 +73,19 @@ x = userGrouping( x, grouping)
 
 x = getDifferentials( x,cellidfile='User.group.1', deg.method= 'wilcox' , Log=TRUE)
 
-expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2" ), label="correct time names")
+expect_equal( names(x@usedObj$linearSelections), c( "Time.group.2" ), label="correct time names")
 
-
-expect_equal(names(x@usedObj$linearSelections[["Time.group.2"]]@geneClusters[["User.group.1"]][['clusters']]),
+expect_equal(names(x@usedObj$linearSelections[["User.group.1"]]@geneClusters[["User.group.1"]][['clusters']]),
 			c("1","2","3","4","5",'6'), label = "geneClusters are part of the linearSelections" )
 
 
-subset = rownames(x@usedObj$linearSelections[["lastEntry"]]@dat)[seq(1,nrow(x@usedObj$linearSelections[["lastEntry"]]@dat),2)]
-linearSubset = subset( x@usedObj$linearSelections[["lastEntry"]], subset)
+subset = rownames(x@usedObj$linearSelections[[x@usedObj$lastGroup]]@dat)[seq(1,nrow(x@usedObj$linearSelections[[x@usedObj$lastGroup]]@dat),2)]
+linearSubset = subset( x@usedObj$linearSelections[[x@usedObj$lastGroup]], subset)
 
 x = linearAnalysisSubset( linearSubset, x )
 
 
-expect_equal( names(x@usedObj$linearSelections), c("lastEntry", "Time.group.2", "Time.group.3" ), label="correct time names #2")
+expect_equal( names(x@usedObj$linearSelections), c(x@usedObj$lastGroup, "Time.group.2", "Time.group.3" ), label="correct time names #2")
 
 expect_equal(names(x@usedObj$linearSelections[["Time.group.3"]]@geneClusters[["Time.group.2"]][['clusters']]),
 			c("1","2","3","4","5","6"), label = "geneClusters are part of the linearSelections #3" )

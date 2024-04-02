@@ -151,6 +151,20 @@ setMethod('check', signature = c ('cellexalvrR'),
 			error = c(error , 
 					paste("groupSelectedFrom",g,"is no cellexalGrouping"))
 		}
+		else if ( !empty(x@groupSelectedFrom[[g]]@linarObj) ){
+			x@groupSelectedFrom[[g]]@linarObj = checkTime( x@groupSelectedFrom[[g]]@linarObj )
+		}
+	}
+	
+
+	if ( ncol(x@meta.cell) == 1 ) {
+		x@meta.cell = cbind( x@meta.cell, 'save' = rep(1, nrow(x@meta.cell)))
+		message("meta.cell matrix contained only one column - fixed - use the returned object!")
+	}
+
+	if ( ncol(x@meta.gene) == 1 ) {
+		x@meta.gene = cbind( x@meta.gene, 'save' = rep(1, nrow(x@meta.gene)))
+		message("meta.gene matrix contained only one column - fixed - use the returned object!")
 	}
 
 	if ( ncol(x@meta.cell) == 1 ) {

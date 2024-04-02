@@ -1,5 +1,6 @@
 context('md_gene_list')
 
+Sys.setenv(TEST_MODE = "TRUE")
 genes = c('x', 'a', 'b', 'c')
 
 text = md_gene_links( genes )
