@@ -1,6 +1,6 @@
 context('Networks')
 
-skip ( "functionality broken - procr package needs to be replaced in the code - functionality broken")
+#skip ( "functionality broken - procr package needs to be replaced in the code - functionality broken")
 
 Sys.setenv(TEST_MODE = "TRUE")
 

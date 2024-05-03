@@ -54,6 +54,7 @@ Imports:
 	wesanderson,
 	zip
 Remotes: 
+    tpq/propr
 	sonejilab/FastWilcoxTest,
 	stela2502/Matrix.utils,
 	SGDDNB/ShinyCell,
